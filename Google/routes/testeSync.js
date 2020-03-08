@@ -17,7 +17,7 @@ const SCOPES = ['https://www.googleapis.com/auth/tasks.readonly'];
 router.get('/lists', function(req, res) {
 task = {}
 
-  fs.readFile('../credentials.json',(err, content) => {
+  fs.readFile('credentials.json',(err, content) => {
       if (err) return console.log('Error loading client secret file:', err);
         auth2.authorize(JSON.parse(content),function(response){
           list_tasks(response,function(tasks){
