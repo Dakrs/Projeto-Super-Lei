@@ -1,0 +1,13 @@
+Instalar o npm
+
+Para correr:
+
+1 - cd Google
+2 - npm install --save
+3 - npm start
+
+4 - Abrir o browser em http://localhost:4000/tasks/lists
+
+5- seguir os passos que aparece no terminal
+
+6- verificar no Mongo se foi criada uma BD e ver o conteudo dela 
