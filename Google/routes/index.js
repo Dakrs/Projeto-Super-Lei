@@ -15,7 +15,7 @@ const SCOPES = ['https://www.googleapis.com/auth/tasks.readonly'];
 /* GET home page. */
 router.get('/lists', function(req, res) {
 
-  fs.readFile('../credentials.json',(err, content) => {
+  fs.readFile('credentials.json',(err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
     // Authorize a client with credentials, then call the Google Tasks API. 
         auth2.authorize(JSON.parse(content),function(response){

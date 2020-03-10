@@ -19,6 +19,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/' + DATABASE_NAME, { useNewUrlParser
 
 var indexRouter = require('./routes/testeSync');
 var usersRouter = require('./routes/users');
+var calendarRouter = require('./routes/calendar')
 
 var app = express();
 
@@ -34,6 +35,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/tasks', indexRouter);
 app.use('/users', usersRouter);
+app.use('/calendar',calendarRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
