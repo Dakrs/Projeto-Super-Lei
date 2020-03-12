@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="../node_modules/vue/dist/vue.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="../node_modules/semantic-ui-css/semantic.min.css">
+    <link rel="stylesheet" type="text/css" href="./index.css" />
+  </head>
+  <body>
+    <div id="all-todos" class="ui grid" style="height: 100%; width: 100%; margin: 0px">
+      <div class="azure three wide column">
+        <div class="title">
+            <h1 class="title white special">AmCyNi</h1>
+        </div>
+      </div>
+      <div class="seven wide column">
+        <h1 class="title">Your ToDos</h1>
+        <div class="ui centered cards">
+          <template v-for="(todo,index) in todos">
+            <div class="ui azure card" style="-webkit-app-region: no-drag; -webkit-user-select: none;">
+              <div class="content">
+                <span v-on:click="toggleInfo(index)" class="right floated plus">
+                  <i class="right floated plus icon"></i>
+                </span>
+                <div class="header">{{ todo.name }}</div>
+                <div class="meta">
+                  <span class="left floated">
+                    {{ todo.origin }}
+                  </span>
+                  <span class="right floated calendar alternate outline">
+                    <i class="calendar alternate outline icon"></i>
+                    {{ todo.date }}
+                  </span>
+                </div>
+              </div>
+              <div class="extra content">
+                <span class="left floated check">
+                  <i class="check green icon"></i>
+                  Complete
+                </span>
+                <span class="right floated ban">
+                  <i class="ban red icon"></i>
+                  Cancel
+                </span>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+      <div class="six wide column leftBorder" style="vertical-align: middle;">
+        <todo-info
+          v-if="toggled !== null"
+          v-bind:todo="todos[toggled]"
+        ></todo-info>
+      </div>
+    </div>
+    <div id="VUE-MODEL">
+      <api-modal></api-modal>
+    </div>
+    <script type="text/javascript" src="./js/mainView.js"></script>
+    <script type="text/javascript">
+      if (!api_controller.has_GOOGLE_API_KEY){
+        $('#API-MODAL').modal('show')
+      }
+    </script>
+  </body>
+</html>
