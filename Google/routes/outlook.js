@@ -34,7 +34,6 @@ router.get('/emails', async function(req, res, next) {
             var bool = Utility.todoRegex(element.subject)
             if (bool){
             task._id = nanoid()
-            task.date = element.receivedDateTime
             task.description = element.subject
             task.priority = element.importance
             task.origin = "OUTLOOK"

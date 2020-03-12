@@ -77,12 +77,28 @@ router.get('/emails', function(req, res) {
   fs.readFile('credentials.json',(err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
       auth2.authorize(JSON.parse(content),function(response){
-        list_emails(response,function(tasks){
-          res.jsonp(tasks) 
+        list_emails(response,function(emails){
+            emails.forEach(element =>{
+              var headers = element.payload.headers
+                  headers.forEach(header => {
+                      if(header.name ==="Subject" && element.labelIds[element.labelIds.length-1] ==="INBOX"){
+                        if(Utility.todoRegex(header.value)){
+                        task._id = nanoid()
+                        task.description = header.value
+                        task.origin = "GOOGLE"
+                        task.owner = "me"
+                        Task.insert(task)
+                        .then(dados =>console.log("Inseri task proveniente do gmail") )
+                        }
+                      }
+                  })      
+            })
+          res.jsonp(emails)               
         })
+
       })
-    })
-  })
+  })          
+})
 
 
 
