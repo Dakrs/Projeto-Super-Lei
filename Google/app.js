@@ -6,7 +6,7 @@ var logger = require('morgan');
 var mongoose = require('mongoose');
 
 
-
+require('dotenv').config();
 
 /****************************
  * MONGO CONNECTION
@@ -17,9 +17,9 @@ mongoose.connect('mongodb://127.0.0.1:27017/' + DATABASE_NAME, { useNewUrlParser
   .then(() => console.log(`Connected to Mongo at [${DATABASE_NAME}] database...`))
   .catch((erro) => console.log(`Mongo: Error connecting to [${DATABASE_NAME}]: ${erro}`))
 
-var indexRouter = require('./routes/testeSync');
-var usersRouter = require('./routes/users');
-var calendarRouter = require('./routes/calendar')
+var indexRouter = require('./routes/google');
+var outlookROuter = require('./routes/outlook')
+var authorizeRouter = require('./routes/authorize')
 
 var app = express();
 
@@ -33,9 +33,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/tasks', indexRouter);
-app.use('/users', usersRouter);
-app.use('/calendar',calendarRouter)
+app.use('/google', indexRouter);
+app.use('/outlook',outlookROuter)
+app.use('/authorize',authorizeRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

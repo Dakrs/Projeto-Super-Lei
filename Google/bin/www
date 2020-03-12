@@ -12,7 +12,7 @@ var http = require('http');
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '4000');
+var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 /**
@@ -82,5 +82,5 @@ function onError(error) {
  */
 
 function onListening() {
- console.log("Servidor à escuta na porta 4000")
+ console.log("Servidor à escuta na porta 3000")
 }

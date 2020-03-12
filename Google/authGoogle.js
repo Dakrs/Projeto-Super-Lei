@@ -1,6 +1,6 @@
 const {google} = require('googleapis');
 var Credential = require('./controllers/credentials')
-const SCOPES = ['https://www.googleapis.com/auth/tasks.readonly','https://www.googleapis.com/auth/calendar.readonly'];
+const SCOPES = ['https://www.googleapis.com/auth/tasks.readonly','https://www.googleapis.com/auth/calendar.readonly','https://www.googleapis.com/auth/gmail.readonly'];
 const readline = require('readline');
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
