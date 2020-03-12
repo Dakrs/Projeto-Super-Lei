@@ -11,3 +11,13 @@ Para correr:
 5- seguir os passos que aparece no terminal
 
 6- verificar no Mongo se foi criada uma BD e ver o conteudo dela 
+
+Rotas :
+
+
+http://localhost:3000/google/tasks
+http://localhost:3000/google/calendar
+http://localhost:3000/google/emails -- ainda nao insere tasks
+http://localhost:3000/outlook/emails
+http://localhost:3000/outlook/calendar
+
