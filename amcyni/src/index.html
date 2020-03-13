@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  </head>
+  <body>
+    <div class="container" id="MAIN_COMP" style="min-height: 100vh; margin: 0; padding: 0">
+      <div class="row" style="min-height: 100vh;">
+        <div class="col azure left" align="center">
+          <div class="title" style="margin-top: 12.5%">
+            <h1 class="title white special">AmCyNi</h1>
+          </div>
+          <div class="footer">
+            <span class="footerText">made with <i class="fa fa-heart" style="color: red"></i> by Welel</span>
+          </div>
+        </div>
+        <div class="col middle" align="center">
+          <h1 class="title">Your ToDos</h1>
+          <template v-for="(todo,index) in todos">
+            <div class="card mb-3">
+              <div class="card-body" style="padding: 15px; padding-bottom:10px;">
+                <table class="table table-borderless" style="margin-bottom:0">
+                  <tbody>
+                    <tr>
+                      <td class="text-left" style="padding:0;">
+                        <h5 class="card-title" style="margin:0">{{ todo.name }}</h5>
+                      </td>
+                      <td class="text-right" style="padding:0;">
+                        <span v-on:click="toggleInfo(index)">
+                          <i class="fa fa-plus"></i>
+                        </span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <table class="table table-borderless" style="margin-bottom:0">
+                  <tbody>
+                    <tr>
+                      <td class="text-left" style="padding:0;">
+                        <small class="text-muted">{{ todo.origin }}</small>
+                      </td>
+                      <td class="text-right" style="padding:0;">
+                        <small class="text-muted">
+                          <i class="fa fa-calendar"></i> {{ todo.date }}
+                        </small>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="card-footer text-muted specfooter">
+                <table class="table table-borderless" style="margin-bottom:0">
+                  <tbody>
+                    <tr>
+                      <td class="footerCard text-left">
+                        <span>
+                          <i class="fa fa-check-square-o" style="color: green"></i> Complete
+                        </span>
+                      </td>
+                      <td class="footerCard text-right">
+                        <span>
+                           <i class="fa fa-ban" style="color: red"></i> Cancel
+                        </span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </template>
+        </div>
+        <div class="col leftBorder right" style="margin-top: 17.5%">
+          <todo-info
+            v-if="toggled !== null"
+            v-bind:todo="todos[toggled]"
+          ></todo-info>
+        </div>
+      </div>
+    </div>
+    <div id="VUE-MODEL">
+      <api-modal></api-modal>
+    </div>
+  </body>
+</html>
