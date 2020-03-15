@@ -6,9 +6,15 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
 import Vue from 'vue';
 
+const Store = require('electron-store');
+const store = new Store();
+
+
 Vue.component('todo-info',{
   props: {
     todo: Object,
+    callback_completed: Function,
+    callback_cancel: Function,
   },
   template: `
   <div class="card mb-3 nomove">
@@ -36,12 +42,20 @@ Vue.component('todo-info',{
     </div>
     <div class="card-footer text-muted specfooter" align="center">
       <div class="btn-group" role="group" aria-label="Basic example">
-        <button type="button" class="btn btn-outline-success">Complete</button>
-        <button type="button" class="btn btn-outline-danger">Cancel</button>
+        <button type="button" @click="complete()" class="btn btn-outline-success">Complete</button>
+        <button type="button" @click="cancel()" class="btn btn-outline-danger">Cancel</button>
       </div>
     </div>
   </div>
-  `
+  `,
+  methods: {
+    complete: function (){
+      this.callback_completed(this.todo.id);
+    },
+    cancel: function (){
+      this.callback_cancel(this.todo.id);
+    },
+  }
 })
 
 
@@ -60,14 +74,14 @@ Vue.component('api-modal',{
         <div class="modal-body">
           In order to access and colect usefull data for your application we need to access some producers.
         </div>
-        <form style="margin-left: 10%; margin-right: 10%;">
+        <form style="margin-left: 10%; margin-right: 10%;" onsubmit="event.preventDefault()">
           <div class="form-group">
             <label for="GOOGLE_API_KEY">API KEY</label>
             <input type="text" class="form-control" id="INPUT_API_KEY">
           </div>
         </form>
         <div class="modal-footer">
-          <button id="SUBMIT_API_KEY" type="button" class="btn btn-primary">Send</button>
+          <button id="SUBMIT_API_KEY" type="button" class="btn btn-dark">Send</button>
         </div>
       </div>
     </div>
@@ -80,9 +94,15 @@ function API_KEY_REQUEST(){
   const USER_KEY = $('#INPUT_API_KEY').val();
   $('#INPUT_API_KEY').val('');
   console.log(USER_KEY);
-  setTimeout(() => {
-    api_controller.has_GOOGLE_API_KEY = true;
-  },1000);
+  if (USER_KEY.length > 6){
+    SAVE_API_KEY(USER_KEY);
+    setTimeout(() => {
+      api_controller.has_GOOGLE_API_KEY = true;
+    },1000);
+  }
+  else{
+    alert('KEY TOO SHORT');
+  }
 }
 
 function getDate(){
@@ -98,6 +118,7 @@ var date = new Date();
 var todosAux = [];
 
 todosAux.push({
+  id: 1,
   date: getDate(),
   name: 'Aula PSD',
   origin: 'Google Calender',
@@ -105,6 +126,7 @@ todosAux.push({
   priority: 2,
 })
 todosAux.push({
+  id: 2,
   date: getDate(),
   name: 'Aula CPD',
   origin: 'Gmail',
@@ -112,6 +134,7 @@ todosAux.push({
   priority: 5,
 })
 todosAux.push({
+  id: 3,
   date: getDate(),
   name: 'Missao UD',
   origin: 'Outlook',
@@ -119,6 +142,7 @@ todosAux.push({
   priority: 1,
 })
 todosAux.push({
+  id: 4,
   date: getDate(),
   name: 'Entrega KAK',
   origin: 'Google Task',
@@ -130,7 +154,7 @@ todosAux.push({
 var api_controller = new Vue({
   el: '#VUE-MODEL',
   data: {
-    has_GOOGLE_API_KEY: false,
+    has_GOOGLE_API_KEY: API_KEY_EXISTS(),
   },
   watch: {
     has_GOOGLE_API_KEY: function (val) {
@@ -164,8 +188,51 @@ var alltodos = new Vue({
   methods: {
     toggleInfo: function (index) {
       this.toggled = index;
-    }
+    },
+    // botão complete todo main comp
+    complete: function (id,index){
+      if (this.toggled === index){
+        this.toggled = null;
+      }
+      this.todos = this.todos.filter((item) => item.id !== id);
+      //metodo para comunicar ao back end que o item foi aprovado.
+    },
+    // botão cancel todo main comp
+    cancel: function (id,index){
+      if (this.toggled === index){
+        this.toggled = null;
+      }
+      this.todos = this.todos.filter((item) => item.id !== id);
+      //metodo para comunicar ao back end que o item foi cancelado.
+    },
+    // para lidar com os botões do todo que está a ser mostrado nos details
+    complete_toggle: function(id){
+      this.toggled = null;
+      this.todos = this.todos.filter((item) => item.id !== id);
+      //metodo para comunicar ao back end que o item foi aprovado.
+    },
+    // para lidar com os botões do todo que está a ser mostrado nos details
+    cancel_toggle: function(id){
+      this.toggled = null;
+      this.todos = this.todos.filter((item) => item.id !== id);
+      //metodo para comunicar ao back end que o item foi cancelado.
+    },
   }
 })
+
+
+//verifica se é preciso pedir a chave para a api no modal
+function API_KEY_EXISTS(){
+  var key = store.get('GOOGLE_API_KEY');
+  console.log(key);
+
+  return (typeof key !== 'undefined');
+}
+
+//guardar a key localmente.
+function SAVE_API_KEY(key){
+  store.set('GOOGLE_API_KEY',key);
+  //escrita na BD do backend;
+}
 
 console.log('👋 This message is being logged by "renderer.js", included via webpack');

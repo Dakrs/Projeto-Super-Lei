@@ -9,18 +9,18 @@
       <div class="row" style="min-height: 100vh;">
         <div class="col azure left" align="center">
           <div class="title" style="margin-top: 12.5%">
-            <h1 class="title white special">AmCyNi</h1>
+            <p class="title">me<strong>todo</strong></p>
           </div>
           <div class="footer">
-            <span class="footerText">made with <i class="fa fa-heart" style="color: red"></i> by Welel</span>
+            <span class="footerText">made with <i class="fa fa-heart" style="color: red"></i> by AmCyNi</span>
           </div>
         </div>
         <div class="col middle" align="center">
-          <h1 class="title">Your ToDos</h1>
+          <h2 class="title">Your ToDos</h2>
           <ol style="list-style-type:none;">
               <template v-for="(todo,index) in todos">
                 <li>
-                  <div class="card mb-3">
+                  <div class="card mb-3 nomove">
                     <div class="card-body" style="padding: 15px; padding-bottom:10px;">
                       <table class="table table-borderless" style="margin-bottom:0">
                         <tbody>
@@ -56,12 +56,12 @@
                         <tbody>
                           <tr>
                             <td class="footerCard text-left">
-                              <span>
+                              <span v-on:click="complete(todo.id,index)">
                                 <i class="fa fa-check-square-o" style="color: green"></i> Complete
                               </span>
                             </td>
                             <td class="footerCard text-right">
-                              <span>
+                              <span v-on:click="cancel(todo.id,index)">
                                  <i class="fa fa-ban" style="color: red"></i> Cancel
                               </span>
                             </td>
@@ -74,11 +74,17 @@
               </template>
             </ol>
         </div>
-        <div class="col leftBorder right" style="margin-top: 17.5%">
-          <todo-info
-            v-if="toggled !== null"
-            v-bind:todo="todos[toggled]"
-          ></todo-info>
+        <div class="col leftBorder right">
+          <div style="margin-top: 25.5%">
+            <template v-if="toggled !== null">
+              <h3 class="left">Details:</h3>
+              <todo-info
+                v-bind:todo="todos[toggled]"
+                :callback_cancel="cancel_toggle"
+                :callback_completed="complete_toggle"
+              ></todo-info>
+            </template>
+          </div>
         </div>
       </div>
     </div>

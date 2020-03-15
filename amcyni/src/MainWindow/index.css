@@ -16,6 +16,16 @@ h1.special {
   font-style: italic;
 }
 
+p.title {
+  font-size: 2em;
+  font-family: 'Open Sans', sans-serif;
+  font-style: italic;
+}
+
+p.bolder {
+  font-weight: bolder;
+}
+
 div.azure{
   background-color: #F1F5F7;
 }
@@ -36,6 +46,16 @@ div.leftBorder{
 h1.title {
   -webkit-user-select: none;
   text-align: center;
+}
+
+h2.title {
+  -webkit-user-select: none;
+  text-align: center;
+}
+
+h2.left {
+  -webkit-user-select: none;
+  text-align: left;
 }
 
 p.nomargin {
