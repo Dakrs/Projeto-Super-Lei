@@ -1,5 +1,8 @@
+const path = require('path');
+
+
 module.exports = [
-  // Add support for native node modules
+  // Add support for native node moduler
   {
     test: /\.node$/,
     use: 'node-loader',

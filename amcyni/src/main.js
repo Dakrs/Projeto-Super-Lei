@@ -1,35 +1,38 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
+const LoadingWindow = require('./Electron/LoadingWindow');
+const MainWindow = require('./Electron/MainWindow');
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
   app.quit();
 }
 
-const createWindow = () => {
-  // Create the browser window.
-  const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
-    titleBarStyle: 'hidden',
-    movable: true,
-    resizable: false,
-    webPreferences: {
-      nodeIntegration: true
-    }
-  });
-
-  // and load the index.html of the app.
-  mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
-
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
-};
+let loadwin = null;
+let mainwin = null;
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow);
+app.on('ready', function () {
+  /**
+  mainwin = new MainWindow();
+  mainwin.window.once('ready-to-show',() => {
+    mainwin.window.show();
+  });*/
+
+  loadwin = new LoadingWindow();
+
+  loadwin.window.once('show',() => {
+    mainwin = new MainWindow();
+    mainwin.window.once('ready-to-show',() => {
+      mainwin.window.show();
+      loadwin.window.hide();
+      loadwin.window.close();
+    });
+  });
+  loadwin.window.show();
+});
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
