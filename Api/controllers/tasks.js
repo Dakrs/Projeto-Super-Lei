@@ -27,6 +27,10 @@ module.exports.selectById = id =>{
 
 }
 
+module.exports.findByIdOrigin = (idFont, font) =>{
+    return Task.find({idOrigin:idFont,  origin : font }).exec()
+}
+
 
 module.exports.updateById = task => {
     return Task.findByIdAndUpdate({_id :task._id},task,{new:true})        

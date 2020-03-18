@@ -11,92 +11,104 @@ var Utility = require('../utility')
 
 /* GET home page. */
 router.get('/tasks', function(req, res) {
-task = {}
-
-  fs.readFile('credentials.json',(err, content) => {
-      if (err) return console.log('Error loading client secret file:', err);
-        auth2.authorize(JSON.parse(content),function(response){
-          list_tasks(response,function(tasks){
-            res.jsonp(tasks) 
-            tasks.forEach(element => {
-              var items = element.data.items
-              if(items){
-                items.forEach(t => {
-                  task._id=nanoid()
-                  task.date= t.due
-                  task.description = t.title
-                  task.origin = "GOOGLE"
-                  task.owner = "me"
-                  
-        
-                  Task.insert(task)
-                  .then(dados =>console.log("Inseri task") )
-                })
-              }
-            });
-          })
-        })  
-      })
-    
-    })
-
-/* GET home page. */
-router.get('/calendar', function(req, res) {
-
-  task = {}
-
-  fs.readFile('credentials.json',(err, content) => {
-      if (err) return console.log('Error loading client secret file:', err);
-        auth2.authorize(JSON.parse(content),function(response){
-        listCalendars(response,function(idCalendario){
-              listEvents(response,idCalendario,function(eventos){
-                  eventos.forEach(element => {
-                      var bool = Utility.todoRegex(element.summary)
-                      if (bool){
-                        task._id=nanoid()
-                        task.date= element.start.date
-                        task.description = element.summary
-                        task.origin = "GOOGLE"
-                        task.owner = "me"
-                        Task.insert(task)
-                   .then(dados =>console.log("Inseri task") )
-                      }
-                      
-                  });
-            res.jsonp(eventos)    
-       })  
-      })
-    
-    })
-})
-})
-
-router.get('/emails', function(req, res) {
   task = {}
 
   fs.readFile('credentials.json',(err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
-      auth2.authorize(JSON.parse(content),function(response){
-        list_emails(response,function(emails){
-            emails.forEach(element =>{
-              var headers = element.payload.headers
-                  headers.forEach(header => {
-                      if(header.name ==="Subject" && element.labelIds[element.labelIds.length-1] ==="INBOX"){
-                        if(Utility.todoRegex(header.value)){
-                        task._id = nanoid()
-                        task.description = header.value
-                        task.origin = "GOOGLE"
-                        task.owner = "me"
-                        Task.insert(task)
-                        .then(dados =>console.log("Inseri task proveniente do gmail") )
-                        }
-                      }
-                  })      
+    auth2.authorize(JSON.parse(content),function(response){
+      list_tasks(response,function(tasks){
+        res.jsonp(tasks) 
+        tasks.forEach(element => {
+          var items = element.data.items
+          if(items){
+            items.forEach(t => {
+              Task.findByIdOrigin(t.id,"Google Tasks")
+              .then(response => {
+                if (response.length===0){
+                  task._id=nanoid()
+                  task.idOrigin = t.id
+                  task.date= t.due
+                  task.description = t.title
+                  task.origin = "Google Tasks"
+                  task.owner = "me"
+                        
+                  Task.insert(task)
+                  .then(dados =>console.log("Inseri task") )
+                }
+              })
             })
-          res.jsonp(emails)               
+          }
         })
+      })  
+    })
+  })
+})
 
+/* GET home page. */
+router.get('/calendar', function(req, res) {
+  task = {}
+  fs.readFile('credentials.json',(err, content) => {
+    if (err) return console.log('Error loading client secret file:', err);
+    auth2.authorize(JSON.parse(content),function(response){
+      listCalendars(response,function(idCalendario){
+        listEvents(response,idCalendario,function(eventos){
+          eventos.forEach(element => {
+            var bool = Utility.todoRegex(element.summary)
+            if (bool){
+              Task.findByIdOrigin(element.id,"Google Calendar")
+              .then(response => {
+                if (response.length===0){
+                  task._id=nanoid()
+                  task.idOrigin = element.id
+                  task.date= element.start.date
+                  task.description = element.summary
+                  task.origin = "Google Calendar"
+                  task.owner = "me"
+                  
+                  Task.insert(task)
+                  .then(dados =>console.log("Inseri task") )
+                }
+              })
+            }              
+          });
+          res.jsonp(eventos)    
+        })  
+      }) 
+    })
+  })
+})
+
+router.get('/emails', function(req, res) {
+  task = {}
+  fs.readFile('credentials.json',(err, content) => {
+    if (err) return console.log('Error loading client secret file:', err);
+    auth2.authorize(JSON.parse(content),function(response){
+      list_emails(response,function(emails){
+        emails.forEach(element =>{
+          var headers = element.payload.headers
+          headers.forEach(header => {
+            if(header.name ==="Subject" && element.labelIds[element.labelIds.length-1] ==="INBOX"){
+              if(Utility.todoRegex(header.value)){
+                Task.findByIdOrigin(element.id,"Google Gmail")
+                .then(response =>{  
+                  if(response.length===0){
+                    task._id = nanoid()
+                    task.idOrigin = element.id
+                    task.description = header.value
+                    task.origin = "Google Gmail"
+                    task.owner = "me"
+                  
+                    Task.insert(task)
+                    .then(dados =>console.log("Inseri task proveniente do gmail") )
+                  }
+                })
+              }
+            }
+          })      
+        })
+      res.jsonp(emails)               
       })
+    })
   })          
 })
 
