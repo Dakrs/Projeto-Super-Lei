@@ -15,12 +15,12 @@
             <span class="footerText">made with <i class="fa fa-heart" style="color: red"></i> by AmCyNi</span>
           </div>
         </div>
-        <div class="col middle" align="center">
+        <div class="col middle nomove" align="center">
           <h2 class="title">Your ToDos</h2>
-          <ol style="list-style-type:none;">
+          <ul id="cards" style="list-style-type:none;">
               <template v-for="(todo,index) in todos">
-                <li>
-                  <div class="card mb-3 nomove">
+                <li :key="todo.id">
+                  <div class="card mb-3">
                     <div class="card-body" style="padding: 15px; padding-bottom:10px;">
                       <table class="table table-borderless" style="margin-bottom:0">
                         <tbody>
@@ -29,7 +29,7 @@
                               <h5 class="card-title" style="margin:0">{{ todo.name }}</h5>
                             </td>
                             <td class="text-right" style="padding:0;">
-                              <span v-on:click="toggleInfo(index)">
+                              <span v-on:click="toggleInfo(todo.id)">
                                 <i class="fa fa-plus"></i>
                               </span>
                             </td>
@@ -70,16 +70,16 @@
                       </table>
                     </div>
                   </div>
-                </li>
+                </li->
               </template>
-            </ol>
+            </ul>
         </div>
         <div class="col leftBorder right">
           <div style="margin-top: 25.5%">
             <template v-if="toggled !== null">
               <h3 class="left">Details:</h3>
               <todo-info
-                v-bind:todo="todos[toggled]"
+                v-bind:todo="toggled"
                 :callback_cancel="cancel_toggle"
                 :callback_completed="complete_toggle"
               ></todo-info>

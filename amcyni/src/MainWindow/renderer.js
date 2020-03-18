@@ -5,6 +5,7 @@ import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
 import Vue from 'vue';
+import Sortable from 'sortablejs';
 
 const Store = require('electron-store');
 const store = new Store();
@@ -186,8 +187,8 @@ var alltodos = new Vue({
     sortedBy: 0,
   },
   methods: {
-    toggleInfo: function (index) {
-      this.toggled = index;
+    toggleInfo: function (id) {
+      this.toggled = this.todos.find(item => item.id === id);
     },
     // botão complete todo main comp
     complete: function (id,index){
@@ -195,7 +196,7 @@ var alltodos = new Vue({
         this.toggled = null;
       }
       this.todos = this.todos.filter((item) => item.id !== id);
-      //metodo para comunicar ao back end que o item foi aprovado.
+      //metodo para comunicar ao back end que o item foi aprovado. !!!FALTA
     },
     // botão cancel todo main comp
     cancel: function (id,index){
@@ -203,19 +204,50 @@ var alltodos = new Vue({
         this.toggled = null;
       }
       this.todos = this.todos.filter((item) => item.id !== id);
-      //metodo para comunicar ao back end que o item foi cancelado.
+      //metodo para comunicar ao back end que o item foi cancelado. !!!FALTA
     },
     // para lidar com os botões do todo que está a ser mostrado nos details
     complete_toggle: function(id){
       this.toggled = null;
       this.todos = this.todos.filter((item) => item.id !== id);
-      //metodo para comunicar ao back end que o item foi aprovado.
+      //metodo para comunicar ao back end que o item foi aprovado. !!!FALTA
     },
     // para lidar com os botões do todo que está a ser mostrado nos details
     cancel_toggle: function(id){
       this.toggled = null;
       this.todos = this.todos.filter((item) => item.id !== id);
-      //metodo para comunicar ao back end que o item foi cancelado.
+      //metodo para comunicar ao back end que o item foi cancelado. !!!FALTA
+    },
+    //metodo para atualizar a ordem da lista quando old_index é menor que new_index
+    rev_DaD_update: function(old_index,new_index){
+      var new_Array = [];
+
+      this.todos.forEach((item, i) => {
+        new_Array.push(item);
+      });
+
+      var temp = this.todos[old_index];
+      for(var i = old_index; i < new_index && i < this.todos.length; i++)
+      {
+          new_Array[i] = this.todos[i+1];
+      }
+      new_Array[new_index] = temp;
+      this.todos = new_Array;
+    },
+    //metodo para atualizar a ordem da lista quando old_index é maior que new_index
+    nor_DaD_update: function(old_index,new_index){
+      var new_Array = [];
+      this.todos.forEach((item, i) => {
+        new_Array.push(item);
+      });
+
+      var temp = this.todos[old_index];
+      for(var i = old_index; i > new_index && i > 0; i--)
+      {
+        new_Array[i] = this.todos[i-1];
+      }
+      new_Array[new_index] = temp;
+      this.todos = new_Array;
     },
   }
 })
@@ -234,5 +266,18 @@ function SAVE_API_KEY(key){
   store.set('GOOGLE_API_KEY',key);
   //escrita na BD do backend;
 }
+
+var el = document.getElementById('cards')
+var sortable = Sortable.create(el,{
+  animation: 150,
+  onEnd: function (evt){
+    if (evt.oldDraggableIndex < evt.newDraggableIndex){
+      alltodos.rev_DaD_update(evt.oldDraggableIndex,evt.newDraggableIndex);
+    }
+    else if (evt.oldDraggableIndex > evt.newDraggableIndex) {
+      alltodos.nor_DaD_update(evt.oldDraggableIndex,evt.newDraggableIndex);
+    }
+  },
+});
 
 console.log('👋 This message is being logged by "renderer.js", included via webpack');
