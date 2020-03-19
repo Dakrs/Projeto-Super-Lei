@@ -15,12 +15,6 @@ let mainwin = null;
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', function () {
-  /**
-  mainwin = new MainWindow();
-  mainwin.window.once('ready-to-show',() => {
-    mainwin.window.show();
-  });*/
-
   loadwin = new LoadingWindow();
 
   loadwin.window.once('show',() => {

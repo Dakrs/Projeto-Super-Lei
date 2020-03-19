@@ -73,6 +73,11 @@ td.details{
   font-size: 14px;
 }
 
+td.fontSize {
+  padding: 0;
+  font-size: 1rem;
+}
+
 td.nomargin {
   padding: 0;
 }
@@ -91,7 +96,8 @@ div.left {
   bottom: 0;
   left: 0;
   width: 26%;
-  overflow-y: scroll;
+  /**
+  overflow-y: scroll;*/
 }
 
 div.middle {
@@ -108,7 +114,8 @@ div.right {
   top: 0;
   bottom: 0;
   right: 0;
-  overflow-y: scroll;
+  /**
+  overflow-y: scroll;*/
   width: 32.5%;
 }
 
@@ -128,7 +135,7 @@ div.noselect {
 }
 
 div.mayDrag {
-  
+
 }
 
 span.footerText {
@@ -138,8 +145,40 @@ span.footerText {
 
 div.footer {
   position: fixed;
+  right: 0;
+  bottom: 0;
+  width: 32.5%;
+  text-align: center;
+}
+
+div.bottomTittle {
+  position: fixed;
   left: 0;
   bottom: 0;
   width: 26%;
   text-align: center;
+}
+
+span.addButton {
+  position: fixed;
+  left: 0;
+  top: 1%;
+  width: 24%;
+  text-align: right;
+  margin-right: 2%;
+}
+
+div.sortBy {
+  position: fixed;
+  left: 0;
+  top: 7.5%;
+  width: 20%;
+  margin-left: 3%;
+  margin-right: 3%;
+  text-align: left;
+}
+
+span.sortBy {
+  width: 24%;
+  text-align: left;
 }

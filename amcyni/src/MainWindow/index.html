@@ -8,11 +8,38 @@
     <div class="container" id="MAIN_COMP" style="min-height: 100vh; margin: 0; padding: 0">
       <div class="row" style="min-height: 100vh;">
         <div class="col azure left" align="center">
-          <div class="title" style="margin-top: 12.5%">
-            <p class="title">me<strong>todo</strong></p>
+          <span class="addButton">
+            <i class="fa fa-plus"></i>
+          </span>
+          <div class="sortBy">
+            <span class="text-muted" style="font-size: 0.75rem">
+                SortBy
+            </span>
+            <table class="table table-borderless" style="margin-bottom:0">
+              <tbody>
+                <tr>
+                  <td @click="sortBy(0)" class="fontSize text-left">
+                    <i class="fa fa-undo"></i>
+                    Reset
+                  </td>
+                </tr>
+                <tr>
+                  <td @click="sortBy(1)" class="fontSize text-left">
+                    <i class="fa fa-hourglass-o"></i>
+                    Time
+                  </td>
+                </tr>
+                <tr>
+                  <td @click="sortBy(2)" class="fontSize text-left">
+                    <i class="fa fa-cubes"></i>
+                    Origin
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-          <div class="footer">
-            <span class="footerText">made with <i class="fa fa-heart" style="color: red"></i> by AmCyNi</span>
+          <div class="title bottomTittle">
+            <p class="title">me<strong>todo</strong></p>
           </div>
         </div>
         <div class="col middle nomove" align="center">
@@ -42,11 +69,13 @@
                             <td class="text-left" style="padding:0;">
                               <small class="text-muted">{{ todo.origin }}</small>
                             </td>
-                            <td class="text-right" style="padding:0;">
-                              <small class="text-muted">
-                                <i class="fa fa-calendar"></i> {{ todo.date }}
-                              </small>
-                            </td>
+                            <template v-if="verifyProperty(todo.date)">
+                              <td class="text-right" style="padding:0;">
+                                <small class="text-muted">
+                                  <i class="fa fa-calendar"></i> {{ timeConversor(todo.date) }}
+                                </small>
+                              </td>
+                            </template>
                           </tr>
                         </tbody>
                       </table>
@@ -84,6 +113,9 @@
                 :callback_completed="complete_toggle"
               ></todo-info>
             </template>
+          </div>
+          <div class="footer">
+            <span class="footerText">made with <i class="fa fa-heart" style="color: red"></i> by AmCyNi</span>
           </div>
         </div>
       </div>

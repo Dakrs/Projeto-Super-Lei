@@ -21,20 +21,22 @@ Vue.component('todo-info',{
   <div class="card mb-3 nomove">
     <div class="card-body" style="padding: 15px; padding-bottom:10px;">
       <h5 class="card-title" style="margin:0;margin-bottom: 0.75rem;text-align: center;">{{ todo.name }}</h5>
-      <span>Description:</span>
-      <p class="text-muted justify">{{ todo.description }}</p>
+      <template v-if="verifyProperty(todo.description)">
+        <span>Description:</span>
+        <p class="text-muted justify">{{ todo.description }}</p>
+      </template>
       <span>Details:</span>
       <table class="table table-borderless" style="margin-bottom:0">
         <tbody>
-          <tr>
+          <tr v-if="verifyProperty(todo.priority)">
             <td class="details text-left grey">Priority</td>
             <td class="details text-right">{{ todo.priority }}</td>
           </tr>
-          <tr>
+          <tr v-if="verifyProperty(todo.date)">
             <td class="details text-left grey">Expire Date</td>
-            <td class="details text-right">{{ todo.date }}</td>
+            <td class="details text-right">{{ timeConv(todo.date) }}</td>
           </tr>
-          <tr>
+          <tr v-if="verifyProperty(todo.origin)">
             <td class="details text-left grey">Origin</td>
             <td class="details text-right">{{ todo.origin }}</td>
           </tr>
@@ -56,6 +58,16 @@ Vue.component('todo-info',{
     cancel: function (){
       this.callback_cancel(this.todo.id);
     },
+    verifyProperty: function(data){
+      return (typeof data !== 'undefined');
+    },
+    timeConv: function (time){
+      const ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(time);
+      const mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(time);
+      const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(time);
+
+      return da + ' ' + mo + ' ' + ye;
+    }
   }
 })
 
@@ -106,29 +118,20 @@ function API_KEY_REQUEST(){
   }
 }
 
-function getDate(){
-  const d = new Date();
-  const ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d)
-  const mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d)
-  const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d)
-
-  return da + ' ' + mo + ' ' + ye;
-}
-
 var date = new Date();
 var todosAux = [];
 
 todosAux.push({
   id: 1,
-  date: getDate(),
+  date: new Date(2017,1,1),
   name: 'Aula PSD',
-  origin: 'Google Calender',
+  origin: 'Outlook',
   description: 'Aula que acontece todas as segundas feiras e é preciso aparecer para poder aprender.',
   priority: 2,
 })
 todosAux.push({
   id: 2,
-  date: getDate(),
+  date: new Date(2015,1,1),
   name: 'Aula CPD',
   origin: 'Gmail',
   description: 'Aula das terças e super secante.',
@@ -136,7 +139,7 @@ todosAux.push({
 })
 todosAux.push({
   id: 3,
-  date: getDate(),
+  date: new Date(2016,1,1),
   name: 'Missao UD',
   origin: 'Outlook',
   description: 'Missão semanal para o desenvolvimento pessoal',
@@ -144,7 +147,7 @@ todosAux.push({
 })
 todosAux.push({
   id: 4,
-  date: getDate(),
+  date: new Date(2014,1,1),
   name: 'Entrega KAK',
   origin: 'Google Task',
   description: 'Entrega para do PLEI KAK',
@@ -182,9 +185,10 @@ var api_controller = new Vue({
 var alltodos = new Vue({
   el: '#MAIN_COMP',
   data: {
-    todos:todosAux,
+    todos: todosAux,
     toggled: null,
     sortedBy: 0,
+    todos_main: todosAux,
   },
   methods: {
     toggleInfo: function (id) {
@@ -233,6 +237,7 @@ var alltodos = new Vue({
       }
       new_Array[new_index] = temp;
       this.todos = new_Array;
+      this.todos_main = new_Array; // para sair
     },
     //metodo para atualizar a ordem da lista quando old_index é maior que new_index
     nor_DaD_update: function(old_index,new_index){
@@ -248,6 +253,58 @@ var alltodos = new Vue({
       }
       new_Array[new_index] = temp;
       this.todos = new_Array;
+      this.todos_main = new_Array; // para sair
+    },
+    verifyProperty: function(data){
+      return (typeof data !== 'undefined');
+    },
+    sortBy: function(type){
+      if (type !== this.sortedBy)
+      {
+        console.log('entrei');
+        this.sortedBy = type;
+        var new_Array = [];
+        if (type === 0){
+          this.todos_main.forEach((item, i) => {
+            new_Array.push(item);
+          });
+        }
+        else if (type === 1) {
+          this.todos.forEach((item, i) => {
+            new_Array.push(item);
+          });
+          new_Array.sort((a,b) => {
+            var dateA = a.date;
+            var dateB = b.date;
+
+            return (dateA.getTime() - dateB.getTime());
+          });
+        }
+        else {
+          var groupby = new Map();
+          this.todos.forEach((item, i) => {
+            if (!groupby.has(item.origin))
+              groupby.set(item.origin,[])
+            groupby.get(item.origin).push(item);
+          });
+          for (const [key,value] of groupby.entries()){
+            value.forEach((item, i) => {
+              new_Array.push(item);
+            });
+          }
+        }
+        this.todos = new_Array;
+      }
+    },
+    timeConversor: function (time){
+      const ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(time);
+      const mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(time);
+      const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(time);
+
+      return da + ' ' + mo + ' ' + ye;
+    },
+    test: function(){
+      alert('Wele');
     },
   }
 })
