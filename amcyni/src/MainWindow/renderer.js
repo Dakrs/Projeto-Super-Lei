@@ -10,6 +10,17 @@ import Sortable from 'sortablejs';
 const Store = require('electron-store');
 const store = new Store();
 
+/**
+Todo:
+id: 1,
+date: new Date(2017,1,1), !!!Pode ser null
+name: 'Aula PSD',
+origin: 'Outlook',
+description: 'Aula que acontece todas as segundas feiras e é preciso aparecer para poder aprender.',
+priority: 2,
+index:, !!!Pode ser null
+*/
+
 
 Vue.component('todo-info',{
   props: {
@@ -128,14 +139,16 @@ todosAux.push({
   origin: 'Outlook',
   description: 'Aula que acontece todas as segundas feiras e é preciso aparecer para poder aprender.',
   priority: 2,
+  index: 0,
 })
 todosAux.push({
   id: 2,
-  date: new Date(2015,1,1),
+  //date: new Date(2015,1,1),
   name: 'Aula CPD',
   origin: 'Gmail',
   description: 'Aula das terças e super secante.',
   priority: 5,
+  index: 1,
 })
 todosAux.push({
   id: 3,
@@ -144,6 +157,7 @@ todosAux.push({
   origin: 'Outlook',
   description: 'Missão semanal para o desenvolvimento pessoal',
   priority: 1,
+  index: 2,
 })
 todosAux.push({
   id: 4,
@@ -152,6 +166,7 @@ todosAux.push({
   origin: 'Google Task',
   description: 'Entrega para do PLEI KAK',
   priority: 3,
+  index: 3,
 })
 
 
@@ -189,6 +204,7 @@ var alltodos = new Vue({
     toggled: null,
     sortedBy: 0,
     todos_main: todosAux,
+    sortableJS: null,
   },
   methods: {
     toggleInfo: function (id) {
@@ -236,8 +252,8 @@ var alltodos = new Vue({
           new_Array[i] = this.todos[i+1];
       }
       new_Array[new_index] = temp;
+      updateIndex(new_Array);
       this.todos = new_Array;
-      this.todos_main = new_Array; // para sair
     },
     //metodo para atualizar a ordem da lista quando old_index é maior que new_index
     nor_DaD_update: function(old_index,new_index){
@@ -252,8 +268,8 @@ var alltodos = new Vue({
         new_Array[i] = this.todos[i-1];
       }
       new_Array[new_index] = temp;
+      updateIndex(new_Array);
       this.todos = new_Array;
-      this.todos_main = new_Array; // para sair
     },
     verifyProperty: function(data){
       return (typeof data !== 'undefined');
@@ -261,39 +277,21 @@ var alltodos = new Vue({
     sortBy: function(type){
       if (type !== this.sortedBy)
       {
-        console.log('entrei');
         this.sortedBy = type;
         var new_Array = [];
         if (type === 0){
-          this.todos_main.forEach((item, i) => {
-            new_Array.push(item);
-          });
+          this.todos = sortByNormal(this.todos);
+          this.sortableJS.option("disabled", false);
         }
         else if (type === 1) {
-          this.todos.forEach((item, i) => {
-            new_Array.push(item);
-          });
-          new_Array.sort((a,b) => {
-            var dateA = a.date;
-            var dateB = b.date;
-
-            return (dateA.getTime() - dateB.getTime());
-          });
+          this.todos = sortByDate(this.todos);
+          this.sortableJS.option("disabled", true);
         }
         else {
-          var groupby = new Map();
-          this.todos.forEach((item, i) => {
-            if (!groupby.has(item.origin))
-              groupby.set(item.origin,[])
-            groupby.get(item.origin).push(item);
-          });
-          for (const [key,value] of groupby.entries()){
-            value.forEach((item, i) => {
-              new_Array.push(item);
-            });
-          }
+          this.todos = sortByOrigin(this.todos);
+          this.sortableJS.option("disabled", true);
         }
-        this.todos = new_Array;
+        //this.todos = new_Array;
       }
     },
     timeConversor: function (time){
@@ -303,10 +301,14 @@ var alltodos = new Vue({
 
       return da + ' ' + mo + ' ' + ye;
     },
+    // função para atualizar os items de um dado tipo: //0 - Github 1 - Google 2 - Outlook
+    sync: function(type){
+
+    },
     test: function(){
       alert('Wele');
     },
-  }
+  },
 })
 
 
@@ -324,8 +326,9 @@ function SAVE_API_KEY(key){
   //escrita na BD do backend;
 }
 
+
 var el = document.getElementById('cards')
-var sortable = Sortable.create(el,{
+alltodos.sortableJS = Sortable.create(el,{
   animation: 150,
   onEnd: function (evt){
     if (evt.oldDraggableIndex < evt.newDraggableIndex){
@@ -336,5 +339,71 @@ var sortable = Sortable.create(el,{
     }
   },
 });
+
+function sortByOrigin(list){
+  var new_Array = [];
+  var groupby = new Map();
+  list.forEach((item, i) => {
+    if (!groupby.has(item.origin))
+      groupby.set(item.origin,[])
+    groupby.get(item.origin).push(item);
+  });
+  for (const [key,value] of groupby.entries()){
+    value.forEach((item, i) => {
+      new_Array.push(item);
+    });
+  }
+
+  return new_Array;
+}
+
+function sortByDate(list){
+  var new_Array = [];
+  list.forEach((item, i) => {
+    new_Array.push(item);
+  });
+  new_Array.sort((a,b) => {
+    if (!a.hasOwnProperty('date')){
+      return 1;
+    }
+    if (!b.hasOwnProperty('date')){
+      return -1;
+    }
+
+    return (a.date.getTime() - b.date.getTime());
+  });
+
+  return new_Array;
+}
+
+function sortByNormal(list){
+  var new_Array = [];
+
+  const [p_index, f_index] = list.reduce( ([p,f], e) => (e.hasOwnProperty('index') ? [[...p,e],f] : [p,[...f,e]]), [[],[]] );
+  const [p_date, f_date] = f_index.reduce( ([p,f], e) => (e.hasOwnProperty('date') ? [[...p,e],f] : [p,[...f,e]]), [[],[]] );
+
+  p_index.sort((a,b) => (a.index - b.index));
+  p_date.sort((a,b) => (a.date.getTime() - b.date.getTime()));
+  f_date.sort((a,b) => (a.name.localeCompare(b.name)));
+
+  p_index.forEach((item, i) => {
+    new_Array.push(item);
+  });
+  p_date.forEach((item, i) => {
+    new_Array.push(item);
+  });
+  f_date.forEach((item, i) => {
+    new_Array.push(item);
+  });
+  return new_Array;
+}
+
+function updateIndex(list){
+  list.forEach((item, i) => {
+    item.index = i;
+  });
+}
+
+//sortable.option("disabled", true);
 
 console.log('👋 This message is being logged by "renderer.js", included via webpack');

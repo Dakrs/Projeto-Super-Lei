@@ -14,12 +14,15 @@ h1.special {
   font-family: 'Open Sans', sans-serif;
   font-weight: bolder;
   font-style: italic;
+  -webkit-user-select: none;
+  -webkit-app-region: no-drag;
 }
 
 p.title {
   font-size: 2em;
+  /*
   font-family: 'Open Sans', sans-serif;
-  font-style: italic;
+  font-style: italic;*/
 }
 
 p.bolder {
@@ -75,7 +78,7 @@ td.details{
 
 td.fontSize {
   padding: 0;
-  font-size: 1rem;
+  font-size: 1.1rem;
 }
 
 td.nomargin {
@@ -166,19 +169,53 @@ span.addButton {
   width: 24%;
   text-align: right;
   margin-right: 2%;
+  font-size: 16px;
 }
 
 div.sortBy {
   position: fixed;
   left: 0;
-  top: 7.5%;
-  width: 20%;
-  margin-left: 3%;
-  margin-right: 3%;
+  top: 15%;
+  width: 16%;
+  margin-left: 5%;
+  margin-right: 5%;
   text-align: left;
+}
+
+div.sync {
+  position: fixed;
+  left: 0;
+  top: 35%;
+  width: 16%;
+  margin-left: 5%;
+  margin-right: 5%;
+  text-align: left;
+}
+
+div.history {
+  position: fixed;
+  left: 0;
+  top: 55%;
+  width: 16%;
+  margin-left: 5%;
+  margin-right: 5%;
+  text-align: left;
+}
+
+span.mouse {
+  cursor: pointer;
 }
 
 span.sortBy {
   width: 24%;
   text-align: left;
+}
+
+span.noselect {
+  -webkit-user-select: none;
+}
+
+td.mouse {
+  cursor: pointer;
+  -webkit-user-select: none;
 }
