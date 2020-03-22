@@ -23,22 +23,54 @@ module.exports.selectAllByOwner = owner => {
 
 
 module.exports.selectById = id =>{
-    return Task.findOne({_id : id}).exec()
+    return Task
+           .findOne({_id : id})
+           .exec()
 
 }
 
 module.exports.findByIdOrigin = (idFont, font) =>{
-    return Task.find({idOrigin:idFont,  origin : font }).exec()
+    return Task
+           .find({idOrigin:idFont,  origin : font })
+           .exec()
 }
 
 
 module.exports.updateById = task => {
-    return Task.findByIdAndUpdate({_id :task._id},task,{new:true})        
-} 
+    return Task
+           .findByIdAndUpdate({_id :task._id},task,{new:true})        
+}
+
+module.exports.updateState = (idTask,state) => {
+    return Task
+    .findByIdAndUpdate({_id : idTask},
+        {$set : {state : state}})
+}
+
+module.exports.historic = () => {
+    return Task
+           .find({state : 1 })
+           .exec()    
+}
+
+module.exports.sortByOrigin = () =>{
+    return Task
+           .find()
+           .sort({origin : 1})
+           .exec()
+}
+
+module.exports.sortByTime = () =>{
+    return Task
+           .find()
+           .sort({date : 1})
+           .exec()
+}
 
 
 module.exports.removeById = id =>{
-    return Task.deleteOne({_id:id})
+    return Task
+           .deleteOne({_id:id})
 }
 
 

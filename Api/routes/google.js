@@ -31,6 +31,7 @@ router.get('/tasks', function(req, res) {
                   task.description = t.title
                   task.origin = "Google Tasks"
                   task.owner = "me"
+                  task.state = 0
                         
                   Task.insert(task)
                   .then(dados =>console.log("Inseri task") )
@@ -64,6 +65,7 @@ router.get('/calendar', function(req, res) {
                   task.description = element.summary
                   task.origin = "Google Calendar"
                   task.owner = "me"
+                  task.state = 0
                   
                   Task.insert(task)
                   .then(dados =>console.log("Inseri task") )
@@ -97,6 +99,7 @@ router.get('/emails', function(req, res) {
                     task.description = header.value
                     task.origin = "Google Gmail"
                     task.owner = "me"
+                    task.state = 0
                   
                     Task.insert(task)
                     .then(dados =>console.log("Inseri task proveniente do gmail") )

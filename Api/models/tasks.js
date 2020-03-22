@@ -8,7 +8,8 @@ var taskSchema = new mongoose.Schema({
     description : String,
     priority : String,
     origin : String,
-    owner : String
+    owner : String,
+    state : Number, 
   });
     
   module.exports = mongoose.model('tasks', taskSchema)

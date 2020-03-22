@@ -41,6 +41,7 @@ router.get('/emails', async function(req, res, next) {
               task.priority = element.importance
               task.origin = "Outlook emails"
               task.owner = "me"
+              task.state = 0
               
               Task.insert(task)
               .then(dados => console.log("inseri task proveniente do email outlook"))
@@ -100,6 +101,8 @@ router.get('/calendar',async function(req, res, next){
               task.priority = element.importance
               task.origin = "Outlook Calendar"
               task.owner = "me"
+              task.state = 0
+              
               Task.insert(task)
               .then(dados => console.log("inseri task proveniente do CALENDARIO outlook"))
             }

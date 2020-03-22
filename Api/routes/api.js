@@ -12,9 +12,46 @@ router.get('/owner/:owner',function(req, res, next) {
     .then(dados =>res.jsonp(dados))
     .catch(erro => res.status(500).jsonp(erro))
 })
-  
+
+router.get('/origin',function(req, res, next) {
+    Task.sortByOrigin()
+    .then(dados =>res.jsonp(dados))
+    .catch(erro => res.status(500).jsonp(erro))
+})
+
+router.get('/date',function(req, res, next) {
+    Task.sortByTime()
+    .then(dados =>res.jsonp(dados))
+    .catch(erro => res.status(500).jsonp(erro))
+})
+
+
+router.get('/historic',function(req, res, next) {
+    Task.historic()
+    .then(dados =>res.jsonp(dados))
+    .catch(erro => res.status(500).jsonp(erro))
+})
+
+
+
+
 router.get('/:id',function(req, res, next) {
     Task.selectById(req.params.id)
+    .then(dados =>res.jsonp(dados))
+    .catch(erro => res.status(500).jsonp(erro))
+})
+
+
+
+router.put('/',function(req, res, next) {
+    Task.updateById(req.body)
+    .then(dados =>res.jsonp(dados))
+    .catch(erro => res.status(500).jsonp(erro))
+})
+
+router.put('/state/:id',function(req, res, next) {
+    var state = req.query.state
+    Task.updateState(req.params.id,state)
     .then(dados =>res.jsonp(dados))
     .catch(erro => res.status(500).jsonp(erro))
 })
@@ -24,26 +61,5 @@ router.delete('/:id',function(req, res, next) {
     .then(dados =>res.jsonp(dados))
     .catch(erro => res.status(500).jsonp(erro))
 })
-
-router.put('/',function(req, res, next) {
-    Task.updateById(req.body)
-    .then(dados =>res.jsonp(dados))
-    .catch(erro => res.status(500).jsonp(erro))
-})
-
-
-
-
-
-
-
-
-  /* GET /authorize/signout */
-router.get('/signout', function(req, res, next) {
-    authHelper.clearCookies(res);
-  
-    // Redirect to home
-    res.redirect('/');
-  });
 
 module.exports = router;
