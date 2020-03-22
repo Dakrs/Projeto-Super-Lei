@@ -119,6 +119,7 @@ router.get('/calendar',async function(req, res, next){
   console.log(x)
   res.redirect(authHelper.getAuthUrl())
   }
+  
 })
 
 module.exports = router;
