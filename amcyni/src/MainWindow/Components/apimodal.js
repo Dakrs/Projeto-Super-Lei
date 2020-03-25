@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import Vue from 'vue';
+import Ipc from '../Ipc';
 
 const store = new window.Store();
 //store.delete('GOOGLE_API_KEY')
@@ -34,15 +35,18 @@ Vue.component('api-modal',{
 })
 
 
-function API_KEY_REQUEST(){
+async function API_KEY_REQUEST(){
   const USER_KEY = $('#INPUT_API_KEY').val();
   $('#INPUT_API_KEY').val('');
   console.log(USER_KEY);
   if (USER_KEY.length > 6){
-    SAVE_API_KEY(USER_KEY);
-    setTimeout(() => {
+    const res = await SAVE_API_KEY(USER_KEY);
+    if (res){
       api_controller.has_GOOGLE_API_KEY = true;
-    },1000);
+    }
+    else{
+      alert('ERROR');
+    }
   }
   else{
     alert('KEY TOO SHORT');
@@ -84,7 +88,9 @@ function API_KEY_EXISTS(){
 }
 
 //guardar a key localmente.
-function SAVE_API_KEY(key){
-  store.set('GOOGLE_API_KEY',key);
-  //escrita na BD do backend;
+async function SAVE_API_KEY(key){
+  const res = await Ipc.store_google_api_key(key);
+  if (res)
+    store.set('GOOGLE_API_KEY',key);
+  return res;
 }

@@ -56,6 +56,7 @@ export default {store_google_api_key,
                 update_list_index,
                 get_all_todos,
                 get_git_todos,
+                get_google_todos,
                 get_outlook_todos,
                 add_todo,
                 history}

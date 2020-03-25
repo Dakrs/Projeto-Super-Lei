@@ -28,90 +28,78 @@ index:, !!!Pode ser null
 
 
 
-var date = new Date();
-var todosAux = [];
-
-todosAux.push({
-  id: 1,
-  date: new Date(2017,1,1),
-  name: 'Aula PSD',
-  origin: 'Outlook',
-  description: 'Aula que acontece todas as segundas feiras e é preciso aparecer para poder aprender.',
-  priority: 2,
-  index: 0,
-})
-todosAux.push({
-  id: 2,
-  //date: new Date(2015,1,1),
-  name: 'Aula CPD',
-  origin: 'Gmail',
-  description: 'Aula das terças e super secante.',
-  priority: 5,
-  index: 1,
-})
-todosAux.push({
-  id: 3,
-  date: new Date(2016,1,1),
-  name: 'Missao UD',
-  origin: 'Outlook',
-  description: 'Missão semanal para o desenvolvimento pessoal',
-  priority: 1,
-  index: 2,
-})
-todosAux.push({
-  id: 4,
-  date: new Date(2014,1,1),
-  name: 'Entrega KAK',
-  origin: 'Google Task',
-  description: 'Entrega para do PLEI KAK',
-  priority: 3,
-  index: 3,
-})
-
-
 var alltodos = new Vue({
   el: '#MAIN_COMP',
   data: {
-    todos: todosAux,
+    todos: [],
     toggled: null,
     sortedBy: 0,
-    todos_main: todosAux,
     sortableJS: null,
+  },
+  async mounted(){
+    this.todos = await Ipc.get_all_todos();
+    console.log(this.todos);
   },
   methods: {
     toggleInfo: function (id) {
-      this.toggled = this.todos.find(item => item.id === id);
+      const todo = this.todos.find(item => item.id === id);
+      if (this.toggled !== null && this.toggled.id === id){
+        this.toggled = null;
+      }
+      else{
+        this.toggled = todo;
+      }
     },
     // botão complete todo main comp
-    complete: function (id,index){
-      if (this.toggled === index){
-        this.toggled = null;
+    complete: async function (id){
+      const result = await Ipc.complete_todo_id(id);
+      if (result){
+        if (this.toggled !== null && this.toggled.id === id){
+          this.toggled = null;
+        }
+        this.todos = this.todos.filter((item) => item.id !== id);
       }
-      this.todos = this.todos.filter((item) => item.id !== id);
-      //metodo para comunicar ao back end que o item foi aprovado. !!!FALTA
+      else{
+        alert('ERROR!');
+      }
     },
     // botão cancel todo main comp
-    cancel: function (id,index){
-      if (this.toggled === index){
-        this.toggled = null;
+    cancel: async function (id){
+      const result = await Ipc.cancel_todo_id(id);
+      if (result){
+        if (this.toggled !== null && this.toggled.id === id){
+          this.toggled = null;
+        }
+        this.todos = this.todos.filter((item) => item.id !== id);
       }
-      this.todos = this.todos.filter((item) => item.id !== id);
-      //metodo para comunicar ao back end que o item foi cancelado. !!!FALTA
+      else{
+        alert('ERROR!');
+      }
     },
     // para lidar com os botões do todo que está a ser mostrado nos details
-    complete_toggle: function(id){
-      this.toggled = null;
-      this.todos = this.todos.filter((item) => item.id !== id);
-      //metodo para comunicar ao back end que o item foi aprovado. !!!FALTA
+    complete_toggle: async function(id){
+      const result = await Ipc.complete_todo_id(id);
+      if (result){
+        this.toggled = null;
+        this.todos = this.todos.filter((item) => item.id !== id);
+      }
+      else{
+        alert('ERROR!');
+      }
     },
     // para lidar com os botões do todo que está a ser mostrado nos details
-    cancel_toggle: function(id){
-      this.toggled = null;
-      this.todos = this.todos.filter((item) => item.id !== id);
-      //metodo para comunicar ao back end que o item foi cancelado. !!!FALTA
+    cancel_toggle: async function(id){
+      const result = await Ipc.cancel_todo_id(id);
+      if (result){
+        this.toggled = null;
+        this.todos = this.todos.filter((item) => item.id !== id);
+      }
+      else{
+        alert('ERROR!');
+      }
     },
     //metodo para atualizar a ordem da lista quando old_index é menor que new_index
-    rev_DaD_update: function(old_index,new_index){
+    rev_DaD_update: async function(old_index,new_index){
       var new_Array = [];
 
       this.todos.forEach((item, i) => {
@@ -125,10 +113,15 @@ var alltodos = new Vue({
       }
       new_Array[new_index] = temp;
       updateIndex(new_Array);
-      this.todos = new_Array;
+
+      const res = await Ipc.update_list_index(new_Array);
+      if (res)
+        this.todos = new_Array;
+      else
+        console.log('ERROR');
     },
     //metodo para atualizar a ordem da lista quando old_index é maior que new_index
-    nor_DaD_update: function(old_index,new_index){
+    nor_DaD_update: async function(old_index,new_index){
       var new_Array = [];
       this.todos.forEach((item, i) => {
         new_Array.push(item);
@@ -141,7 +134,12 @@ var alltodos = new Vue({
       }
       new_Array[new_index] = temp;
       updateIndex(new_Array);
-      this.todos = new_Array;
+
+      const res = await Ipc.update_list_index(new_Array);
+      if (res)
+        this.todos = new_Array;
+      else
+        console.log('ERROR');
     },
     verifyProperty: function(data){
       return (typeof data !== 'undefined');
@@ -173,8 +171,44 @@ var alltodos = new Vue({
       return da + ' ' + mo + ' ' + ye;
     },
     // função para atualizar os items de um dado tipo: //0 - Github 1 - Google 2 - Outlook
-    sync: function(type){
+    sync: async function(type){
+      var new_todos = [];
 
+      switch (type) {
+        case 0:
+          new_todos = await Ipc.get_git_todos();
+          break;
+        case 1:
+          new_todos = await Ipc.get_google_todos();
+          break;
+        case 2:
+          new_todos = await Ipc.get_outlook_todos();
+          break;
+        default:
+      }
+
+      var new_Array = [];
+      this.todos.forEach((item, i) => {
+        new_Array.push(item);
+      });
+
+      new_todos.forEach((item, i) => {
+        new_Array.push(item);
+      });
+
+      switch (this.sortedBy) {
+        case 0:
+          this.todos = sortByNormal(new_Array);
+          break;
+        case 1:
+          this.todos = sortByDate(new_Array);
+          break;
+        case 2:
+          this.todos = sortByOrigin(new_Array);
+          break;
+        default:
+      }
+      alert(new_todos.length + ' new ToDos!');
     },
     test: function(){
       alert('Wele');

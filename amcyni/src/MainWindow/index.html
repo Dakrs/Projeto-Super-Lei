@@ -116,13 +116,13 @@
                       <table class="table table-borderless" style="margin-bottom:0">
                         <tbody>
                           <tr>
-                            <td class="footerCard text-left">
-                              <span v-on:click="complete(todo.id,index)">
+                            <td class="footerCard text-left mouse">
+                              <span v-on:click="complete(todo.id)">
                                 <i class="fa fa-check-square-o" style="color: green"></i> Complete
                               </span>
                             </td>
-                            <td class="footerCard text-right">
-                              <span v-on:click="cancel(todo.id,index)">
+                            <td class="footerCard text-right mouse">
+                              <span v-on:click="cancel(todo.id)">
                                  <i class="fa fa-ban" style="color: red"></i> Cancel
                               </span>
                             </td>
