@@ -78,7 +78,7 @@
           <h2 class="title">Your ToDos</h2>
           <ul id="cards" style="list-style-type:none;">
               <template v-for="(todo,index) in todos">
-                <li :key="todo.id">
+                <li :key="todo._id">
                   <div class="card mb-3">
                     <div class="card-body" style="padding: 15px; padding-bottom:10px;">
                       <table class="table table-borderless" style="margin-bottom:0">
@@ -88,7 +88,7 @@
                               <h5 class="card-title" style="margin:0">{{ todo.name }}</h5>
                             </td>
                             <td class="text-right" style="padding:0;">
-                              <span class="mouse" v-on:click="toggleInfo(todo.id)">
+                              <span class="mouse" v-on:click="toggleInfo(todo._id)">
                                 <i class="fa fa-plus"></i>
                               </span>
                             </td>
@@ -117,12 +117,12 @@
                         <tbody>
                           <tr>
                             <td class="footerCard text-left mouse">
-                              <span v-on:click="complete(todo.id)">
+                              <span v-on:click="complete(todo._id)">
                                 <i class="fa fa-check-square-o" style="color: green"></i> Complete
                               </span>
                             </td>
                             <td class="footerCard text-right mouse">
-                              <span v-on:click="cancel(todo.id)">
+                              <span v-on:click="cancel(todo._id)">
                                  <i class="fa fa-ban" style="color: red"></i> Cancel
                               </span>
                             </td>

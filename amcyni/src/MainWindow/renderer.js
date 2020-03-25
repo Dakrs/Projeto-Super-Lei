@@ -21,7 +21,7 @@ id: 1,
 date: new Date(2017,1,1), !!!Pode ser null
 name: 'Aula PSD',
 origin: 'Outlook',
-description: 'Aula que acontece todas as segundas feiras e é preciso aparecer para poder aprender.',
+description: 'Aula que acontece todas as segundas feiras e é preciso aparecer para poder aprender.', !!! Pode ser null
 priority: 2,
 index:, !!!Pode ser null
 */
@@ -42,8 +42,8 @@ var alltodos = new Vue({
   },
   methods: {
     toggleInfo: function (id) {
-      const todo = this.todos.find(item => item.id === id);
-      if (this.toggled !== null && this.toggled.id === id){
+      const todo = this.todos.find(item => item._id === id);
+      if (this.toggled !== null && this.toggled._id === id){
         this.toggled = null;
       }
       else{
@@ -54,10 +54,10 @@ var alltodos = new Vue({
     complete: async function (id){
       const result = await Ipc.complete_todo_id(id);
       if (result){
-        if (this.toggled !== null && this.toggled.id === id){
+        if (this.toggled !== null && this.toggled._id === id){
           this.toggled = null;
         }
-        this.todos = this.todos.filter((item) => item.id !== id);
+        this.todos = this.todos.filter((item) => item._id !== id);
       }
       else{
         alert('ERROR!');
@@ -67,10 +67,10 @@ var alltodos = new Vue({
     cancel: async function (id){
       const result = await Ipc.cancel_todo_id(id);
       if (result){
-        if (this.toggled !== null && this.toggled.id === id){
+        if (this.toggled !== null && this.toggled._id === id){
           this.toggled = null;
         }
-        this.todos = this.todos.filter((item) => item.id !== id);
+        this.todos = this.todos.filter((item) => item._id !== id);
       }
       else{
         alert('ERROR!');
@@ -81,7 +81,7 @@ var alltodos = new Vue({
       const result = await Ipc.complete_todo_id(id);
       if (result){
         this.toggled = null;
-        this.todos = this.todos.filter((item) => item.id !== id);
+        this.todos = this.todos.filter((item) => item._id !== id);
       }
       else{
         alert('ERROR!');
@@ -92,7 +92,7 @@ var alltodos = new Vue({
       const result = await Ipc.cancel_todo_id(id);
       if (result){
         this.toggled = null;
-        this.todos = this.todos.filter((item) => item.id !== id);
+        this.todos = this.todos.filter((item) => item._id !== id);
       }
       else{
         alert('ERROR!');

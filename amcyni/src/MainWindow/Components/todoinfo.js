@@ -49,10 +49,10 @@ Vue.component('todo-info',{
   `,
   methods: {
     complete: function (){
-      this.callback_completed(this.todo.id);
+      this.callback_completed(this.todo._id);
     },
     cancel: function (){
-      this.callback_cancel(this.todo.id);
+      this.callback_cancel(this.todo._id);
     },
     verifyProperty: function(data){
       return (typeof data !== 'undefined');
