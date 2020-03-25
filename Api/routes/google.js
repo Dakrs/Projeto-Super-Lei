@@ -28,7 +28,7 @@ router.get('/tasks', function(req, res) {
                   task._id=nanoid()
                   task.idOrigin = t.id
                   task.date= t.due
-                  task.description = t.title
+                  task.name = t.title
                   task.origin = "Google Tasks"
                   task.owner = "me"
                   task.state = 0
@@ -62,7 +62,7 @@ router.get('/calendar', function(req, res) {
                   task._id=nanoid()
                   task.idOrigin = element.id
                   task.date= element.start.date
-                  task.description = element.summary
+                  task.name = element.summary
                   task.origin = "Google Calendar"
                   task.owner = "me"
                   task.state = 0
@@ -96,7 +96,7 @@ router.get('/emails', function(req, res) {
                   if(response.length===0){
                     task._id = nanoid()
                     task.idOrigin = element.id
-                    task.description = header.value
+                    task.name = header.value
                     task.origin = "Google Gmail"
                     task.owner = "me"
                     task.state = 0

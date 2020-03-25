@@ -37,7 +37,7 @@ router.get('/emails', async function(req, res, next) {
             if(response.length===0){
               task._id = nanoid()
               task.idOrigin = element.id
-              task.description = element.subject
+              task.name = element.subject
               task.priority = element.importance
               task.origin = "Outlook emails"
               task.owner = "me"
@@ -97,7 +97,7 @@ router.get('/calendar',async function(req, res, next){
               task._id = nanoid()
               task.idOrigin = element.id
               task.date = element.start.dateTime
-              task.description = element.subject
+              task.name = element.subject
               task.priority = element.importance
               task.origin = "Outlook Calendar"
               task.owner = "me"
