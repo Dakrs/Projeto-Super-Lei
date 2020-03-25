@@ -1,14 +1,19 @@
 import $ from 'jquery';
 window.$ = $;
-require('bootstrap/js/dist/modal');
+//require('bootstrap/js/dist/modal');
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
 import Vue from 'vue';
 import Sortable from 'sortablejs';
-
-const Store = require('electron-store');
-const store = new Store();
+import './Components/todoinfo.js';
+import './Components/apimodal.js';
+import {  sortByOrigin,
+          sortByDate,
+          sortByNormal,
+          updateIndex
+        } from './Sorting';
+import Ipc from './Ipc';
 
 /**
 Todo:
@@ -22,112 +27,6 @@ index:, !!!Pode ser null
 */
 
 
-Vue.component('todo-info',{
-  props: {
-    todo: Object,
-    callback_completed: Function,
-    callback_cancel: Function,
-  },
-  template: `
-  <div class="card mb-3 nomove">
-    <div class="card-body" style="padding: 15px; padding-bottom:10px;">
-      <h5 class="card-title" style="margin:0;margin-bottom: 0.75rem;text-align: center;">{{ todo.name }}</h5>
-      <template v-if="verifyProperty(todo.description)">
-        <span>Description:</span>
-        <p class="text-muted justify">{{ todo.description }}</p>
-      </template>
-      <span>Details:</span>
-      <table class="table table-borderless" style="margin-bottom:0">
-        <tbody>
-          <tr v-if="verifyProperty(todo.priority)">
-            <td class="details text-left grey">Priority</td>
-            <td class="details text-right">{{ todo.priority }}</td>
-          </tr>
-          <tr v-if="verifyProperty(todo.date)">
-            <td class="details text-left grey">Expire Date</td>
-            <td class="details text-right">{{ timeConv(todo.date) }}</td>
-          </tr>
-          <tr v-if="verifyProperty(todo.origin)">
-            <td class="details text-left grey">Origin</td>
-            <td class="details text-right">{{ todo.origin }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="card-footer text-muted specfooter" align="center">
-      <div class="btn-group" role="group" aria-label="Basic example">
-        <button type="button" @click="complete()" class="btn btn-outline-success">Complete</button>
-        <button type="button" @click="cancel()" class="btn btn-outline-danger">Cancel</button>
-      </div>
-    </div>
-  </div>
-  `,
-  methods: {
-    complete: function (){
-      this.callback_completed(this.todo.id);
-    },
-    cancel: function (){
-      this.callback_cancel(this.todo.id);
-    },
-    verifyProperty: function(data){
-      return (typeof data !== 'undefined');
-    },
-    timeConv: function (time){
-      const ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(time);
-      const mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(time);
-      const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(time);
-
-      return da + ' ' + mo + ' ' + ye;
-    }
-  }
-})
-
-
-
-Vue.component('api-modal',{
-  props: {
-    todo: Object,
-  },
-  template: `
-  <div class="modal fade" id="API-MODAL" data-backdrop="static" data-focus="true" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalCenterTitle">Google API Key</h5>
-        </div>
-        <div class="modal-body">
-          In order to access and colect usefull data for your application we need to access some producers.
-        </div>
-        <form style="margin-left: 10%; margin-right: 10%;" onsubmit="event.preventDefault()">
-          <div class="form-group">
-            <label for="GOOGLE_API_KEY">API KEY</label>
-            <input type="text" class="form-control" id="INPUT_API_KEY">
-          </div>
-        </form>
-        <div class="modal-footer">
-          <button id="SUBMIT_API_KEY" type="button" class="btn btn-dark">Send</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  `
-})
-
-
-function API_KEY_REQUEST(){
-  const USER_KEY = $('#INPUT_API_KEY').val();
-  $('#INPUT_API_KEY').val('');
-  console.log(USER_KEY);
-  if (USER_KEY.length > 6){
-    SAVE_API_KEY(USER_KEY);
-    setTimeout(() => {
-      api_controller.has_GOOGLE_API_KEY = true;
-    },1000);
-  }
-  else{
-    alert('KEY TOO SHORT');
-  }
-}
 
 var date = new Date();
 var todosAux = [];
@@ -167,33 +66,6 @@ todosAux.push({
   description: 'Entrega para do PLEI KAK',
   priority: 3,
   index: 3,
-})
-
-
-var api_controller = new Vue({
-  el: '#VUE-MODEL',
-  data: {
-    has_GOOGLE_API_KEY: API_KEY_EXISTS(),
-  },
-  watch: {
-    has_GOOGLE_API_KEY: function (val) {
-      if (val){
-        alert('API KEY Validated');
-        $('#API-MODAL').modal('hide');
-      }
-      else {
-        $('#API-MODAL').modal('show');
-      }
-    }
-  },
-  mounted: function (){
-    this.$nextTick(function () {
-      if (!this.has_GOOGLE_API_KEY){
-        $('#API-MODAL').modal('show');
-        document.getElementById('SUBMIT_API_KEY').addEventListener('click',API_KEY_REQUEST);
-      }
-    })
-  }
 })
 
 
@@ -291,7 +163,6 @@ var alltodos = new Vue({
           this.todos = sortByOrigin(this.todos);
           this.sortableJS.option("disabled", true);
         }
-        //this.todos = new_Array;
       }
     },
     timeConversor: function (time){
@@ -312,21 +183,6 @@ var alltodos = new Vue({
 })
 
 
-//verifica se é preciso pedir a chave para a api no modal
-function API_KEY_EXISTS(){
-  var key = store.get('GOOGLE_API_KEY');
-  console.log(key);
-
-  return (typeof key !== 'undefined');
-}
-
-//guardar a key localmente.
-function SAVE_API_KEY(key){
-  store.set('GOOGLE_API_KEY',key);
-  //escrita na BD do backend;
-}
-
-
 var el = document.getElementById('cards')
 alltodos.sortableJS = Sortable.create(el,{
   animation: 150,
@@ -340,69 +196,13 @@ alltodos.sortableJS = Sortable.create(el,{
   },
 });
 
-function sortByOrigin(list){
-  var new_Array = [];
-  var groupby = new Map();
-  list.forEach((item, i) => {
-    if (!groupby.has(item.origin))
-      groupby.set(item.origin,[])
-    groupby.get(item.origin).push(item);
-  });
-  for (const [key,value] of groupby.entries()){
-    value.forEach((item, i) => {
-      new_Array.push(item);
-    });
-  }
 
-  return new_Array;
-}
+/**
+window.ipcRenderer.on('testing',(event,arg) => {
+  console.log(arg);
+})
 
-function sortByDate(list){
-  var new_Array = [];
-  list.forEach((item, i) => {
-    new_Array.push(item);
-  });
-  new_Array.sort((a,b) => {
-    if (!a.hasOwnProperty('date')){
-      return 1;
-    }
-    if (!b.hasOwnProperty('date')){
-      return -1;
-    }
-
-    return (a.date.getTime() - b.date.getTime());
-  });
-
-  return new_Array;
-}
-
-function sortByNormal(list){
-  var new_Array = [];
-
-  const [p_index, f_index] = list.reduce( ([p,f], e) => (e.hasOwnProperty('index') ? [[...p,e],f] : [p,[...f,e]]), [[],[]] );
-  const [p_date, f_date] = f_index.reduce( ([p,f], e) => (e.hasOwnProperty('date') ? [[...p,e],f] : [p,[...f,e]]), [[],[]] );
-
-  p_index.sort((a,b) => (a.index - b.index));
-  p_date.sort((a,b) => (a.date.getTime() - b.date.getTime()));
-  f_date.sort((a,b) => (a.name.localeCompare(b.name)));
-
-  p_index.forEach((item, i) => {
-    new_Array.push(item);
-  });
-  p_date.forEach((item, i) => {
-    new_Array.push(item);
-  });
-  f_date.forEach((item, i) => {
-    new_Array.push(item);
-  });
-  return new_Array;
-}
-
-function updateIndex(list){
-  list.forEach((item, i) => {
-    item.index = i;
-  });
-}
+window.ipcRenderer.send('test');*/
 
 //sortable.option("disabled", true);
 

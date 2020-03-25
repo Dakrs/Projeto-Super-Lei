@@ -12,7 +12,8 @@ class MainWindow {
         movable: true,
         resizable: false,
         webPreferences: {
-          nodeIntegration: true,
+          //nodeIntegration: false,
+          preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
         },
         show: false,
       })

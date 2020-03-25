@@ -53,7 +53,10 @@
                 {
                   "html": "./src/MainWindow/index.html",
                   "js": "./src/MainWindow/renderer.js",
-                  "name": "main_window"
+                  "name": "main_window",
+                  "preload": {
+                    "js": "./src/MainWindow/preload.js"
+                  }
                 },
                 {
                   "html": "./src/LoadingWindow/loading.html",
