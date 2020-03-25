@@ -115,6 +115,13 @@ export default function setIpc(){
     return [google];
   });
 
+  ipcMain.handle('add_todo', async (event, ...args) => {
+    const result = await getTrue();
+    const obj = args[0];
+    obj._id = 30;
+    return obj;
+  });
+
   /**
 
   ipcMain.handle('add_todo', async (event, ...args) => {

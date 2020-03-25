@@ -8,7 +8,7 @@
     <div class="container" id="MAIN_COMP" style="min-height: 100vh; margin: 0; padding: 0">
       <div class="row" style="min-height: 100vh;">
         <div class="col azure left" align="center">
-          <span class="addButton">
+          <span class="addButton" @click="toggleAddTodo()">
             <i class="fa fa-plus-square-o fa-lg"></i>
           </span>
           <div class="sortBy">
@@ -151,6 +151,9 @@
           </div>
         </div>
       </div>
+      <add-todo
+        :callback="addTodo"
+      ></add-todo>
     </div>
     <div id="VUE-MODEL">
       <api-modal></api-modal>

@@ -26,6 +26,73 @@ priority: 2,
 index:, !!!Pode ser null
 */
 
+Vue.component('add-todo',{
+  props: {
+    callback: Function,
+  },
+  template: `
+  <div class="modal fade" id="ADD_TOO_COMP" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalCenterTitle">Add ToDo</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="ADDTODO-FORM">
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="inputName">Name</label>
+                <input name="name" type="text" class="form-control" id="inputName" required>
+              </div>
+              <div class="form-group col-md-6">
+              <label for="inputPriority">Priority</label>
+                <select name="priority" id="inputPriority" class="form-control">
+                  <option>1</option>
+                  <option>2</option>
+                  <option>3</option>
+                  <option>4</option>
+                  <option>5</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="inputDescription">Description</label>
+              <input name="description" type="text" class="form-control" id="inputDescription">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" form="ADDTODO-FORM" value="Submit" class="btn btn-dark">Summit</button>
+          <button type="button" data-dismiss="modal" class="btn btn-dark">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  `,
+  mounted(){
+
+    var func = this.callback;
+    $('#ADDTODO-FORM').on('submit', function(e){
+      e.preventDefault();
+      var obj = {};
+      $('#ADDTODO-FORM').serializeArray().forEach((item, i) => {
+        obj[item.name] = item.value;
+      });
+
+      if (obj.description === "")
+        delete obj.description;
+
+      obj.priority = +obj.priority;
+      obj.origin = 'metodo';
+
+      $('#ADDTODO-FORM').trigger("reset");
+      func(obj);
+    });
+  }
+})
 
 
 var alltodos = new Vue({
@@ -209,6 +276,30 @@ var alltodos = new Vue({
         default:
       }
       alert(new_todos.length + ' new ToDos!');
+    },
+    toggleAddTodo: function(){
+      $('#ADD_TOO_COMP').modal('show');
+    },
+    addTodo: async function (obj){
+      const res = await Ipc.add_todo(obj);
+
+      if (typeof res !== 'undefined'){
+        this.todos.push(res);
+        switch (this.sortedBy) {
+          case 0:
+            this.todos = sortByNormal(this.todos);
+            break;
+          case 1:
+            this.todos = sortByDate(this.todos);
+            break;
+          case 2:
+            this.todos = sortByOrigin(this.todos);
+            break;
+          default:
+        }
+        alert('Todo Added');
+      }
+      $('#ADD_TOO_COMP').modal('hide');
     },
     test: function(){
       alert('Wele');
