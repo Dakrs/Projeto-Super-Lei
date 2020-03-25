@@ -104,7 +104,8 @@ var alltodos = new Vue({
     sortableJS: null,
   },
   async mounted(){
-    this.todos = await Ipc.get_all_todos();
+    var todos = await Ipc.get_all_todos();
+    this.todos = sortByNormal(todos);
     console.log(this.todos);
   },
   methods: {
