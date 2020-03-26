@@ -83,6 +83,8 @@
     "electron": "8.1.1",
     "electron-positioner": "^4.1.0",
     "html-webpack-plugin": "^3.2.0",
+    "mongoose": "^5.9.6",
+    "nanoid": "^2.1.11",
     "node-loader": "^0.6.0",
     "node-sass": "^4.13.1",
     "postcss-loader": "^3.0.0",

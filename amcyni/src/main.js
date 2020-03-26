@@ -3,6 +3,17 @@ const path = require('path');
 const LoadingWindow = require('./Electron/LoadingWindow');
 const MainWindow = require('./Electron/MainWindow');
 import setIpc from './MainIpc';
+var mongoose = require('mongoose');
+
+/****************************
+ * MONGO CONNECTION
+ ****************************/
+const DATABASE_NAME = 'Access';
+
+mongoose.connect('mongodb://127.0.0.1:27017/' + DATABASE_NAME, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log(`Connected to Mongo at [${DATABASE_NAME}] database...`))
+  .catch((erro) => console.log(`Mongo: Error connecting to [${DATABASE_NAME}]: ${erro}`))
+
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require

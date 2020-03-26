@@ -1,5 +1,8 @@
 const { ipcMain   } = require('electron');
 const axios = require('axios');
+const Todo = require('./controllers/tasks')
+var nanoid = require('nanoid')
+
 
 function getTrue() {
   return new Promise(resolve => {
@@ -82,53 +85,75 @@ export default function setIpc(){
   });
 
   ipcMain.handle('complete_todo_id', async (event, ...id) => {
-    var response  
-    try {
-       response = await axios.put('http://localhost:4545/api/state/'+id+'?state=1') // 0 - por fazer // 1 - completa  // 2 - cancelada 
-    }
-    catch(err) {
-          return false
-      }
+  
+    var response
 
-    return true;
+    try {
+       let todo =await Todo.updateState(id,1)
+      if(todo)
+      response=true
+    }   
+    catch(err) {
+      response=false
+    }
+      return response;
+
+
   });
 
   ipcMain.handle('cancel_todo_id', async (event, ...id) => {
-    var response  
-    try {
-       response = await axios.put('http://localhost:4545/api/state/'+id+'?state=2') // 0 - por fazer // 1 - completa  // 2 - cancelada 
-    }
-    catch(err) {
-          return false
-      }
+   
+    var response
 
-    return true;
+    try {
+       let todo =await Todo.updateState(id,2)
+      if(todo)
+      response=true
+    }   
+    catch(err) {
+      response=false
+    }
+      return response;
+
 
   });
 
-  ipcMain.handle('update_list_index', async (event, ...todos) => {
+  ipcMain.handle('update_list_index', async (event, ...arrayTodos) => {
+  
     var response
-    try {
-        response = await axios.put('http://localhost:4545/api',{
-          todos
-        }) // 0 - por fazer // 1 - completa  // 2 - cancelada 
-    }
 
+    try {
+      var todos = arrayTodos[0]
+      todos.forEach(element => {
+          Todo.updateById(element)          
+        })
+      response=true;
+    }   
     catch(err) {
-           return false
-       }
- 
-     return true;
+      response=false
+    }
+      return response;
+
 
   });
 
   ipcMain.handle('get_all_todos', async (event, ...args) => {
-    let response = await axios.get('http://localhost:4545/api')
-    response.data.forEach(element => {
+
+    var todos 
+
+    try {
+      let tasks = await Todo.selectAll()
+      todos = JSON.parse(JSON.stringify(tasks))
+      todos.forEach(element => {
           if(element.date)
-              element.date= new Date(element.date)     
-        });
-      return response.data
+                element.date= new Date(element.date)     
+          });
+
+    }
+    catch(err) {
+            todos = []
+        }
+      return todos  
   });
 
   ipcMain.handle('get_git_todos', async (event, ...args) => {
@@ -151,20 +176,25 @@ export default function setIpc(){
       var response
 
     try {
-    
-          response = await axios.post('http://localhost:4545/api',{
-          name : args[0].name,
-          priority : args[0].priority,
-          description : args[0].description,
-          origin : "metodo"   
-         
-          })
-      
+         var todo = {}
+          todo._id = nanoid()
+          todo.name = args[0].name,
+          todo.priority = args[0].priority,
+          todo.description = args[0].description,
+          todo.rigin = "metodo"
+          todo.owner = "me"
+          todo.state =0
+          console.log(todo)
+          response = await Todo.insert(todo)
+          response = JSON.parse(JSON.stringify(response))
     }
+      
     catch(err) {
-           return null
+           response = {}
        }
-       return response.data;
+       console.log(response)
+
+       return response
  
   });
 

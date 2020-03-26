@@ -22,6 +22,7 @@ export async function update_list_index(list){
 
 export async function get_all_todos(){
   const result = await ipcRenderer.invoke('get_all_todos');
+  console.log(result)
   return result;
 }
 
