@@ -14,6 +14,19 @@ h1.special {
   font-family: 'Open Sans', sans-serif;
   font-weight: bolder;
   font-style: italic;
+  -webkit-user-select: none;
+  -webkit-app-region: no-drag;
+}
+
+p.title {
+  font-size: 2em;
+  /*
+  font-family: 'Open Sans', sans-serif;
+  font-style: italic;*/
+}
+
+p.bolder {
+  font-weight: bolder;
 }
 
 div.azure{
@@ -38,6 +51,16 @@ h1.title {
   text-align: center;
 }
 
+h2.title {
+  -webkit-user-select: none;
+  text-align: center;
+}
+
+h2.left {
+  -webkit-user-select: none;
+  text-align: left;
+}
+
 p.nomargin {
   margin: 0;
   padding: 0;
@@ -51,6 +74,11 @@ td.footerCard{
 td.details{
   padding: 0;
   font-size: 14px;
+}
+
+td.fontSize {
+  padding: 0;
+  font-size: 1.1rem;
 }
 
 td.nomargin {
@@ -71,7 +99,8 @@ div.left {
   bottom: 0;
   left: 0;
   width: 26%;
-  overflow-y: scroll;
+  /**
+  overflow-y: scroll;*/
 }
 
 div.middle {
@@ -88,7 +117,8 @@ div.right {
   top: 0;
   bottom: 0;
   right: 0;
-  overflow-y: scroll;
+  /**
+  overflow-y: scroll;*/
   width: 32.5%;
 }
 
@@ -103,6 +133,14 @@ div.nomove {
   -webkit-user-select: none;
 }
 
+div.noselect {
+  -webkit-user-select: none;
+}
+
+div.mayDrag {
+
+}
+
 span.footerText {
   font-size: 14px;
   margin-bottom: 15px;
@@ -110,8 +148,74 @@ span.footerText {
 
 div.footer {
   position: fixed;
+  right: 0;
+  bottom: 0;
+  width: 32.5%;
+  text-align: center;
+}
+
+div.bottomTittle {
+  position: fixed;
   left: 0;
   bottom: 0;
   width: 26%;
   text-align: center;
+}
+
+span.addButton {
+  position: fixed;
+  left: 0;
+  top: 1%;
+  width: 24%;
+  text-align: right;
+  margin-right: 2%;
+  font-size: 16px;
+}
+
+div.sortBy {
+  position: fixed;
+  left: 0;
+  top: 15%;
+  width: 16%;
+  margin-left: 5%;
+  margin-right: 5%;
+  text-align: left;
+}
+
+div.sync {
+  position: fixed;
+  left: 0;
+  top: 35%;
+  width: 16%;
+  margin-left: 5%;
+  margin-right: 5%;
+  text-align: left;
+}
+
+div.history {
+  position: fixed;
+  left: 0;
+  top: 55%;
+  width: 16%;
+  margin-left: 5%;
+  margin-right: 5%;
+  text-align: left;
+}
+
+span.mouse {
+  cursor: pointer;
+}
+
+span.sortBy {
+  width: 24%;
+  text-align: left;
+}
+
+span.noselect {
+  -webkit-user-select: none;
+}
+
+td.mouse {
+  cursor: pointer;
+  -webkit-user-select: none;
 }

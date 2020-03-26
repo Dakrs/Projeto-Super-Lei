@@ -6,6 +6,7 @@ var taskSchema = new mongoose.Schema({
     idOrigin : String,
     date : Date,
     name : String,
+    description : String,
     priority : String,
     origin : String,
     owner : String,

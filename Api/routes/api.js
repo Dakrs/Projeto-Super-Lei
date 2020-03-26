@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var Task = require('../controllers/tasks')
+var nanoid = require('nanoid')
+
 router.get('/',function(req, res, next) {
     Task.selectAll()
     .then(dados =>res.jsonp(dados))
@@ -44,9 +46,12 @@ router.get('/:id',function(req, res, next) {
 
 
 router.put('/',function(req, res, next) {
-    Task.updateById(req.body)
-    .then(dados =>res.jsonp(dados))
-    .catch(erro => res.status(500).jsonp(erro))
+    var todos = req.body.todos[0]
+    todos.forEach(element => {
+            Task.updateById(element)
+    });
+    res.redirect('/api')
+
 })
 
 router.put('/state/:id',function(req, res, next) {
@@ -61,5 +66,17 @@ router.delete('/:id',function(req, res, next) {
     .then(dados =>res.jsonp(dados))
     .catch(erro => res.status(500).jsonp(erro))
 })
+
+router.post('/',function(req,res){
+    req.body._id = nanoid();
+    req.body.owner = "me"
+    req.body.state =0
+    Task.insert(req.body)
+    .then(dados =>res.jsonp(dados))
+    .catch(erro => res.status(500).jsonp(erro))
+
+
+})
+
 
 module.exports = router;

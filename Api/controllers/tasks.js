@@ -38,12 +38,13 @@ module.exports.findByIdOrigin = (idFont, font) =>{
 
 module.exports.updateById = task => {
     return Task
-           .findByIdAndUpdate({_id :task._id},task,{new:true})        
+           .updateOne({_id :task._id},task,{new:true})
+           .exec()        
 }
 
 module.exports.updateState = (idTask,state) => {
     return Task
-    .findByIdAndUpdate({_id : idTask},
+    .updateOne({_id : idTask},
         {$set : {state : state}})
 }
 
