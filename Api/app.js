@@ -20,6 +20,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/' + DATABASE_NAME, { useNewUrlParser
 var indexRouter = require('./routes/google');
 var outlookROuter = require('./routes/outlook')
 var authorizeRouter = require('./routes/authorize')
+var apiRouter = require('./routes/api')
 
 var app = express();
 
@@ -36,6 +37,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/google', indexRouter);
 app.use('/outlook',outlookROuter)
 app.use('/authorize',authorizeRouter)
+app.use('/api',apiRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

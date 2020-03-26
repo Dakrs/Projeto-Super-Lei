@@ -1,4 +1,5 @@
-const { ipcMain } = require('electron');
+const { ipcMain   } = require('electron');
+const axios = require('axios');
 
 function getTrue() {
   return new Promise(resolve => {
@@ -80,24 +81,54 @@ export default function setIpc(){
     return result;
   });
 
-  ipcMain.handle('complete_todo_id', async (event, ...args) => {
-    const result = await getTrue();
-    return result;
+  ipcMain.handle('complete_todo_id', async (event, ...id) => {
+    var response  
+    try {
+       response = await axios.put('http://localhost:4545/api/state/'+id+'?state=1') // 0 - por fazer // 1 - completa  // 2 - cancelada 
+    }
+    catch(err) {
+          return false
+      }
+
+    return true;
   });
 
-  ipcMain.handle('cancel_todo_id', async (event, ...args) => {
-    const result = await getTrue();
-    return result;
+  ipcMain.handle('cancel_todo_id', async (event, ...id) => {
+    var response  
+    try {
+       response = await axios.put('http://localhost:4545/api/state/'+id+'?state=2') // 0 - por fazer // 1 - completa  // 2 - cancelada 
+    }
+    catch(err) {
+          return false
+      }
+
+    return true;
+
   });
 
-  ipcMain.handle('update_list_index', async (event, ...args) => {
-    const result = await getTrue();
-    return result;
+  ipcMain.handle('update_list_index', async (event, ...todos) => {
+    var response
+    try {
+        response = await axios.put('http://localhost:4545/api',{
+          todos
+        }) // 0 - por fazer // 1 - completa  // 2 - cancelada 
+    }
+
+    catch(err) {
+           return false
+       }
+ 
+     return true;
+
   });
 
   ipcMain.handle('get_all_todos', async (event, ...args) => {
-    const result = await getTrue();
-    return todosAux;
+    let response = await axios.get('http://localhost:4545/api')
+    response.data.forEach(element => {
+          if(element.date)
+              element.date= new Date(element.date)     
+        });
+      return response.data
   });
 
   ipcMain.handle('get_git_todos', async (event, ...args) => {
@@ -114,21 +145,30 @@ export default function setIpc(){
     const result = await getTrue();
     return [google];
   });
-
+  
   ipcMain.handle('add_todo', async (event, ...args) => {
-    const result = await getTrue();
-    const obj = args[0];
-    obj._id = 30;
-    return obj;
+    
+      var response
+
+    try {
+    
+          response = await axios.post('http://localhost:4545/api',{
+          name : args[0].name,
+          priority : args[0].priority,
+          description : args[0].description,
+          origin : "metodo"   
+         
+          })
+      
+    }
+    catch(err) {
+           return null
+       }
+       return response.data;
+ 
   });
 
-  /**
-
-  ipcMain.handle('add_todo', async (event, ...args) => {
-    const result = await somePromise()
-    return result
-  });
-
+  /* 
   ipcMain.handle('history', async (event) => {
     const result = await somePromise()
     return result
