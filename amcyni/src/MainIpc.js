@@ -129,7 +129,6 @@ export default function setIpc(){
               element.date= new Date(element.date)     
         });
       return response.data
-    
   });
 
   ipcMain.handle('get_git_todos', async (event, ...args) => {
@@ -145,10 +144,8 @@ export default function setIpc(){
   ipcMain.handle('get_google_todos', async (event, ...args) => {
     const result = await getTrue();
     return [google];
-    
   });
-
-
+  
   ipcMain.handle('add_todo', async (event, ...args) => {
     
       var response
