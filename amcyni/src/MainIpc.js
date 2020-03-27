@@ -1,7 +1,8 @@
 const { ipcMain   } = require('electron');
 const axios = require('axios');
-const Todo = require('./controllers/tasks')
+const Todo = require('./backend/controllers/tasks')
 var nanoid = require('nanoid')
+const google = require('./backend/platforms/google')
 
 
 function getTrue() {
@@ -69,7 +70,7 @@ var outlook = {
   priority: 3,
 }
 
-var google = {
+var google1 = {
   _id: 7,
   date: new Date(2018,4,2),
   name: 'Celebração',
@@ -167,8 +168,9 @@ export default function setIpc(){
   });
 
   ipcMain.handle('get_google_todos', async (event, ...args) => {
-    const result = await getTrue();
-    return [google];
+    const tasks = await google.connect_Google()
+    console.log(tasks)
+    return tasks
   });
   
   ipcMain.handle('add_todo', async (event, ...args) => {
