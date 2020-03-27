@@ -240,7 +240,8 @@ var alltodos = new Vue({
     },
     // função para atualizar os items de um dado tipo: //0 - Github 1 - Google 2 - Outlook
     sync: async function(type){
-      var new_todos = [];
+      var length = this.todos.length;
+      const new_todos = [];
 
       switch (type) {
         case 0:
@@ -255,6 +256,7 @@ var alltodos = new Vue({
         default:
       }
 
+      /**
       var new_Array = [];
       this.todos.forEach((item, i) => {
         new_Array.push(item);
@@ -262,21 +264,21 @@ var alltodos = new Vue({
 
       new_todos.forEach((item, i) => {
         new_Array.push(item);
-      });
+      });*/
 
       switch (this.sortedBy) {
         case 0:
-          this.todos = sortByNormal(new_Array);
+          this.todos = sortByNormal(new_todos);
           break;
         case 1:
-          this.todos = sortByDate(new_Array);
+          this.todos = sortByDate(new_todos);
           break;
         case 2:
-          this.todos = sortByOrigin(new_Array);
+          this.todos = sortByOrigin(new_todos);
           break;
         default:
       }
-      alert(new_todos.length + ' new ToDos!');
+      alert((new_todos.length - length)  + ' new ToDos!');
     },
     toggleAddTodo: function(){
       $('#ADD_TOO_COMP').modal('show');
