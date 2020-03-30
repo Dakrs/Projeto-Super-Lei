@@ -1,0 +1,22 @@
+Instalar o npm
+
+Para correr:
+
+1 - cd Google
+2 - npm install --save
+3 - npm start
+
+4 - Abrir o browser em http://localhost:3000/google/tasks
+
+5- seguir os passos que aparece no terminal
+
+6- verificar no Mongo se foi criada uma BD e ver o conteudo dela
+
+Rotas :
+
+
+http://localhost:3000/google/tasks
+http://localhost:3000/google/calendar
+http://localhost:3000/google/emails 
+http://localhost:3000/outlook/emails
+http://localhost:3000/outlook/calendar
