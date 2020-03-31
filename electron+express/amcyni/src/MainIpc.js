@@ -1,8 +1,6 @@
 const { ipcMain   } = require('electron');
 const axios = require('axios');
-const Todo = require('./backend/controllers/tasks')
 var nanoid = require('nanoid')
-const google = require('./backend/platforms/google')
 
 
 function getTrue() {
