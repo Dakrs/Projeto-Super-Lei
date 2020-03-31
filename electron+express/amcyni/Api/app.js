@@ -6,7 +6,8 @@ var logger = require('morgan');
 var mongoose = require('mongoose');
 
 
-require('dotenv').config();
+require('dotenv').config({path : __dirname+'/.env'});
+
 
 /****************************
  * MONGO CONNECTION

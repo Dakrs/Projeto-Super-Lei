@@ -11,15 +11,15 @@ router.get('/', async function(req, res, next) {
     // If code is present, use it
     if (code) {
       try {
-        await authHelper.getTokenFromCode(code, res);
+        await authHelper.getTokenFromCode(code);
         // Redirect to home
-        res.redirect('/')
-      } catch (error) {
-        res.status(500).jsonp(erro)
+        res.redirect('/google/url')
+      } catch (err) {
+        res.status(500).jsonp(err)
       }
     } else {
       // Otherwise complain
-      res.status(500).jsonp(erro)
+      res.status(500).jsonp(err)
     }
   });
 

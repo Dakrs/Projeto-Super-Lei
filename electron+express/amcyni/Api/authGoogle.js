@@ -13,7 +13,7 @@ exports.authorize = (credentials,callback) => {
   const {client_secret, client_id, redirect_uris} = credentials.installed;
   const oAuth2Client = new google.auth.OAuth2(
       client_id, client_secret, redirect_uris[0]);
-      Credential.listar()
+      Credential.get("GOOGLE")
       .then(dados =>{
            if (dados.length >0){
                 oAuth2Client.setCredentials(dados[0].token)

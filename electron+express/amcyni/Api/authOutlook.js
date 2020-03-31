@@ -1,4 +1,6 @@
 const jwt = require('jsonwebtoken');
+const Credential = require('./controllers/credentials')
+
 const credentials = {
     client: {
       id: process.env.APP_ID,
@@ -24,7 +26,9 @@ const credentials = {
 
 
   
-  async function getTokenFromCode(auth_code, res) {
+  async function getTokenFromCode(auth_code) {
+    var creden = {} 
+    var tokenAux = {}
     let result = await oauth2.authorizationCode.getToken({
       code: auth_code,
       redirect_uri: process.env.REDIRECT_URI,
@@ -33,57 +37,57 @@ const credentials = {
   
     const token = oauth2.accessToken.create(result);
     
-  
-    saveValuesToCookie(token, res);
+    creden.type = "OUTLOOK"
+    creden.owner ="me"
+    tokenAux.access_token = token.token.access_token
+    tokenAux.refresh_token =token.token.refresh_token
+    tokenAux.scope = token.token.scope
+    tokenAux.token_type=token.token.token_type
+    tokenAux.expiry_date = token.token.expires_at.getTime()
+    creden.token = tokenAux
+
+     await Credential.insert(creden)
+
   
     return token.token.access_token;
   }
   exports.getTokenFromCode = getTokenFromCode;
 
-  function saveValuesToCookie(token, res) {
-    // Parse the identity token
-    const user = jwt.decode(token.token.id_token);
-  
-    // Save the access token in a cookie
-    res.cookie('graph_access_token', token.token.access_token, {maxAge: 300000, httpOnly: true});
-    // Save the user's name in a cookie
-    res.cookie('graph_user_name', user.name, {maxAge: 300000, httpOnly: true});
-    // Save the refresh token in a cookie
-    res.cookie('graph_refresh_token', token.token.refresh_token, {maxAge: 500000, httpOnly: true});
-    // Save the token expiration time in a cookie
-    res.cookie('graph_token_expires', token.token.expires_at.getTime(), {maxAge: 300000, httpOnly: true});
-  }
-
-
-
   async function getAccessToken(cookies, res) {
     // Do we have an access token cached?
-    let token = cookies.graph_access_token;
+    let token = await Credential.get("OUTLOOK")
+
    
   
-    if (token) {
+    if (token.length>0) {
       console.log("TOKEN EM CACHE")
       
       // We have a token, but is it expired?
       // Expire 5 minutes early to account for clock differences
-      const FIVE_MINUTES =300000 ;
-      const expiration = new Date(parseFloat(cookies.graph_token_expires - FIVE_MINUTES));
-      if (expiration > new Date()) {
+      const expiration = token.token.expiry_date - Date().getTime();
+      if (expiration > 0) {
         // Token is still good, just return it
         return token;
       }
       
-    }
     console.log("TOKEN Nao esta em  CACHE")
   
     // Either no token or it's expired, do we have a
     // refresh token?
     const refresh_token = cookies.graph_refresh_token;
+    const refresh_token = token.token.refresh_token
     if (refresh_token) {
       const newToken = await oauth2.accessToken.create({refresh_token: refresh_token}).refresh();
-      saveValuesToCookie(newToken, res);
+      var tokenAux = {}
+      tokenAux.access_token = newToken.token.access_token
+      tokenAux.refresh_token =newToken.token.refresh_token
+      tokenAux.scope = newTtoken.token.scope
+      tokenAux.token_type=newToken.token.token_type
+      tokenAux.expiry_date = newToken.token.expires_at.getTime()
+      Credential.update("OUTLOOK",tokenAux)
       return newToken.token.access_token;
     }
+  }
   
     // Nothing in the cookies that helps, return empty
     return null;
