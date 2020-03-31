@@ -78,21 +78,13 @@ var google1 = {
 
 export default function setIpc(){
 
-  
-  ipcMain.handle('get_url_google', async (event, ...key) => {
-    let response = await axios.get('http://localhost:4545/google/url')
-      return response.data
-   });
- 
-
-
   ipcMain.handle('store_google_api_key', async (event, ...args) => {
-    var response=true  
+    var response=true
     try {
        response = await axios.post('http://localhost:4545/google/code',{
          code : args[0]
-       }) 
-       // 0 - por fazer // 1 - completa  // 2 - cancelada 
+       })
+       // 0 - por fazer // 1 - completa  // 2 - cancelada
     }
     catch(err) {
           response= false
@@ -102,11 +94,11 @@ export default function setIpc(){
   });
 
   ipcMain.handle('complete_todo_id', async (event, ...id) => {
-  
-    var response=true  
+
+    var response=true
     try {
-       response = await axios.put('http://localhost:4545/api/state/'+id+'?state=1') 
-       // 0 - por fazer // 1 - completa  // 2 - cancelada 
+       response = await axios.put('http://localhost:4545/api/state/'+id+'?state=1')
+       // 0 - por fazer // 1 - completa  // 2 - cancelada
     }
     catch(err) {
           response= false
@@ -117,11 +109,11 @@ export default function setIpc(){
   });
 
   ipcMain.handle('cancel_todo_id', async (event, ...id) => {
-    
-    var response =true  
+
+    var response =true
     try {
-       response = await axios.put('http://localhost:4545/api/state/'+id+'?state=1') 
-       // 0 - por fazer // 1 - completa  // 2 - cancelada 
+       response = await axios.put('http://localhost:4545/api/state/'+id+'?state=1')
+       // 0 - por fazer // 1 - completa  // 2 - cancelada
     }
     catch(err) {
           response=true
@@ -132,12 +124,12 @@ export default function setIpc(){
   });
 
   ipcMain.handle('update_list_index', async (event, ...arrayTodos) => {
-  
+
     var response
     try {
         response = await axios.put('http://localhost:4545/api',{
           todos
-        }) // 0 - por fazer // 1 - completa  // 2 - cancelada 
+        }) // 0 - por fazer // 1 - completa  // 2 - cancelada
     }
 
     catch(err) {
@@ -152,7 +144,7 @@ export default function setIpc(){
     let response = await axios.get('http://localhost:4545/api')
     response.data.forEach(element => {
           if(element.date)
-              element.date= new Date(element.date)     
+              element.date= new Date(element.date)
         });
       return response.data
 
@@ -164,7 +156,7 @@ export default function setIpc(){
   });
 
   ipcMain.handle('get_outlook_todos', async (event, ...args) => {
-    
+
     return [outlook];
   });
 
@@ -176,11 +168,11 @@ export default function setIpc(){
    let response = await axios.get('http://localhost:4545/api')
    response.data.forEach(element => {
          if(element.date)
-             element.date= new Date(element.date)     
+             element.date= new Date(element.date)
        });
      return response.data
   });
-  
+
   ipcMain.handle('add_todo', async (event, ...args) => {
     var response
 
@@ -190,7 +182,7 @@ export default function setIpc(){
           name : args[0].name,
           priority : args[0].priority,
           description : args[0].description,
-          origin : "metodo"   
+          origin : "metodo"
 
           })
 
@@ -202,7 +194,7 @@ export default function setIpc(){
 
   });
 
-  /* 
+  /*
   ipcMain.handle('history', async (event) => {
     const result = await somePromise()
     return result

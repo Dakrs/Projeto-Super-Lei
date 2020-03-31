@@ -1,12 +1,15 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
+const axios = require('axios');
 const LoadingWindow = require('./Electron/LoadingWindow');
 const MainWindow = require('./Electron/MainWindow');
+const GoogleURLWindow = require('./Electron/GoogleURLWindow');
 import setIpc from './MainIpc';
 
 
 let loadwin = null;
 let mainwin = null;
+let googlewindow = null;
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -110,17 +113,6 @@ app.on('ready', function () {
 	loadwin.window.show();
 
   startExpress()
-  //await sleep(1000);
-
-	/**
-  loadwin.window.once('show',() => {
-    mainwin = new MainWindow();
-    mainwin.window.once('ready-to-show',() => {
-      mainwin.window.show();
-      loadwin.window.hide();
-      loadwin.window.close();
-    });
-  });*/
 });
 
 // Called before quitting...gives us an opportunity to shutdown the child process
@@ -139,6 +131,7 @@ app.on('before-quit',function()
 app.on('window-all-closed', function () {
 	// On OS X it is common for applications and their menu bar
 	// to stay active until the user quits explicitly with Cmd + Q
+
 	if (process.platform !== 'darwin') {
 		app.quit()
 	}
@@ -155,11 +148,30 @@ process.on("SIGINT", function () {
 app.on('activate', () => {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
+  if (BrowserWindow.getAllWindows().length === 0 && mainwin !== null) {
+    mainwin = new MainWindow();
+		mainwin.window.once('ready-to-show', () => {
+			mainwin.window.show();
+		});
   }
 });
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 setIpc();
+
+ipcMain.on('URL_GOOGLE', async (event,arg) => {
+	let response = await axios.get('http://localhost:4545/google/url');
+	var url = response.data;
+
+	googlewindow = new GoogleURLWindow(url,mainwin);
+	googlewindow.window.once('ready-to-show', () => {
+		googlewindow.window.show();
+		mainwin.window.hide();
+	});
+
+	googlewindow.window.on('closed',() => {
+		googlewindow = null;
+		mainwin.window.show();
+	})
+})

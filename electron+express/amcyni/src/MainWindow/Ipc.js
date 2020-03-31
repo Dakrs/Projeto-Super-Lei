@@ -50,6 +50,10 @@ export async function history(){
   return result;
 }
 
+export function triggerURL(){
+  ipcRenderer.send('URL_GOOGLE');
+}
+
 export default {store_google_api_key,
                 cancel_todo_id,
                 complete_todo_id,
@@ -59,4 +63,5 @@ export default {store_google_api_key,
                 get_google_todos,
                 get_outlook_todos,
                 add_todo,
-                history}
+                history,
+                triggerURL}

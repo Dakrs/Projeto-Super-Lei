@@ -9,15 +9,21 @@ Vue.component('api-modal',{
   props: {
     todo: Object,
   },
+  methods:{
+    goToURL: function(){
+      Ipc.triggerURL();
+    },
+  },
   template: `
-  <div class="modal fade" id="API-MODAL" data-backdrop="static" data-focus="true" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal fade" id="API-MODAL" data-backdrop="static" data-focus="true" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="-webkit-user-select: none;">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalCenterTitle">Google API Key</h5>
         </div>
         <div class="modal-body">
-          In order to access and colect usefull data for your application we need to access some producers.
+          <p>In order to access and colect usefull data for your application we need to access some sources.</p>
+          <span @click="goToURL()" style="text-align: center; cursor: pointer;">Link to generate API Key</span>
         </div>
         <form style="margin-left: 10%; margin-right: 10%;" onsubmit="event.preventDefault()">
           <div class="form-group">
@@ -91,6 +97,6 @@ function API_KEY_EXISTS(){
 async function SAVE_API_KEY(key){
   const res = await Ipc.store_google_api_key(key);
   if (res)
-    store.set('GOOGLE_API_KEY',key);
+    store.set('GOOGLE_API_KEY',true);
   return res;
 }
