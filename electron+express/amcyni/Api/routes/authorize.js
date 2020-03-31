@@ -13,7 +13,7 @@ router.get('/', async function(req, res, next) {
       try {
         await authHelper.getTokenFromCode(code);
         // Redirect to home
-        res.redirect('/google/url')
+        res.redirect("Close the window")
       } catch (err) {
         res.status(500).jsonp(err)
       }

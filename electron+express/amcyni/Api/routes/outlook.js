@@ -8,6 +8,15 @@ var Task = require('../controllers/tasks')
 var Utility = require('../utility')
 
 
+
+router.get('/url',async function(req,res){
+  var url = await authHelper.getAuthUrl()
+  res.jsonp(url)
+
+})
+
+
+
 router.get('/emails', async function(req, res, next) {
   
   task = {}
