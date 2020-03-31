@@ -11,7 +11,8 @@ var Utility = require('../utility')
 router.get('/emails', async function(req, res, next) {
   
   task = {}
-  const accessToken = await authHelper.getAccessToken(req.cookies, res);
+  const accessToken = await authHelper.getAccessToken();
+  console.log(accessToken)
   if (accessToken) {
     // Initialize Graph client
     const client = graph.Client.init({
@@ -58,7 +59,6 @@ router.get('/emails', async function(req, res, next) {
   else {
     // Redirect to home
     var x = authHelper.getAuthUrl()
-    console.log(x)
     res.redirect(authHelper.getAuthUrl())
   }
 
@@ -66,7 +66,8 @@ router.get('/emails', async function(req, res, next) {
 
 router.get('/calendar',async function(req, res, next){
   var task ={}
-  const accessToken = await authHelper.getAccessToken(req.cookies, res);
+  const accessToken = await authHelper.getAccessToken();
+  console.log(accessToken)
   if (accessToken) {
     // Initialize Graph client
     const client = graph.Client.init({
@@ -116,7 +117,6 @@ router.get('/calendar',async function(req, res, next){
   } else {
     // Redirect to home
   var x = authHelper.getAuthUrl()
-  console.log(x)
   res.redirect(authHelper.getAuthUrl())
   }
   

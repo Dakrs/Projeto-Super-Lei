@@ -157,8 +157,16 @@ export default function setIpc(){
 
   ipcMain.handle('get_outlook_todos', async (event, ...args) => {
 
-    return [outlook];
+    await axios.get('http://localhost:4545/outlook/calendar')
+    await axios.get('http://localhost:4545/outlook/emails')
+   let response = await axios.get('http://localhost:4545/api')
+   response.data.forEach(element => {
+         if(element.date)
+             element.date= new Date(element.date)
+       });
+     return response.data
   });
+
 
   ipcMain.handle('get_google_todos', async (event, ...args) => {
 

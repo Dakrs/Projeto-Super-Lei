@@ -53,28 +53,26 @@ const credentials = {
   }
   exports.getTokenFromCode = getTokenFromCode;
 
-  async function getAccessToken(cookies, res) {
+  async function getAccessToken() {
     // Do we have an access token cached?
-    let token = await Credential.get("OUTLOOK")
+    var token = await Credential.get("OUTLOOK")
 
    
   
     if (token.length>0) {
-      console.log("TOKEN EM CACHE")
       
       // We have a token, but is it expired?
       // Expire 5 minutes early to account for clock differences
-      const expiration = token.token.expiry_date - Date().getTime();
+      var date =  new Date()
+      const expiration = token[0].token.expiry_date - date.getTime();
       if (expiration > 0) {
         // Token is still good, just return it
-        return token;
+        return token[0].token.access_token;
       }
       
-    console.log("TOKEN Nao esta em  CACHE")
   
     // Either no token or it's expired, do we have a
     // refresh token?
-    const refresh_token = cookies.graph_refresh_token;
     const refresh_token = token.token.refresh_token
     if (refresh_token) {
       const newToken = await oauth2.accessToken.create({refresh_token: refresh_token}).refresh();
