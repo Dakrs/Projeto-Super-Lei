@@ -4,6 +4,10 @@ const LoadingWindow = require('./Electron/LoadingWindow');
 const MainWindow = require('./Electron/MainWindow');
 import setIpc from './MainIpc';
 
+
+let loadwin = null;
+let mainwin = null;
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 var webServer;
@@ -43,6 +47,14 @@ function startExpress() {
 	// Handle standard out data from the child process
 	webServer.stdout.on('data', function (data) {
 		log.info('data: ' + data);
+		if (data.includes('Connected to Mongo') && mainwin === null){
+			mainwin = new MainWindow();
+	    mainwin.window.once('ready-to-show',() => {
+	      mainwin.window.show();
+	      loadwin.window.hide();
+	      loadwin.window.close();
+	    });
+		}
 	});
 
 	// Triggered when a child process uses process.send() to send messages.
@@ -78,30 +90,29 @@ function startExpress() {
 }
 
 
-
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
   app.quit();
 }
 
-let loadwin = null;
-let mainwin = null;
-
 function sleep(ms) {
 	return new Promise((resolve) => {
 	  setTimeout(resolve, ms);
 	});
-  }   
+  }
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', async function () {
+app.on('ready', function () {
   shuttingDown = false;
-  startExpress()
-  await sleep(1000);
-  loadwin = new LoadingWindow();
+	loadwin = new LoadingWindow();
+	loadwin.window.show();
 
+  startExpress()
+  //await sleep(1000);
+
+	/**
   loadwin.window.once('show',() => {
     mainwin = new MainWindow();
     mainwin.window.once('ready-to-show',() => {
@@ -109,8 +120,7 @@ app.on('ready', async function () {
       loadwin.window.hide();
       loadwin.window.close();
     });
-  });
-  loadwin.window.show();
+  });*/
 });
 
 // Called before quitting...gives us an opportunity to shutdown the child process
