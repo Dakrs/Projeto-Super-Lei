@@ -50,7 +50,7 @@ router.put('/',function(req, res, next) {
     todos.forEach(element => {
             Task.updateById(element)
     });
-    res.redirect('/api')
+    res.jsonp(todos)
 
 })
 

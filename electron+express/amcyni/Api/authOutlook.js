@@ -73,13 +73,13 @@ const credentials = {
   
     // Either no token or it's expired, do we have a
     // refresh token?
-    const refresh_token = token.token.refresh_token
+    const refresh_token = token[0].token.refresh_token
     if (refresh_token) {
       const newToken = await oauth2.accessToken.create({refresh_token: refresh_token}).refresh();
       var tokenAux = {}
       tokenAux.access_token = newToken.token.access_token
       tokenAux.refresh_token =newToken.token.refresh_token
-      tokenAux.scope = newTtoken.token.scope
+      tokenAux.scope = newToken.token.scope
       tokenAux.token_type=newToken.token.token_type
       tokenAux.expiry_date = newToken.token.expires_at.getTime()
       Credential.update("OUTLOOK",tokenAux)

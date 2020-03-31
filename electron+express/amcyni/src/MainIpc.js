@@ -123,7 +123,7 @@ export default function setIpc(){
 
   });
 
-  ipcMain.handle('update_list_index', async (event, ...arrayTodos) => {
+  ipcMain.handle('update_list_index', async (event, ...todos) => {
 
     var response
     try {
