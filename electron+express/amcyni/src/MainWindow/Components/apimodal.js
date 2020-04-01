@@ -3,7 +3,7 @@ import Vue from 'vue';
 import Ipc from '../Ipc';
 
 const store = new window.Store();
-//store.delete('GOOGLE_API_KEY')
+store.delete('GOOGLE_API_KEY')
 
 Vue.component('api-modal',{
   props: {
