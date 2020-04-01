@@ -240,7 +240,7 @@ var alltodos = new Vue({
     // função para atualizar os items de um dado tipo: //0 - Github 1 - Google 2 - Outlook
     sync: async function(type){
       var length = this.todos.length;
-      const new_todos = [];
+      var new_todos = [];
 
       switch (type) {
         case 0:

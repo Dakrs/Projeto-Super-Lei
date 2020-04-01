@@ -46,6 +46,7 @@ router.get('/tasks', async function(req, res) {
               task.origin = "Google Tasks"
               task.owner = "me"
               task.state = 0
+              task.priority=3
                                     
               var aux = await Task.insert(task)
               return aux                  
@@ -91,6 +92,7 @@ router.get('/calendar', async function(req, res) {
           task.origin = "Google Calendar"
           task.owner = "me"
           task.state = 0
+          task.priority=3
               
           var aux = await Task.insert(task)
 
@@ -137,6 +139,7 @@ router.get('/emails', async function(req, res) {
                   task.origin = "Google Gmail"
                   task.owner = "me"
                   task.state = 0
+                  task.priority=3
                   
                   var x = await Task.insert(task)
                   return x;

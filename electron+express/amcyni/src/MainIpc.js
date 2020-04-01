@@ -78,6 +78,12 @@ var google1 = {
 
 export default function setIpc(){
 
+  ipcMain.handle('URL_OUTLOOK',async (event,arg) => {
+    let response = await axios.get('http://localhost:4545/outlook/url');
+    var url = response.data;
+    return url
+  });
+
   ipcMain.handle('store_google_api_key', async (event, ...args) => {
     var response=true
     try {
