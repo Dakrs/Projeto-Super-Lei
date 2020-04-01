@@ -163,11 +163,12 @@ router.get('/emails', async function(req, res) {
   
   })          
 
-router.post('/code',async function(req,res){
+router.post('/code',async (req,res) => {
       var code = req.body.code;
+      var x
       var file = await readFile()
-     var x = await auth2.insertToken(code,JSON.parse(file))
-     res.jsonp(x)
+      response =await auth2.insertToken(code,JSON.parse(file))
+     res.jsonp(response)
 })
 
 
