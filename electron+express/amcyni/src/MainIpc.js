@@ -1,6 +1,9 @@
 const { ipcMain   } = require('electron');
 const axios = require('axios');
-var nanoid = require('nanoid')
+var nanoid = require('nanoid');
+
+const Store = require('electron-store');
+const store = new Store();
 
 
 function getTrue() {
@@ -87,10 +90,12 @@ export default function setIpc(){
   ipcMain.handle('store_google_api_key', async (event, ...args) => {
     var response=true
     try {
+      console.log(args)
        response = await axios.post('http://localhost:4545/google/code',{
          code : args[0]
        })
        // 0 - por fazer // 1 - completa  // 2 - cancelada
+       store.set('GOOGLE_API_KEY',true);
     }
     catch(err) {
           response= false

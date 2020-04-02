@@ -7,13 +7,16 @@ import './index.css';
 import Vue from 'vue';
 import Sortable from 'sortablejs';
 import './Components/todoinfo.js';
-import './Components/apimodal.js';
+//import './Components/apimodal.js';
+import './Components/modal.js';
 import {  sortByOrigin,
           sortByDate,
           sortByNormal,
           updateIndex
         } from './Sorting';
-import Ipc from './Ipc';
+//import Ipc from './Ipc';
+const Ipc = window.API.Ipc;
+const API = window.API;
 
 /**
 Todo:
@@ -101,11 +104,12 @@ var alltodos = new Vue({
     toggled: null,
     sortedBy: 0,
     sortableJS: null,
+    sync_status: [true,API.getGOOGLE_KEY_STATUS(),true]
   },
   async mounted(){
     var todos = await Ipc.get_all_todos();
     this.todos = sortByNormal(todos);
-    console.log(this.todos);
+    //console.log(this.todos);
   },
   methods: {
     toggleInfo: function (id) {
@@ -242,36 +246,65 @@ var alltodos = new Vue({
       var length = this.todos.length;
       var new_todos = [];
 
-      switch (type) {
-        case 0:
-          new_todos = await Ipc.get_git_todos();
-          break;
-        case 1:
-          new_todos = await Ipc.get_google_todos();
-          break;
-        case 2:
-          new_todos = await Ipc.get_outlook_todos();
-          break;
-        default:
+      if (!this.sync_status[type]){
+        //GOOGLE-MODAL
+        switch (type) {
+          case 0:
+            //$('#GOOGLE-MODAL').modal('show');
+            break;
+          case 1:
+            $('#GOOGLE-MODAL').modal('show');
+            break;
+          case 2:
+            break;
+          default:
+        }
       }
+      else{
+        switch (type) {
+          case 0:
+            new_todos = await Ipc.get_git_todos();
+            break;
+          case 1:
+            new_todos = await Ipc.get_google_todos();
+            break;
+          case 2:
+            new_todos = await Ipc.get_outlook_todos();
+            break;
+          default:
+        }
 
-      switch (this.sortedBy) {
-        case 0:
-          this.todos = sortByNormal(new_todos);
-          break;
-        case 1:
-          this.todos = sortByDate(new_todos);
-          break;
-        case 2:
-          this.todos = sortByOrigin(new_todos);
-          break;
-        default:
+        switch (this.sortedBy) {
+          case 0:
+            this.todos = sortByNormal(new_todos);
+            break;
+          case 1:
+            this.todos = sortByDate(new_todos);
+            break;
+          case 2:
+            this.todos = sortByOrigin(new_todos);
+            break;
+          default:
+        }
+        alert((new_todos.length - length)  + ' new ToDos!');
       }
-      alert((new_todos.length - length)  + ' new ToDos!');
     },
+    handleGoogleModal: async function(key,type){
+      const res = await window.API.Ipc.store_google_api_key(key);
+
+      if (res !== true){
+        alert('Error saving Google API key');
+      }
+      else{
+        this.sync_status[type] = true;
+      }
+      $('#GOOGLE-MODAL').modal('hide');
+    },
+    // função que mostra o modal
     toggleAddTodo: function(){
       $('#ADD_TOO_COMP').modal('show');
     },
+    // função para adicionar um todo.
     addTodo: async function (obj){
       const res = await Ipc.add_todo(obj);
 

@@ -14,6 +14,7 @@ class MainWindow {
         webPreferences: {
           //nodeIntegration: false,
           preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+          contextIsolation: true,
         },
         show: false,
       })

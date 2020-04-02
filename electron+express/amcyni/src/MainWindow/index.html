@@ -151,12 +151,15 @@
           </div>
         </div>
       </div>
+      <google-key-modal
+        :submit_fun="handleGoogleModal">
+      </google-key-modal>
       <add-todo
         :callback="addTodo"
       ></add-todo>
     </div>
-    <div id="VUE-MODEL">
+    <!--div id="VUE-MODEL">
       <api-modal></api-modal>
-    </div>
+    </div-->
   </body>
 </html>

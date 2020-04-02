@@ -1,9 +1,6 @@
 import $ from 'jquery';
 import Vue from 'vue';
-import Ipc from '../Ipc';
-
-const store = new window.Store();
-store.delete('GOOGLE_API_KEY')
+//import Ipc from '../Ipc';
 
 Vue.component('api-modal',{
   props: {
@@ -11,7 +8,7 @@ Vue.component('api-modal',{
   },
   methods:{
     goToURL: function(){
-      Ipc.triggerURL();
+      window.API.Ipc.triggerGOOGLE_URL();
     },
   },
   template: `
@@ -87,7 +84,8 @@ var api_controller = new Vue({
 
 //verifica se é preciso pedir a chave para a api no modal
 function API_KEY_EXISTS(){
-  var key = store.get('GOOGLE_API_KEY');
+  //var key = store.get('GOOGLE_API_KEY');
+  var key = window.API.getGOOGLE_KEY_STATUS();
   console.log(key);
 
   return (typeof key !== 'undefined');
@@ -95,8 +93,9 @@ function API_KEY_EXISTS(){
 
 //guardar a key localmente.
 async function SAVE_API_KEY(key){
-  const res = await Ipc.store_google_api_key(key);
+  const res = await window.API.Ipc.store_google_api_key(key);
+  /**
   if (res)
-    store.set('GOOGLE_API_KEY',true);
+    store.set('GOOGLE_API_KEY',true);*/
   return res;
 }

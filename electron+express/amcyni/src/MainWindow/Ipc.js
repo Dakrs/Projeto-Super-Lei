@@ -1,6 +1,8 @@
-const ipcRenderer = window.ipcRenderer
+//const ipcRenderer = window.ipcRenderer
+const { ipcRenderer } = require('electron')
 
 export async function store_google_api_key(key){
+  console.log(key);
   const result = await ipcRenderer.invoke('store_google_api_key',key);
   return result;
 }
@@ -50,7 +52,7 @@ export async function history(){
   return result;
 }
 
-export function triggerURL(){
+export function triggerGOOGLE_URL(){
   ipcRenderer.send('URL_GOOGLE');
 }
 
@@ -64,4 +66,4 @@ export default {store_google_api_key,
                 get_outlook_todos,
                 add_todo,
                 history,
-                triggerURL}
+                triggerGOOGLE_URL}
