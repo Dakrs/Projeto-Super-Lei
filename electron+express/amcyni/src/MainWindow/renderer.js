@@ -263,7 +263,7 @@ var alltodos = new Vue({
       else{
         switch (type) {
           case 0:
-            new_todos = await Ipc.get_git_todos();
+            new_todos = await Ipc.getGOOGLE_KEY_STATUS();
             break;
           case 1:
             new_todos = await Ipc.get_google_todos();

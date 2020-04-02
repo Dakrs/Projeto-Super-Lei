@@ -7,8 +7,7 @@ var nanoid = require('nanoid');
 const {google} = require('googleapis');
 var Task = require('../controllers/tasks')
 var Utility = require('../utility')
-var Credential = require('../controllers/credentials')
-var axios = require('axios')
+
 
 
 router.get('/url',async function(req,res){
@@ -23,7 +22,7 @@ router.get('/url',async function(req,res){
 
 /* GET home page. */
 router.get('/tasks', async function(req, res) {
-  task = {}
+
   var file = await readFile();
   if(file){
     auth2.authorize(JSON.parse(file), async function(oAuth2Client){
@@ -38,11 +37,13 @@ router.get('/tasks', async function(req, res) {
 
           var response = await Task.findByIdOrigin(t.id,"Google Tasks")
           if (response.length===0){
-
+            var task = {}
               task._id=nanoid()
               task.idOrigin = t.id
               task.date= t.due
               task.name = t.title
+              if(t.notes)
+              task.description = t.notes
               task.origin = "Google Tasks"
               task.owner = "me"
               task.state = 0
@@ -71,7 +72,6 @@ router.get('/tasks', async function(req, res) {
 
 /* GET home page. */
 router.get('/calendar', async function(req, res) {
-  task = {}
   var file = await readFile();
   if(file){
     auth2.authorize(JSON.parse(file), async function(oAuth2Client){
@@ -84,11 +84,13 @@ router.get('/calendar', async function(req, res) {
     if (bool){
         var response = await Task.findByIdOrigin(element.id,"Google Calendar")
         if (response.length===0){
-
+            var task ={}
           task._id=nanoid()
           task.idOrigin = element.id
           task.date= element.start.date
           task.name = element.summary
+          if(element.description)
+          task.description=element.description
           task.origin = "Google Calendar"
           task.owner = "me"
           task.state = 0
@@ -163,11 +165,12 @@ router.get('/emails', async function(req, res) {
 
   })
 
-router.post('/code',async function(req,res){
+router.post('/code',async (req,res) => {
       var code = req.body.code;
+      var x
       var file = await readFile()
-     var x = await auth2.insertToken(code,JSON.parse(file))
-     res.jsonp(x)
+      response =await auth2.insertToken(code,JSON.parse(file))
+     res.jsonp(response)
 })
 
 
@@ -239,7 +242,8 @@ async function list_tasks(auth) {
 async function tasks(auth,idList){
   const service = google.tasks({version : 'v1',auth})
    const taskLists = await service.tasks.list({
-    tasklist:idList
+    tasklist:idList,
+    dueMin : new Date()
   })
   return taskLists
 }
@@ -265,9 +269,12 @@ async function listCalendars(auth){
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
 async function listEvents(auth,idCalendario){
+  const start = new Date(new Date().setHours(0,0,0));
     const calendar = google.calendar({version: 'v3', auth});
     const calendarios = await calendar.events.list({
-      calendarId: idCalendario
+      calendarId: idCalendario,
+      timeMax: new Date(new Date(start).setDate(start.getDate() + 365)),
+      timeMin: start
     })
 
 

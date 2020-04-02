@@ -88,31 +88,33 @@ export default function setIpc(){
   });
 
   ipcMain.handle('store_google_api_key', async (event, ...args) => {
-    var response=true
+    var response=false
     try {
-      console.log(args)
-       response = await axios.post('http://localhost:4545/google/code',{
+       var aux = await axios.post('http://localhost:4545/google/code',{
          code : args[0]
        })
+       response = aux.data
        // 0 - por fazer // 1 - completa  // 2 - cancelada
        store.set('GOOGLE_API_KEY',true);
     }
     catch(err) {
-          response= false
+          console.error("Erro",err)
       }
 
-    return response;
+
+    return response
   });
 
   ipcMain.handle('complete_todo_id', async (event, ...id) => {
 
-    var response=true
+    var response=false
     try {
        response = await axios.put('http://localhost:4545/api/state/'+id+'?state=1')
        // 0 - por fazer // 1 - completa  // 2 - cancelada
+       response=true
     }
     catch(err) {
-          response= false
+      console.error("Erro",err)
       }
 
     return response;
@@ -121,13 +123,14 @@ export default function setIpc(){
 
   ipcMain.handle('cancel_todo_id', async (event, ...id) => {
 
-    var response =true
+    var response =false
     try {
-       response = await axios.put('http://localhost:4545/api/state/'+id+'?state=1')
+        await axios.put('http://localhost:4545/api/state/'+id+'?state=2')
        // 0 - por fazer // 1 - completa  // 2 - cancelada
+       response =true
     }
     catch(err) {
-          response=true
+          console.error("Erro",err)
       }
 
     return response;
