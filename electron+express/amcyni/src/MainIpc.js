@@ -5,7 +5,7 @@ var nanoid = require('nanoid');
 const Store = require('electron-store');
 const store = new Store();
 
-
+/**
 function getTrue() {
   return new Promise(resolve => {
     setTimeout(() => {
@@ -78,11 +78,25 @@ var google1 = {
   origin: 'Google',
   priority: 4,
 }
+*/
 
 export default function setIpc(){
 
-  ipcMain.handle('URL_OUTLOOK',async (event,arg) => {
+  ipcMain.handle('verify-outlook-key', (event,arg) => {
+    //perguntar à api se a key do outlook existe
+
+    //store.set('OUTLOOK_API_KEY',true);
+    return false;
+  })
+
+  ipcMain.handle('url-outlook',async (event,arg) => {
     let response = await axios.get('http://localhost:4545/outlook/url');
+    var url = response.data;
+    return url
+  });
+
+  ipcMain.handle('url-google',async (event,arg) => {
+    let response = await axios.get('http://localhost:4545/google/url');
     var url = response.data;
     return url
   });

@@ -104,7 +104,7 @@ var alltodos = new Vue({
     toggled: null,
     sortedBy: 0,
     sortableJS: null,
-    sync_status: [true,API.getGOOGLE_KEY_STATUS(),false]
+    sync_status: [true,API.getGOOGLE_KEY_STATUS(),API.getOUTLOOK_KEY_STATUS()]
   },
   async mounted(){
     var todos = await Ipc.get_all_todos();
@@ -256,7 +256,7 @@ var alltodos = new Vue({
             $('#GOOGLE-MODAL').modal('show');
             break;
           case 2:
-            Ipc.triggerGOOGLE_URL();
+            $('#OUTLOOK-MODAL').modal('show');
             break;
           default:
         }
@@ -264,7 +264,7 @@ var alltodos = new Vue({
       else{
         switch (type) {
           case 0:
-            new_todos = await Ipc.getGOOGLE_KEY_STATUS();
+            new_todos = await Ipc.get_git_todos();
             break;
           case 1:
             new_todos = await Ipc.get_google_todos();
@@ -298,8 +298,22 @@ var alltodos = new Vue({
       }
       else{
         this.sync_status[type] = true;
+        alert('Google API key validated');
       }
       $('#GOOGLE-MODAL').modal('hide');
+    },
+    handleOutlookModal: async function(){
+      const res = await Ipc.verify_Outlook_Key();
+
+      if (res !== true){
+        alert('Error saving Outlook API key');
+      }
+      else{
+        this.sync_status[2] = true;
+        alert('Outlook API key validated');
+      }
+
+      $('#OUTLOOK-MODAL').modal('hide');
     },
     // função que mostra o modal
     toggleAddTodo: function(){

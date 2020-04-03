@@ -4,23 +4,38 @@ const Positioner = require('electron-positioner');
 
 
 class ApiURLWindow {
-    constructor(url,par) {
+    constructor(type,par) {
       this.window = new BrowserWindow({
         width: 600,
         height: 450,
         titleBarStyle: 'hidden',
         movable: true,
         resizable: false,
-        /**
+
         webPreferences: {
           //nodeIntegration: false,
-          preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
-        },*/
+          //preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+          preload: OUTLOOK_MODAL_PRELOAD_WEBPACK_ENTRY,
+          webviewTag: true,
+          contextIsolation: true,
+        },
         show: false,
         modal: true,
         parent: par,
       })
-      this.window.loadURL(url);
+
+      switch (type) {
+        case 0:
+          break;
+        case 1:
+          this.window.loadURL(GOOGLE_MODAL_WEBPACK_ENTRY);
+          break;
+        case 2:
+          this.window.loadURL(OUTLOOK_MODAL_WEBPACK_ENTRY);
+          break;
+        default:
+
+      }
       //this.window.webContents.openDevTools();
       /**
       this.window.once('ready-to-show', () => {

@@ -21,7 +21,14 @@ ipcRenderer.send('test','ests');*/
 contextBridge.exposeInMainWorld(
   'API',
   {
-    getGOOGLE_KEY_STATUS: () => store.get('GOOGLE_API_KEY'),
+    getGOOGLE_KEY_STATUS: () => {
+      var key = store.get('GOOGLE_API_KEY');
+      return (typeof key !== 'undefined');
+    },
+    getOUTLOOK_KEY_STATUS: () => {
+      var key = store.get('OUTLOOK_API_KEY');
+      return (typeof key !== 'undefined');
+    },
     Ipc: API_MAIN,
   }
 )

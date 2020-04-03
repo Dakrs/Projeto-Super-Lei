@@ -62,6 +62,22 @@
                   "html": "./src/LoadingWindow/loading.html",
                   "js": "./src/LoadingWindow/loading.js",
                   "name": "loading_window"
+                },
+                {
+                  "html": "./src/ModalWindow/modal.html",
+                  "js": "./src/ModalWindow/modalgoogle.js",
+                  "name": "google_modal",
+                  "preload": {
+                    "js": "./src/ModalWindow/preload.js"
+                  }
+                },
+                {
+                  "html": "./src/ModalWindow/modal.html",
+                  "js": "./src/ModalWindow/modaloutlook.js",
+                  "name": "outlook_modal",
+                  "preload": {
+                    "js": "./src/ModalWindow/preload.js"
+                  }
                 }
               ]
             }

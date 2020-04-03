@@ -52,7 +52,26 @@ export async function history(){
 }
 
 export function triggerGOOGLE_URL(){
-  ipcRenderer.send('URL_GOOGLE');
+  ipcRenderer.send('trigger-google-url');
+}
+
+export function triggerOUTLOOK_URL(){
+  ipcRenderer.send('trigger-outlook-url');
+}
+
+export async function getGOOGLEURL(){
+  const result = await ipcRenderer.invoke('url-google');
+  return result;
+}
+
+export async function getOUTLOOKURL(){
+  const result = await ipcRenderer.invoke('url-outlook');
+  return result;
+}
+
+export async function verify_Outlook_Key(){
+  const result = await ipcRenderer.invoke('verify-outlook-key');
+  return result;
 }
 
 export default {store_google_api_key,
@@ -65,4 +84,8 @@ export default {store_google_api_key,
                 get_outlook_todos,
                 add_todo,
                 history,
-                triggerGOOGLE_URL}
+                triggerGOOGLE_URL,
+                triggerOUTLOOK_URL,
+                getGOOGLEURL,
+                getOUTLOOKURL,
+                verify_Outlook_Key}

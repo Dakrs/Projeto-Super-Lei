@@ -9,7 +9,7 @@ import setIpc from './MainIpc';
 
 let loadwin = null;
 let mainwin = null;
-let googlewindow = null;
+let modalwindow = null;
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -160,19 +160,38 @@ app.on('activate', () => {
 // code. You can also put them in separate files and import them here.
 setIpc();
 
-ipcMain.on('URL_GOOGLE', async (event,arg) => {
-	let response = await axios.get('http://localhost:4545/google/url');
-	var url = response.data;
-
-	googlewindow = new ApiURLWindow(url,mainwin.window);
+ipcMain.on('trigger-google-url', async (event,arg) => {
+	modalwindow = new ApiURLWindow(1,mainwin.window);
 
 
-	googlewindow.window.once('ready-to-show', () => {
-		googlewindow.window.show();
+	modalwindow.window.once('ready-to-show', () => {
+		modalwindow.window.show();
 	});
 
-	googlewindow.window.on('closed',() => {
-		googlewindow = null;
+	modalwindow.window.on('closed',() => {
+		modalwindow = null;
 		//mainwin.window.show();
 	})
+})
+
+ipcMain.on('trigger-outlook-url', async (event,arg) => {
+	modalwindow = new ApiURLWindow(2,mainwin.window);
+
+
+	modalwindow.window.once('ready-to-show', () => {
+		modalwindow.window.show();
+	});
+
+	modalwindow.window.on('closed',() => {
+		modalwindow = null;
+		//mainwin.window.show();
+	})
+})
+
+
+ipcMain.on('close-modal', (event,arg) => {
+	if (modalwindow !== null){
+		modalwindow.window.close();
+		//mainwin.window.setEnabled(true);
+	}
 })
