@@ -15,11 +15,11 @@ router.get('/', async function(req, res, next) {
         // Redirect to home
         res.jsonp("Close the window")
       } catch (err) {
-        res.status(500).jsonp(err)
+        res.jsonp(false)
       }
     } else {
       // Otherwise complain
-      res.status(500).jsonp(err)
+      res.jsonp(false)
     }
   });
 

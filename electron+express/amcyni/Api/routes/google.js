@@ -76,43 +76,45 @@ router.get('/calendar', async function(req, res) {
   if(file){
     auth2.authorize(JSON.parse(file), async function(oAuth2Client){
 
-      var idCalendario = await listCalendars(oAuth2Client)
-  var eventos = await listEvents(oAuth2Client,idCalendario)
+      var ids_Calendars = await listCalendars(oAuth2Client)
+      ids_Calendars.map( async idCalendario => {
 
-  const promises = eventos.map(async element =>{
-    var bool = await Utility.todoRegex(element.summary)
-    if (bool){
-        var response = await Task.findByIdOrigin(element.id,"Google Calendar")
-        if (response.length===0){
-            var task ={}
-          task._id=nanoid()
-          task.idOrigin = element.id
-          task.date= element.start.date
-          task.name = element.summary
-          if(element.description)
-          task.description=element.description
-          task.origin = "Google Calendar"
-          task.owner = "me"
-          task.state = 0
-          task.priority=3
+        var eventos = await listEvents(oAuth2Client,idCalendario)
 
-          var aux = await Task.insert(task)
+    const promises = eventos.map(async element =>{
+      var bool = await Utility.todoRegex(element.summary)
+      if (bool){
+          var response = await Task.findByIdOrigin(element.id,"Google Calendar")
+          if (response.length===0){
+              var task ={}
+            task._id=nanoid()
+            task.idOrigin = element.id
+            task.date= element.start.date
+            task.name = element.summary
+            if(element.description)
+            task.description=element.description
+            task.origin = "Google Calendar"
+            task.owner = "me"
+            task.state = 0
+            task.priority=3
 
-          return aux;
-        }
+            var aux = await Task.insert(task)
 
+            return aux;
+          }
+
+      }
+      else
+          return bool;
+
+    });
+
+    var tasks = await Promise.all(promises)
+  })
+    res.jsonp(ids_Calendars)
+      })
     }
-    else
-        return bool;
-
-  });
-
-  var tasks = await Promise.all(promises)
-
-  res.jsonp(eventos)
-    })
-  }
-})
+  })
 
 router.get('/emails', async function(req, res) {
   task = {}
@@ -253,10 +255,22 @@ async function tasks(auth,idList){
 
 
 async function listCalendars(auth){
+  var calendars_ids =[]
   const service = google.calendar({version : 'v3',auth})
-   const taskLists = await service.calendarList.list({
+   var calendars = await service.calendarList.list({
   })
-    return taskLists.data.items[0].id
+    
+    var promises1 = calendars.data.items.map(async calendar =>{
+      if (calendar.accessRole === "owner"){
+          calendars_ids.push(calendar.id)
+      }        
+    return;
+    })
+
+    await Promise.all(promises1)
+
+    return calendars_ids
+
 }
 
 
