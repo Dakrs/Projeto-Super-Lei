@@ -19,7 +19,7 @@ class ApiURLWindow {
           webviewTag: true,
           contextIsolation: true,
         },
-        show: false,
+        show: true,
         modal: true,
         parent: par,
       })

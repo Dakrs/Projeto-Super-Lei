@@ -304,6 +304,7 @@ var alltodos = new Vue({
     },
     handleOutlookModal: async function(){
       const res = await Ipc.verify_Outlook_Key();
+      console.log(res);
 
       if (res !== true){
         alert('Error saving Outlook API key');
