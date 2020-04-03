@@ -3,7 +3,7 @@ const path = require('path');
 const axios = require('axios');
 const LoadingWindow = require('./Electron/LoadingWindow');
 const MainWindow = require('./Electron/MainWindow');
-const GoogleURLWindow = require('./Electron/GoogleURLWindow');
+const ApiURLWindow = require('./Electron/ApiURLWindow');
 import setIpc from './MainIpc';
 
 
@@ -164,14 +164,15 @@ ipcMain.on('URL_GOOGLE', async (event,arg) => {
 	let response = await axios.get('http://localhost:4545/google/url');
 	var url = response.data;
 
-	googlewindow = new GoogleURLWindow(url,mainwin);
+	googlewindow = new ApiURLWindow(url,mainwin.window);
+
+
 	googlewindow.window.once('ready-to-show', () => {
 		googlewindow.window.show();
-		mainwin.window.hide();
 	});
 
 	googlewindow.window.on('closed',() => {
 		googlewindow = null;
-		mainwin.window.show();
+		//mainwin.window.show();
 	})
 })

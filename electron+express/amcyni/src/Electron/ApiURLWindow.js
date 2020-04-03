@@ -3,11 +3,11 @@ const { BrowserWindow } = require('electron');
 const Positioner = require('electron-positioner');
 
 
-class GoogleURLWindow {
+class ApiURLWindow {
     constructor(url,par) {
       this.window = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 600,
+        height: 450,
         titleBarStyle: 'hidden',
         movable: true,
         resizable: false,
@@ -21,9 +21,18 @@ class GoogleURLWindow {
         parent: par,
       })
       this.window.loadURL(url);
-      this.window.webContents.openDevTools();
+      //this.window.webContents.openDevTools();
+      /**
+      this.window.once('ready-to-show', () => {
+        this.window.show();
+        par.window.hide();
+      });
+
+      this.window.on('closed',() => {
+        par.window.show();
+      })*/
     }
 }
 
 
-module.exports = GoogleURLWindow;
+module.exports = ApiURLWindow;

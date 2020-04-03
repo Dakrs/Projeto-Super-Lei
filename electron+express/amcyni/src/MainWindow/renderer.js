@@ -104,7 +104,7 @@ var alltodos = new Vue({
     toggled: null,
     sortedBy: 0,
     sortableJS: null,
-    sync_status: [true,API.getGOOGLE_KEY_STATUS(),true]
+    sync_status: [true,API.getGOOGLE_KEY_STATUS(),false]
   },
   async mounted(){
     var todos = await Ipc.get_all_todos();
@@ -256,6 +256,7 @@ var alltodos = new Vue({
             $('#GOOGLE-MODAL').modal('show');
             break;
           case 2:
+            Ipc.triggerGOOGLE_URL();
             break;
           default:
         }
@@ -290,7 +291,7 @@ var alltodos = new Vue({
       }
     },
     handleGoogleModal: async function(key,type){
-      const res = await window.API.Ipc.store_google_api_key(key);
+      const res = await Ipc.store_google_api_key(key);
 
       if (res !== true){
         alert('Error saving Google API key');

@@ -2,7 +2,6 @@
 const { ipcRenderer } = require('electron')
 
 export async function store_google_api_key(key){
-  console.log(key);
   const result = await ipcRenderer.invoke('store_google_api_key',key);
   return result;
 }
