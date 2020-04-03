@@ -15,3 +15,5 @@ module.exports.update = (type,token) =>{
         .updateOne({type : type},
             {$set :{token : token}})
         }
+
+      

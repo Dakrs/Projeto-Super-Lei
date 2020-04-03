@@ -82,12 +82,19 @@ var google1 = {
 
 export default function setIpc(){
 
-  ipcMain.handle('verify-outlook-key', (event,arg) => {
+  ipcMain.handle('verify-outlook-key',async (event,arg) => {
     //perguntar à api se a key do outlook existe
-
+    var response=false  
+    try {
+    var aux =await axios.get('http://localhost:4545/outlook/verify',)
+    response=aux.data;
+    }
+    catch(err){
+      console.error("Erro",err)
+    }
     //store.set('OUTLOOK_API_KEY',true);
-    return false;
-  })
+    return response;
+   })
 
   ipcMain.handle('url-outlook',async (event,arg) => {
     let response = await axios.get('http://localhost:4545/outlook/url');

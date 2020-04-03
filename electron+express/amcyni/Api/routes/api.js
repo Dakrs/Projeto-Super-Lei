@@ -20,7 +20,6 @@ router.get('/origin',function(req, res, next) {
     .then(dados =>res.jsonp(dados))
     .catch(erro => res.status(500).jsonp(erro))
 })
-
 router.get('/date',function(req, res, next) {
     Task.sortByTime()
     .then(dados =>res.jsonp(dados))
@@ -33,6 +32,7 @@ router.get('/historic',function(req, res, next) {
     .then(dados =>res.jsonp(dados))
     .catch(erro => res.status(500).jsonp(erro))
 })
+
 
 
 
@@ -51,6 +51,7 @@ router.put('/',function(req, res, next) {
             Task.updateById(element)
     });
     res.jsonp(todos)
+    
 
 })
 

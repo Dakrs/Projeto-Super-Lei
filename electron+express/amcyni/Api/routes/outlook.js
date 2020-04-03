@@ -5,6 +5,7 @@ var graph = require('@microsoft/microsoft-graph-client');
 require('isomorphic-fetch');
 var nanoid = require('nanoid')
 var Task = require('../controllers/tasks')
+var Credential = require('../controllers/credentials')
 var Utility = require('../utility')
 
 
@@ -12,6 +13,18 @@ var Utility = require('../utility')
 router.get('/url',async function(req,res){
   var url = await authHelper.getAuthUrl()
   res.jsonp(url)
+
+})
+
+router.get('/verify', function(req,res){
+  Credential.get("OUTLOOK")
+  .then(dados =>{
+      if(dados.length>0)
+    res.jsonp(true)
+      else
+      res.jsonp(false)
+  })
+  .catch(erro => res.jsonp(false))
 
 })
 
