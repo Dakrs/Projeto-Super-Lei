@@ -5,6 +5,14 @@ var nanoid = require('nanoid');
 const Store = require('electron-store');
 const store = new Store();
 
+
+function getTrue() {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve(true);
+    }, 200);
+  });
+}
 /**
 function getTrue() {
   return new Promise(resolve => {
@@ -80,18 +88,29 @@ var google1 = {
 }
 */
 
+var git = {
+  _id: 5,
+  date: new Date(2016,3,12),
+  name: 'Merge',
+  origin: 'Github',
+  description: 'Merge mal realizado',
+  priority: 3,
+}
+
 export default function setIpc(){
 
   ipcMain.handle('verify-outlook-key',async (event,arg) => {
     //perguntar à api se a key do outlook existe
-    var response=false  
+    var response=false
     try {
-    var aux =await axios.get('http://localhost:4545/outlook/verify',)
-    response=aux.data;
+      var aux =await axios.get('http://localhost:4545/outlook/verify',)
+      response=aux.data;
     }
     catch(err){
       console.error("Erro",err)
     }
+    if (response === true)
+      store.set('OUTLOOK_API_KEY',true);
     //store.set('OUTLOOK_API_KEY',true);
     return response;
    })

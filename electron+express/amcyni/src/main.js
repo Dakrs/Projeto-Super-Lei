@@ -170,6 +170,7 @@ ipcMain.on('trigger-google-url', async (event,arg) => {
 
 	modalwindow.window.on('closed',() => {
 		modalwindow = null;
+		console.log('del');
 		//mainwin.window.show();
 	})
 })
@@ -184,6 +185,7 @@ ipcMain.on('trigger-outlook-url', async (event,arg) => {
 
 	modalwindow.window.on('closed',() => {
 		modalwindow = null;
+		console.log('del');
 		//mainwin.window.show();
 	})
 })
@@ -191,7 +193,8 @@ ipcMain.on('trigger-outlook-url', async (event,arg) => {
 
 ipcMain.on('close-modal', (event,arg) => {
 	if (modalwindow !== null){
-		modalwindow.window.close();
+		modalwindow.window.hide();
+		modalwindow.window.destroy();
 		//mainwin.window.setEnabled(true);
 	}
 })
