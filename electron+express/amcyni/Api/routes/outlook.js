@@ -10,8 +10,8 @@ var Utility = require('../utility')
 
 
 
-router.get('/url',async function(req,res){
-  var url = await authHelper.getAuthUrl()
+router.get('/url', async function(req,res){
+  var url = authHelper.getAuthUrl()
   res.jsonp(url)
 
 })

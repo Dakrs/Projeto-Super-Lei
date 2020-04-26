@@ -10,7 +10,7 @@ const keys = require('./config/keys');
 const cookieSession = require('cookie-session');
 
 
-require('dotenv').config();
+require('dotenv').config({path : __dirname+'/.env'});
 
 /****************************
  * MONGO CONNECTION

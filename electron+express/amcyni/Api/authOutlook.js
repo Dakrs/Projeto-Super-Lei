@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const Credential = require('./controllers/credentials')
 
+
 const credentials = {
     client: {
       id: process.env.APP_ID,
@@ -12,15 +13,18 @@ const credentials = {
       tokenPath: 'common/oauth2/v2.0/token'
     }
   };
+
   const oauth2 = require('simple-oauth2').create(credentials);
-  
-  function getAuthUrl() {
-    const returnVal = oauth2.authorizationCode.authorizeURL({
-      redirect_uri: process.env.REDIRECT_URI,
-      scope: process.env.APP_SCOPES
-    });
-    return returnVal;
-  }
+
+    
+function getAuthUrl() {
+  const returnVal = oauth2.authorizationCode.authorizeURL({
+    redirect_uri: process.env.REDIRECT_URI,
+    scope: process.env.APP_SCOPES
+  });
+  console.log(`Generated auth url: ${returnVal}`);
+  return returnVal;
+}
   
   exports.getAuthUrl = getAuthUrl;
 

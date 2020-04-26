@@ -23,13 +23,6 @@ router.get('/', async function(req, res, next) {
     }
   });
 
-  /* GET /authorize/signout */
-router.get('/signout', function(req, res, next) {
-    authHelper.clearCookies(res);
-  
-    // Redirect to home
-    res.redirect('/');
-  });
 
 
 module.exports = router;
