@@ -50,7 +50,6 @@ router.get('/verify', function(req,res){
 router.get('/login/return', async function(req, res, next) {
     // Get auth code
   const code = req.query.code;
-  console.log("CODE ",code);
 
   // If code is present, use it
   if (code) {
@@ -91,35 +90,48 @@ router.get('/issues', async function(req, res, next) {
         const headers = {
           "Authorization" : "Token " + accessToken
         }   
-        const url = "https://api.github.com/issues?q=author:" + username + " type:issue";
+        const url = "https://api.github.com/user/repos";/*?q=author:" + username + " type:issue";*/
         const response = await fetch(url, {
           "method": "GET",
           "headers": headers
         });
         
         const result =  await response.json();
-        console.log(result);
         
-        result.forEach(function(res) {
-            Task.findByIdOrigin(res.id,"GITHUB")
-              .then(response =>{  
-                if(response.length===0){
-                  task._id = nanoid()
-                  task.idOrigin = res.id
-                  task.name = res.title
-                  task.description = res.body
-                  task.origin = "GITHUB"
-                  task.owner = res.user.id
-                  task.state = 0
-                  
-                  Task.insert(task)
-                  .then(dados => console.log("inseri task do github"))
-                }
-              })
+        result.forEach( async function(res) {
+            title = res.name;
+
+            const headers = {
+              "Authorization" : "Token " + accessToken
+            }   
+            const url2 = "https://api.github.com/repos/" + username + "/" + title +  "/issues";/*?q=author:" + username + " type:issue";*/
+            
+            const issues = await fetch(url2, {
+              "method": "GET",
+              "headers": headers
+            });
+
+            const issueRes = await issues.json();
+
+            issueRes.forEach(function(r) {
+              Task.findByIdOrigin(r.id,"GITHUB")
+                .then(response =>{  
+                  if(response.length===0){
+                    task._id = nanoid()
+                    task.idOrigin = r.id
+                    task.name = r.title
+                    task.description = r.body
+                    task.origin = "GITHUB"
+                    task.owner = r.user.id
+                    task.state = 0
+                    
+                    Task.insert(task)
+                    .then(dados => console.log("inseri task do github"))
+                  }
+                })
+            })
         });
-
         res.jsonp(result);
-
       } catch (error) {
         console.log(error);
         githubData = { error: error }
@@ -164,27 +176,8 @@ async function getAccessToken() {
   // Do we have an access token cached?
   var token = await Credential.get("GITHUB");
 
-  if (token.length>0) {
-      return token[0].token.access_token;
-    }
+  return token[0].token.access_token;
 
-    // Either no token or it's expired, do we have a
-    // refresh token?
-    const refresh_token = token[0].token.refresh_token
-    if (refresh_token) {
-      const newToken = await oauth2.accessToken.create({refresh_token: refresh_token}).refresh();
-      var tokenAux = {}
-      tokenAux.access_token = newToken.token.access_token
-      tokenAux.refresh_token =newToken.token.refresh_token
-      tokenAux.scope = newToken.token.scope
-      tokenAux.token_type=newToken.token.token_type
-      tokenAux.expiry_date = newToken.token.expires_at.getTime()
-      Credential.update("GITHUB",tokenAux)
-      return newToken.token.access_token;
-    }
-  
-  // Nothing in the cookies that helps, return empty
-  return null;
 }
 
 
