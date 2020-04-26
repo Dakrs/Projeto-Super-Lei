@@ -70,7 +70,6 @@ router.get('/login/return', async function(req, res, next) {
 router.get('/issues', async function(req, res, next) {
     task = {}
 
-    let githubData;
     const accessToken = await getAccessToken();
 
     if(accessToken){
@@ -97,41 +96,48 @@ router.get('/issues', async function(req, res, next) {
         });
         
         const result =  await response.json();
+        var issueRes = [];
+                
+        var promise1 = result.map( async function(repo) {
+              title = repo.name;
+
+              const headers = {
+                "Authorization" : "Token " + accessToken
+              }   
+              const url2 = "https://api.github.com/repos/" + username + "/" + title +  "/issues";/*?q=author:" + username + " type:issue";*/
+              
+              const issues = await fetch(url2, {
+                "method": "GET",
+                "headers": headers
+              })
+
+              issueRes = await issues.json();
+              
+              if(issueRes.length > 0){
+                var promise2 = issueRes.map(async r => {
+                  var response = await Task.findByIdOrigin(r.id,"GITHUB")
+                  if (response.length===0){
+                    var task = {}
+                        task._id = nanoid()
+                        task.idOrigin = r.id
+                        task.name = r.title
+                        task.description = r.body
+                        task.origin = "GITHUB"
+                        task.owner = r.user.id
+                        task.state = 0
+                        
+                        var aux = await Task.insert(task)
+                        console.log("INSERI");
+                        return aux
+                        
+                   }
+                })                  
+                await Promise.all(promise2);
+              }
+        })
+        await Promise.all(promise1);
+        res.jsonp(issueRes);
         
-        result.forEach( async function(res) {
-            title = res.name;
-
-            const headers = {
-              "Authorization" : "Token " + accessToken
-            }   
-            const url2 = "https://api.github.com/repos/" + username + "/" + title +  "/issues";/*?q=author:" + username + " type:issue";*/
-            
-            const issues = await fetch(url2, {
-              "method": "GET",
-              "headers": headers
-            });
-
-            const issueRes = await issues.json();
-
-            issueRes.forEach(function(r) {
-              Task.findByIdOrigin(r.id,"GITHUB")
-                .then(response =>{  
-                  if(response.length===0){
-                    task._id = nanoid()
-                    task.idOrigin = r.id
-                    task.name = r.title
-                    task.description = r.body
-                    task.origin = "GITHUB"
-                    task.owner = r.user.id
-                    task.state = 0
-                    
-                    Task.insert(task)
-                    .then(dados => console.log("inseri task do github"))
-                  }
-                })
-            })
-        });
-        res.jsonp(result);
       } catch (error) {
         console.log(error);
         githubData = { error: error }
