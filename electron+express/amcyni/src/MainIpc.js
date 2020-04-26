@@ -142,7 +142,7 @@ export default function setIpc(){
   });
 
   ipcMain.handle('url-github',async (event,arg) => {
-    let response = await axios.get('http://localhost:4545/github/auth');
+    let response = await axios.get('http://localhost:4545/github/url');
     var url = response.data;
     console.log(url);
     return url

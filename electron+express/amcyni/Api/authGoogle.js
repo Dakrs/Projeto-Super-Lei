@@ -64,9 +64,9 @@ async function getURL_to_access(credentials) {
   );
     var url = await getNewToken(oAuth2Client)
     return url
-    
-
 }
+
+
 function getNewToken(oAuth2Client) {
   const authUrl = oAuth2Client.generateAuthUrl({
       access_type: 'offline',
