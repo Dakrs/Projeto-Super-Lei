@@ -104,7 +104,7 @@ var alltodos = new Vue({
     toggled: null,
     sortedBy: 0,
     sortableJS: null,
-    sync_status: [true,API.getGOOGLE_KEY_STATUS(),API.getOUTLOOK_KEY_STATUS()]
+    sync_status: [API.getGITHUB_KEY_STATUS(),API.getGOOGLE_KEY_STATUS(),API.getOUTLOOK_KEY_STATUS()]
   },
   async mounted(){
     var todos = await Ipc.get_all_todos();
@@ -250,7 +250,7 @@ var alltodos = new Vue({
         //GOOGLE-MODAL
         switch (type) {
           case 0:
-            //$('#GOOGLE-MODAL').modal('show');
+            $('#GITHUB-MODAL').modal('show');
             break;
           case 1:
             $('#GOOGLE-MODAL').modal('show');
@@ -315,6 +315,20 @@ var alltodos = new Vue({
       }
 
       $('#OUTLOOK-MODAL').modal('hide');
+    },
+    handleGitHubModal: async function (){
+      const res = await Ipc.verify_Github_Key();
+      console.log(res);
+
+      if (res !== true){
+        alert('Error saving Github API key');
+      }
+      else {
+        this.sync_status[0] = true;
+        alert('Github API key validated');
+      }
+
+      $('#GITHUB-MODAL').modal('hide');
     },
     // função que mostra o modal
     toggleAddTodo: function(){

@@ -29,6 +29,10 @@ contextBridge.exposeInMainWorld(
       var key = store.get('OUTLOOK_API_KEY');
       return (typeof key !== 'undefined');
     },
+    getGITHUB_KEY_STATUS: () => {
+      var key = store.get('GITHUB_API_KEY');
+      return (typeof key !== 'undefined');
+    },
     Ipc: API_MAIN,
   }
 )

@@ -79,3 +79,36 @@ Vue.component('outlook-key-modal',{
   </div>
   `
 })
+
+Vue.component('github-key-modal',{
+  props: {
+    submit_fun: Function,
+  },
+  methods: {
+    goToURL: function(){
+      //window.API.Ipc.triggerOUTLOOK_URL();
+      window.API.Ipc.triggerGITHUB_URL();
+    },
+    submit: function(){
+      this.submit_fun();
+    }
+  },
+  template:`
+  <div class="modal fade" id="GITHUB-MODAL" data-focus="true" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="-webkit-user-select: none;">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalCenterTitle">Github API Key</h5>
+        </div>
+        <div class="modal-body">
+          <p>In order to access and colect usefull data for your application we need to access some sources.</p>
+          <span @click="goToURL()" style="text-align: center; cursor: pointer;">Link to generate API Key</span>
+        </div>
+        <div class="modal-footer">
+          <button @click="submit()" type="button" class="btn btn-dark">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  `
+})

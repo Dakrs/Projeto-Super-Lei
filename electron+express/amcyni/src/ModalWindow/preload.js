@@ -6,6 +6,7 @@ contextBridge.exposeInMainWorld(
   {
     GOOGLE_URL: API_MAIN.getGOOGLEURL,
     OUTLOOK_URL: API_MAIN.getOUTLOOKURL,
+    GITHUB_URL: API_MAIN.getGITHUBURL,
     close_modal: () => ipcRenderer.send('close-modal'),
   }
 )

@@ -132,6 +132,7 @@ export default function setIpc(){
   ipcMain.handle('url-outlook',async (event,arg) => {
     let response = await axios.get('http://localhost:4545/outlook/url');
     var url = response.data;
+    console.log(url);
     return url
   });
 
@@ -144,6 +145,7 @@ export default function setIpc(){
   ipcMain.handle('url-github',async (event,arg) => {
     let response = await axios.get('http://localhost:4545/github/auth');
     var url = response.data;
+    console.log(url);
     return url
   });
 

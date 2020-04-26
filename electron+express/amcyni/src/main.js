@@ -190,6 +190,21 @@ ipcMain.on('trigger-outlook-url', async (event,arg) => {
 	})
 })
 
+ipcMain.on('trigger-github-url', async (event,arg) => {
+	modalwindow = new ApiURLWindow(0,mainwin.window);
+
+
+	modalwindow.window.once('ready-to-show', () => {
+		modalwindow.window.show();
+	});
+
+	modalwindow.window.on('closed',() => {
+		modalwindow = null;
+		console.log('del');
+		//mainwin.window.show();
+	})
+})
+
 
 ipcMain.on('close-modal', (event,arg) => {
 	if (modalwindow !== null){

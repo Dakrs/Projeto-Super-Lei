@@ -78,6 +78,14 @@
                   "preload": {
                     "js": "./src/ModalWindow/preload.js"
                   }
+                },
+                {
+                  "html": "./src/ModalWindow/modal.html",
+                  "js": "./src/ModalWindow/modalgithub.js",
+                  "name": "github_modal",
+                  "preload": {
+                    "js": "./src/ModalWindow/preload.js"
+                  }
                 }
               ]
             }

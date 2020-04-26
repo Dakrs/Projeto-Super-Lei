@@ -26,6 +26,7 @@ class ApiURLWindow {
 
       switch (type) {
         case 0:
+          this.window.loadURL(GITHUB_MODAL_WEBPACK_ENTRY);
           break;
         case 1:
           this.window.loadURL(GOOGLE_MODAL_WEBPACK_ENTRY);

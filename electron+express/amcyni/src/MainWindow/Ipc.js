@@ -59,6 +59,10 @@ export function triggerOUTLOOK_URL(){
   ipcRenderer.send('trigger-outlook-url');
 }
 
+export function triggerGITHUB_URL(){
+  ipcRenderer.send('trigger-github-url');
+}
+
 export async function getGOOGLEURL(){
   const result = await ipcRenderer.invoke('url-google');
   return result;
@@ -66,6 +70,16 @@ export async function getGOOGLEURL(){
 
 export async function getOUTLOOKURL(){
   const result = await ipcRenderer.invoke('url-outlook');
+  return result;
+}
+
+export async function getGITHUBURL(){
+  const result = await ipcRenderer.invoke('url-github');
+  return result;
+}
+
+export async function verify_Github_Key(){
+  const result = await ipcRenderer.invoke('verify-github-key');
   return result;
 }
 
@@ -86,6 +100,9 @@ export default {store_google_api_key,
                 history,
                 triggerGOOGLE_URL,
                 triggerOUTLOOK_URL,
+                triggerGITHUB_URL,
                 getGOOGLEURL,
                 getOUTLOOKURL,
-                verify_Outlook_Key}
+                getGITHUBURL,
+                verify_Outlook_Key,
+                verify_Github_Key}
