@@ -4,10 +4,13 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose');
+const passport = require('passport');
+const passportSetup = require('./config/passport-setup');
+const keys = require('./config/keys');
+const cookieSession = require('cookie-session');
 
 
-require('dotenv').config({path : __dirname+'/.env'});
-
+require('dotenv').config();
 
 /****************************
  * MONGO CONNECTION
@@ -19,6 +22,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/' + DATABASE_NAME, { useNewUrlParser
   .catch((erro) => console.log(`Mongo: Error connecting to [${DATABASE_NAME}]: ${erro}`))
 
 var indexRouter = require('./routes/google');
+var githubRouter = require('./routes/github');
 var outlookROuter = require('./routes/outlook')
 var authorizeRouter = require('./routes/authorize')
 var apiRouter = require('./routes/api')
@@ -35,6 +39,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+app.use('/github', githubRouter);
 app.use('/google', indexRouter);
 app.use('/outlook',outlookROuter)
 app.use('/authorize',authorizeRouter)

@@ -115,6 +115,20 @@ export default function setIpc(){
     return response;
    })
 
+   ipcMain.handle('verify-github-key',async (event,arg) => {
+    var response=false
+    try {
+      var aux =await axios.get('http://localhost:4545/github/verify',)
+      response=aux.data;
+    }
+    catch(err){
+      console.error("Erro",err)
+    }
+    if (response === true)
+      store.set('GITHUB_API_KEY',true);
+    return response;
+   });
+
   ipcMain.handle('url-outlook',async (event,arg) => {
     let response = await axios.get('http://localhost:4545/outlook/url');
     var url = response.data;
@@ -123,6 +137,12 @@ export default function setIpc(){
 
   ipcMain.handle('url-google',async (event,arg) => {
     let response = await axios.get('http://localhost:4545/google/url');
+    var url = response.data;
+    return url
+  });
+
+  ipcMain.handle('url-github',async (event,arg) => {
+    let response = await axios.get('http://localhost:4545/github/auth');
     var url = response.data;
     return url
   });
@@ -140,8 +160,6 @@ export default function setIpc(){
     catch(err) {
           console.error("Erro",err)
       }
-
-
     return response
   });
 
@@ -205,8 +223,13 @@ export default function setIpc(){
   });
 
   ipcMain.handle('get_git_todos', async (event, ...args) => {
-    const result = await getTrue();
-    return [git];
+    await axios.get('http://localhost:4545/github/issues')
+    let response = await axios.get('http://localhost:4545/api')
+    response.data.forEach(element => {
+         if(element.date)
+             element.date= new Date(element.date)
+       });
+    return response.data
   });
 
   ipcMain.handle('get_outlook_todos', async (event, ...args) => {
