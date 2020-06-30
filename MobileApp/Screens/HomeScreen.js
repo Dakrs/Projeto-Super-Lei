@@ -5,21 +5,21 @@ import DetailsScreen from './DetailsScreen';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 
-const Stack = createStackNavigator();
+Stack = createStackNavigator()
 
-export default class HomeScreen extends React.Component {
 
-    render(){
+function HomeScreen({Todos,completeTodo,cancelTodo}){
+  // rever o props porque nao é boa cena ser
         return(
     <Stack.Navigator
     initialRouteName="TodosScreen"
     >
     <Stack.Screen
       name="TodosScreen"
-      component={TodosScreen}
       options={
-        {headerShown:false}}
-    />
+        {headerShown:false}}>
+      {props => <TodosScreen{...props} Todos={Todos} completeTodo={completeTodo} cancelTodo={cancelTodo}/> }
+    </Stack.Screen>
      <Stack.Screen
       name="Details"
       component={DetailsScreen}
@@ -27,5 +27,5 @@ export default class HomeScreen extends React.Component {
     />
     </Stack.Navigator>
     )
-    }
 }
+export default HomeScreen

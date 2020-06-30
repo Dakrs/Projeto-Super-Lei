@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React,{useState, useEffect,}  from 'react';
+import React,{useState, useEffect}  from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -19,45 +19,51 @@ import NavBar from '../Components/NavBar';
 import MyCard from '../Components/Card'
 import { Provider as PaperProvider} from 'react-native-paper';
 
-const todos = [
-{_id : "223332",
-  title: "Teste1",
-  origin: "Google",
-  priority: 3,
-  description: "eu sozinho no mundo á esprra delas ssdsadsa sasaddsa asfsad a",
-  date: "01 Feb 2017",
-},
-{
-  _id : "223323",
-  title: "Teste2",
-  origin: "Google",
-  date: "04 Feb 2017",
-  priority: 3,
-},
-{
-  _id : "22332",
-  title: "Teste3",
-  origin: "Outlook",
-  date: "06 Feb 2017",
-  priority: 3,
-}
-]
+import {sortByOrigin,sortByNormal,sortByDate} from '../Sorting'
 
 
 
+ function TodosScreen({navigation,Todos,completeTodo,cancelTodo}){
 
-const TodosScreen = ({navigation})=> {
+  const[todos,setTodos] = useState([])
+
+
+  useEffect(() => {
+      setTodos(Todos)
+  },[])
+
+
+  const SortByOrigin = () =>{
+    var tod = sortByOrigin(todos)
+      setTodos(tod)
+  }
+
+  const SortByNormal = () =>{
+    var tod = sortByNormal(todos)
+      setTodos(tod)
+  }
+
+  const SortByDate = () =>{
+    var tod = sortByDate(todos)
+      setTodos(tod)
+  }
+
   
+
+    
+
+
 
   return (
     <PaperProvider style={styles.font}>
       <StatusBar barStyle="dark-content" />
       <SafeAreaView style={{flex: 1, flexDirection:'column'}} >
-      <NavBar style={{flex: 1}}/>
+      <NavBar style={{flex: 1}} SortByOrigin={SortByOrigin} SortByNormal={SortByNormal} 
+              SortByDate={SortByDate}/>
       <ScrollView style={{flex:1} }>
         {todos.map((todo) =>{
           return(
-            <MyCard key={todo._id} navigation={navigation} todoInfo={todo}></MyCard>
+            <MyCard key={todo._id} navigation={navigation} todoInfo={todo} completeTodo={completeTodo} cancelTodo={cancelTodo}></MyCard>
           )
         })}
       </ScrollView>

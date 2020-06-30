@@ -12,38 +12,76 @@ import {Card,
   import { Icon, Divider } from 'react-native-elements'
 
 const DetailsScreen = ({navigation ,route})=> {
+  const {todoInfo,completeTodo,cancelTodo}= route.params
     
-  const {todoInfo}= route.params
-    return (
-<Card style={styles.card}>
-          <Card.Content style={styles.cardContent}>
-            <Title>{todoInfo.title}</Title>
+  _complete = () => {
+    completeTodo(todoInfo._id)
+  }
+  _cancel = () => {
+    cancelTodo(todoInfo._id)
+  }
+  
+
+
+  return (
+      <Card style={styles.card}>
+        <Card.Content style={{marginBottom: 10}}>
+          <Title>{todoInfo.title}</Title>
             {todoInfo.description ? (
-            <View>
-            <Title>Description</Title>
-            <Paragraph>
+          <View>
+            <Title  style={{fontSize: 14}}>Description:</Title>
+            <Paragraph style={{color:'grey'}}>
               {todoInfo.description}
             </Paragraph>
-            </View>
+          </View>
             ) : (
-               <View></View> 
+          <View></View> 
             )}
 
+        </Card.Content>
+        <Card.Content style={{marginBottom: 10}}>      
+          <Title style={{fontSize: 14}}>Details:</Title>  
+          <View style={styles.row}>
+            <Paragraph style={{color:'grey'}}>Priority</Paragraph>
+            <Paragraph>{todoInfo.priority}</Paragraph>
+          </View>
 
-          <Title>Details</Title>  
-          <Paragraph>Priority</Paragraph>
-          <Paragraph>{todoInfo.priority}</Paragraph>
-          <Paragraph>Expire Date</Paragraph>
-          <Paragraph>{todoInfo.date}</Paragraph>
-          <Paragraph>Origin</Paragraph>
-          <Paragraph>{todoInfo.origin}</Paragraph>       
-      
-            
-          </Card.Content>
+          {todoInfo.date ? (
+            <View style={styles.row}>
+              <Paragraph style={{color:'grey'}} >Expire Date</Paragraph>
+              <Paragraph>{todoInfo.date.toDateString()}</Paragraph>
+            </View>
+          ):(
+            <View></View>
+          )}
 
-        </Card>
+          <View style={styles.row}>
+            <Paragraph style={{color:'grey'}}>Origin</Paragraph>
+            <Paragraph>{todoInfo.origin}</Paragraph>       
+          </View>
+        </Card.Content>
+        <Divider></Divider>
+        <Card.Content style={styles.row}>
+          <Button 
+          labelStyle={{fontSize:10,color:'green',}} 
+          style={styles.button} 
+          mode="Text" 
+          onPress={() => {_cancel(); navigation.push('TodosScreen')} }>
+        Complete
+          </Button> 
+          <Button 
+          labelStyle={{fontSize:10,color:'red',}} 
+          style={styles.button} 
+          mode="Text" 
+          onPress={() => {_complete(); navigation.push('TodosScreen') }}>
+        Cancel
+          </Button>   
+        </Card.Content>
+      </Card>
     )}
  
+
+
     const styles = StyleSheet.create({
         card: {
           flex:1,
@@ -54,20 +92,30 @@ const DetailsScreen = ({navigation ,route})=> {
           
 
         },
-        date:{
+        row:{
           flexDirection: "row",
           justifyContent: "space-between",
           alignItems: "center"
           
         },
-        dateSize: {
-          fontSize: 12,
-          color:'grey' 
-        },
+
+        button:{
+          margin:10,
+          height: 25, 
+          width: 100,
+          fontSize:10,
+          backgroundColor:"white",
+          borderColor:'green',
+          borderRadius:4
+          },
+
+        buttons:{
+          flex:1,
+          flexDirection:'row',
+          justifyContent:'space-between'
+      }
       
-        comban:{
-          fontSize: 10,
-        }
+      }); 
       
-      });    
+      
       export default DetailsScreen;

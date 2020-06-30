@@ -11,22 +11,33 @@ import {Card,
   Button} from 'react-native-paper';
   import { Icon, Divider } from 'react-native-elements'
 
-  const myCard = ({navigation , todoInfo}) => {
+
+  
+  const myCard = ({navigation , todoInfo,completeTodo,cancelTodo}) => {
     return (
 <Card style={styles.card}>
           <Card.Content style={styles.cardContent}>
             <Title>{todoInfo.title}</Title>
-              <Button icon="plus" color="#000000"  compact='false' onPress={() => navigation.navigate('Details',{todoInfo:todoInfo})}></Button> 
+              <Button 
+              icon="plus" 
+              color="#000000"  
+              compact='false' 
+              onPress={() => navigation.navigate('Details',{todoInfo:todoInfo,completeTodo:completeTodo,cancelTodo:cancelTodo})}></Button> 
           </Card.Content>
 
           <Card.Content style={styles.cardContent}>
             <Paragraph style={styles.dateSize}>{todoInfo.origin}</Paragraph>
-            <View style={styles.date}>
-            <Icon
-  name='date-range' size={10} color="grey" />
-            <Paragraph style={styles.dateSize}>{todoInfo.date}</Paragraph>
-          </View>
-          </Card.Content>
+            {todoInfo.date ? (
+                <View style={styles.date}>
+                <Icon
+      name='date-range' size={10} color="grey" />
+                <Paragraph style={styles.dateSize}>{todoInfo.date.toDateString()}</Paragraph>
+              </View>
+    
+            ):(
+              <View></View> 
+            )}
+                      </Card.Content>
            <Divider></Divider> 
           <Card.Content style={styles.cardContent}>
             <View style={styles.date}>

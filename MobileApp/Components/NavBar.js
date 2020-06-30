@@ -1,5 +1,5 @@
 
-import React, {useState, } from 'react';
+import React, {useState,useEffect } from 'react';
 import NavigationBar from 'react-native-navbar';
 import {View,StyleSheet} from 'react-native';
 import { IconButton,Menu,Divider} from 'react-native-paper';
@@ -12,45 +12,48 @@ const titleConfig = {
   };
  
 
-  export default class NavBar extends React.Component {
+  const NavBar = ({navigation, SortByOrigin,SortByNormal,SortByDate})=> {
 
-    state = {
-      visible: false,
-    };
-  
-    _openOptions = () => this.setState({ visible: true });
-  
-    _closeOptions = () => this.setState({ visible: false });
-  
+    const[show, setShow] = useState()
+    useEffect(() =>{
+        setShow(false)
+    },[])
 
-    render(){
+    _openOptions = () => setShow(true);
+  
+    _closeOptions = () => setShow(false);
+  
     return (
         <View styles={style.container}>
         <NavigationBar
         title={titleConfig}
         rightButton={
           <Menu
-          visible={this.state.visible}
-          onDismiss={this._closeOptions}
+          visible={show}
+          onDismiss={_closeOptions}
           anchor={
-            <IconButton icon="dots-vertical" onPress={this._openOptions}>Show menu</IconButton>
+            <IconButton icon="dots-vertical" onPress={_openOptions}>Show menu</IconButton>
           }
         >
-          <Menu.Item onPress={() => {}} title="Reset" />
+          <Menu.Item onPress={() => {SortByNormal()
+          _closeOptions()}} title="Reset" />
           <Divider/>
-          <Menu.Item onPress={() => {}} title="Time" />
+          <Menu.Item onPress={() => {SortByDate()
+          _closeOptions()}} title="Time" />
           <Divider/>
-          <Menu.Item onPress={() => {}} title="Origin" />
+          <Menu.Item onPress={() => {SortByOrigin()
+          _closeOptions()}} title="Origin" />
 
         </Menu>
           }/>
       </View>
     )
   }
-}
 
 export const style = StyleSheet.create({
   container: {
       flex: 1,
     },
 })
+
+export default NavBar;
