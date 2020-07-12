@@ -1,3 +1,4 @@
+
 /**
  * Sample React Native App
  * https://github.com/facebook/react-native
@@ -5,16 +6,24 @@
  * @format
  * @flow strict-local
  */
+/*
 import React, { useEffect, useState } from 'react';
 import { BottomNavigation, Text} from 'react-native-paper';
 
 
 import { NavigationContainer } from '@react-navigation/native';
+import { openDatabase } from 'react-native-sqlite-storage';
+var db = openDatabase({ name: 'Todos.db' });
 
 
-import Sync from './Screens/SyncScreen';
-import AddTodoScreen from './Screens/AddTodoScreen'
-import HomeScreen from './Screens/HomeScreen'
+import {selectAll,
+        insertTodo} 
+        from './src/Dao/db'
+
+
+import Sync from './src/Screens/Home/SyncScreen';
+import AddTodoScreen from './src/Screens/Home/AddTodoScreen'
+import HomeScreen from './src/Screens/Home/Screen'
 
 
 var myDate1 = new Date();
@@ -22,7 +31,7 @@ var myDate2 = new Date("2016-05-15");
 
 var todosArray = [
 {_id : "223332",
-  title: "Teste1",
+  name: "Teste1",
   origin: "Github",
   priority: 3,
   description: "eu sozinho no mundo á esprra delas ssdsadsa sasaddsa asfsad a",
@@ -30,20 +39,20 @@ var todosArray = [
 },
 {
   _id : "223323",
-  title: "Teste2",
+  name: "Teste2",
   origin: "Outlook",
   date: myDate2,
   priority: 3,
 },
 {
   _id : "22332",
-  title: "Teste3",
+  name: "Teste3",
   origin: "Github",
  
   priority: 3,
 },{
   _id : "22322",
-  title: "TESTE4",
+  name: "TESTE4",
   origin: "Github",
  
   priority: 3,
@@ -62,19 +71,25 @@ export default function App() {
   const [todos, setTodos]= useState([])
 
   useEffect(()=>{
+
     setTodos(todosArray)
+  
+
+    
   },[])
 
 
   const submitNewTodo= (name,priority,description) => {
-    setTodos((prevTodos)=>[...prevTodos, {
-                    _id : "33432",
-                     title : name,
-                     origin: "App", 
-                     priority : priority, 
-                     description :description }
-                      ])                 
-  }
+  
+      setTodos((prevTodos)=>[...prevTodos, {
+        _id : "45",
+         name : name,
+         origin: "App", 
+         priority : priority, 
+         description :description }
+          ])       
+    }
+              
 
   const completeTodo = (id) => {
       setTodos(todos.filter(item => item._id !== id))
@@ -119,5 +134,5 @@ export default function App() {
       
     
         
-
+*/
 
