@@ -10,7 +10,8 @@ import { BottomNavigation, Text} from 'react-native-paper';
 
 import { NavigationContainer } from '@react-navigation/native';
 
-import { deleteUser,getUser } from '../../utils'
+
+import { getUser } from '../../utils'
 import api from '../../Services/api'
 
 
@@ -71,6 +72,10 @@ export default function Home({navigation}) {
       var user= await getUser()
       user=JSON.parse(user)
       var response = await api.get('/api/tasks/'+user.user)
+      response.data.forEach(element => {
+        if(element.date)
+            element.date= new Date(element.date)
+      });
       console.log(response.data)
       setTodos(response.data)
     }
@@ -140,7 +145,6 @@ async function syncOutlook () {
     if(element.date)
         element.date= new Date(element.date)
       });
-      console.log(response.data)
       setTodos(response.data)
 }
 
@@ -181,11 +185,3 @@ async function syncOutlook () {
           }
       
     
-        
-/*
-          <TouchableOpacity 
-          onPress={() => ( deleteUser().then(() => {navigation.navigate('AuthLoading')})
-       )}style={{ marginRight: 10 }}>
-<Text>Sair</Text>
-</TouchableOpacity>  
-*/

@@ -4,6 +4,7 @@ import { createStackNavigator } from 'react-navigation-stack'
 import Login from './Screens/Login/Login'
 import Home from './Screens/Home/Home'
 import AuthLoadingScreen from './Screens/AuthLoadingScreen'
+import Register from './Screens/Register'
 
 const StackNavigator = createStackNavigator(
   {
@@ -24,6 +25,7 @@ const AuthStack = createStackNavigator(
   {
     SignIn: Login,
     App: StackNavigatorContainer,
+    SignUp: Register
   },
   {
     initialRouteName: 'SignIn',

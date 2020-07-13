@@ -7,43 +7,38 @@ import { StatusBar,
    StyleSheet,
    Text,
    TextInput,
-   TouchableOpacity,
-   Linking
+   TouchableOpacity
 } from 'react-native'
 
-import api from '../../Services/api'
+import api from '../Services/api'
 
-export default function Login(props) {
+export default function Register(props) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [repeatPassword, setRepeatPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState(null)
 
-  async function saveUser(user) {
-    await AsyncStorage.setItem('@ListApp:userToken', JSON.stringify(user))
-  }
-
+ 
   async function signIn() {
     if (username.length === 0) return
-
+    if(password!==repeatPassword){
+        setErrorMessage("Error! Put the same password")
+        return
+    }
     setLoading(true)
-
     try {
+        
+            const credentials = {
+                email: username,
+                pwd: password
+            }
 
-      const credentials = {
-        email: username,
-        pwd: password
-      }
-
-      const response = await api.post('/login', credentials)
-
-      const user = response.data
-
-      await saveUser(user)
-
+      const response = await api.post('/register', credentials)   
+     
       const resetAction = StackActions.reset({
         index: 0,
-        actions: [NavigationActions.navigate({ routeName: 'App' })],
+        actions: [NavigationActions.navigate({ routeName: 'SignIn' })],
       })
 
       setLoading(false)
@@ -53,18 +48,18 @@ export default function Login(props) {
       console.log(err)
 
       setLoading(false)
-      setErrorMessage('User doesnt exist or wrong password')
+      setErrorMessage('User already exist')
     }
   }
 
-
-  async function Register(){
+const Back = () => {
     const resetAction = StackActions.reset({
-      index: 0,
-      actions: [NavigationActions.navigate({ routeName: 'SignUp' })],
-    })
-    props.navigation.dispatch(resetAction)
-  }
+        index: 0,
+        actions: [NavigationActions.navigate({ routeName: 'SignIn' })],
+      })
+      props.navigation.dispatch(resetAction)
+
+}
 
   return (
     <View style={styles.Container}>
@@ -98,23 +93,34 @@ export default function Login(props) {
           value={password}
           onChangeText={password => setPassword(password)}
         />
+        <TextInput
+          style={styles.Input}
+          autoCapitalize="none"
+          autoCorrect={false}
+          placeholder="Repeat password"
+          underlineColorAndroid="rgba(0, 0, 0, 0)"
+          secureTextEntry={true}
+          value={repeatPassword}
+          onChangeText={repeatPassword => setRepeatPassword(repeatPassword)}
+        />
 
         <TouchableOpacity onPress={signIn} style={styles.Button}>
           {loading ? (
             <ActivityIndicator size="small" color="#FFF" />
           ) : (
-            <Text style={styles.ButtonText}>Sign In</Text>
+            <Text style={styles.ButtonText}>Next</Text>
           )}
         </TouchableOpacity>
-        <Text style={styles.TextInformation}>Dont have an account ?</Text>
-        <Text style={styles.LinkText} onPress={Register}>Sign Up</Text>
+        <Text style={styles.TextInformation}>Have an account ?</Text>
+        <Text style={styles.LinkText} onPress={Back}>Log in</Text>
       </View>
+
 
     </View>
   )
 }
 
-Login.navigationOptions = () => {
+Register.navigationOptions = () => {
   return {
     headerShown:false
   }
@@ -163,7 +169,8 @@ const styles = StyleSheet.create({
     height:44,
     marginTop:10,
     justifyContent:"center",
-    alignItems:"center"
+    alignItems:"center",
+    
   },
   ButtonText:{
     color:"white",
@@ -176,7 +183,7 @@ const styles = StyleSheet.create({
     textDecorationLine:"underline",
     textDecorationColor:"blue",
     justifyContent:"center",
-    textAlign:"center"   
+    textAlign:"center"
   }
-
+    
 });

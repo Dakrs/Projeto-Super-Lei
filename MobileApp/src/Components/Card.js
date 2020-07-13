@@ -11,6 +11,17 @@ import {Card,
   Button} from 'react-native-paper';
   import { Icon, Divider } from 'react-native-elements'
 
+import 'intl';
+import 'intl/locale-data/jsonp/en';
+ 
+  function timeConversor(time){
+    const ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(time);
+    const mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(time);
+    const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(time);
+
+    return da + ' ' + mo + ' ' + ye;
+  }  
+
 
   const myCard = ({navigation , todoInfo,completeTodo,cancelTodo}) => {
 
@@ -31,7 +42,7 @@ import {Card,
                 <View style={styles.date}>
                 <Icon
       name='date-range' size={10} color="grey" />
-                <Paragraph style={styles.dateSize}>{todoInfo.date.toString()}</Paragraph>
+                <Paragraph style={styles.dateSize}>{timeConversor(todoInfo.date)}</Paragraph>
               </View>
     
             ):(

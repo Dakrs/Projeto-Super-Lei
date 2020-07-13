@@ -10,9 +10,20 @@ import {Card,
   Paragraph,
   Button} from 'react-native-paper';
   import { Icon, Divider } from 'react-native-elements'
+  import 'intl';
+  import 'intl/locale-data/jsonp/en';
+   
 
+  function parseDate(str) {
+    var m = str.match(/[^T]+/);
+      
+    return m 
+  }
+ 
 const DetailsScreen = ({navigation ,route})=> {
+
   const {todoInfo,completeTodo,cancelTodo}= route.params
+  
   _complete = () => {
     completeTodo(todoInfo._id)
   }
@@ -20,6 +31,14 @@ const DetailsScreen = ({navigation ,route})=> {
     cancelTodo(todoInfo._id)
   }
   
+ 
+  function timeConversor(time){
+    const ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(time);
+    const mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(time);
+    const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(time);
+
+    return da + ' ' + mo + ' ' + ye;
+  }  
 
 
   return (
@@ -48,7 +67,7 @@ const DetailsScreen = ({navigation ,route})=> {
           {todoInfo.date ? (
             <View style={styles.row}>
               <Paragraph style={{color:'grey'}} >Expire Date</Paragraph>
-              <Paragraph>{todoInfo.date.toString()}</Paragraph>
+              <Paragraph>{timeConversor(todoInfo.date)}</Paragraph>
             </View>
           ):(
             <View></View>
