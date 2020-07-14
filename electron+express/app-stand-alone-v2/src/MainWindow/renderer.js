@@ -364,16 +364,28 @@ var alltodos = new Vue({
     handleLogInSubmit: async function(type,email,pass){
       if (type){
         const resp = await Ipc.login(email,pass);
-        if (resp === null){
-          $('#LOGIN-MODAL').trigger("hide");
-          alert('Error');
+        switch (resp) {
+          case 200:
+            $('#LOGIN-MODAL').modal('hide');
+            alert('Logged in');
+            this.sync_status[3] = true;
+            this.sync_status = [...this.sync_status];
+            break;
+          default:
+            alert('An error was found');
+            break;
         }
       }
       else{
         const resp = await Ipc.register(email,pass);
-        if (resp === null){
-          $('#LOGIN-MODAL').trigger("hide");
-          alert('Error');
+        switch (resp) {
+          case 200:
+            $('#LOGIN-MODAL').modal('hide');
+            alert('Account created with success');
+            break;
+          default:
+            alert('An error was found');
+            break;
         }
       }
     },

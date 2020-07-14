@@ -66,9 +66,13 @@
             </table>
           </div>
           <div class="history">
-            <span class="mouse noselect" @click="handleLogInModal()" style="font-size: 1.1rem">
+            <span v-if="!sync_status[3]" class="mouse noselect" @click="handleLogInModal()" style="font-size: 1.1rem">
               <i class="fa fa-cloud-upload" aria-hidden="true"></i>
               Storage
+            </span>
+            <span v-else class="noselect" style="font-size: 1.1rem">
+              <i class="fa fa-download" aria-hidden="true"></i>
+              Connected
             </span>
           </div>
           <div class="title bottomTittle">

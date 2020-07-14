@@ -284,14 +284,15 @@ export default function setIpc(){
       return null;
     }
 
-    console.log(response);
+    if (response.status === 200){
+      store.set('JWT_TOKEN',response.data.token);  
+    }
 
-    return null;
+    return response.status;
   });
   ipcMain.handle('register', async (event, ...args) => {
     var response;
 
-    console.log("entrei");
     try{
       response = await axios.post('https://amcyni.herokuapp.com/register',{
         email: args[0],
@@ -301,9 +302,8 @@ export default function setIpc(){
     catch(err){
       return null;
     }
-    console.log(response);
 
-    return null;
+    return response.status;
   });
 
   /*

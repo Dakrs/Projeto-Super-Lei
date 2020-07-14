@@ -17,14 +17,17 @@ require('dotenv').config({path : __dirname+'/.env'});
 const DATABASE_NAME = 'Access';
 
 mongoose.connect('mongodb://127.0.0.1:27017/' + DATABASE_NAME, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log(`Connected to Mongo at [${DATABASE_NAME}] database...`))
+  .then(() => {
+    console.log(`Connected to Mongo at [${DATABASE_NAME}] database...`);
+    process.send('READY');
+  })
   .catch((erro) => console.log(`Mongo: Error connecting to [${DATABASE_NAME}]: ${erro}`))
 
 var indexRouter = require('./routes/google');
 var githubRouter = require('./routes/github');
-var outlookROuter = require('./routes/outlook')
-var authorizeRouter = require('./routes/authorize')
-var apiRouter = require('./routes/api')
+var outlookROuter = require('./routes/outlook');
+var authorizeRouter = require('./routes/authorize');
+var apiRouter = require('./routes/api');
 
 var app = express();
 

@@ -4,7 +4,6 @@ const axios = require('axios');
 const LoadingWindow = require('./Electron/LoadingWindow');
 const MainWindow = require('./Electron/MainWindow');
 const ApiURLWindow = require('./Electron/ApiURLWindow');
-const LoginWindow = require('./Electron/LoginWindow');
 import setIpc from './MainIpc';
 
 
@@ -40,7 +39,8 @@ function startExpress() {
 	// Start the node express server
 	const spawn = require('child_process').spawn;
 	webServer = spawn(nodePath,[webServerDirectory], {
-		env : env
+		env : env,
+		stdio: ['ipc']
 	});
 
 	// Were we successful?
@@ -52,26 +52,19 @@ function startExpress() {
 	// Handle standard out data from the child process
 	webServer.stdout.on('data', function (data) {
 		log.info('data: ' + data);
-		if (data.includes('Connected to Mongo') && mainwin === null){
-			mainwin = new MainWindow();
-	    mainwin.window.once('ready-to-show',() => {
-	      mainwin.window.show();
-	      loadwin.window.hide();
-	      loadwin.window.close();
-	    });
-			/**
-			loginwin = new LoginWindow();
-			loginwin.window.once('ready-to-show',() => {
-	      loginwin.window.show();
-	      loadwin.window.hide();
-	      loadwin.window.close();
-	    });*/
-		}
 	});
 
 	// Triggered when a child process uses process.send() to send messages.
 	webServer.on('message', function (message) {
 		log.info(message);
+		if (message === 'READY' && mainwin === null){
+			mainwin = new MainWindow();
+			mainwin.window.once('ready-to-show',() => {
+				mainwin.window.show();
+				loadwin.window.hide();
+				loadwin.window.close();
+			});
+		}
 	});
 
 	// Handle closing of the child process
