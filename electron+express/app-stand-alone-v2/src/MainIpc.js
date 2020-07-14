@@ -169,7 +169,7 @@ export default function setIpc(){
     try {
        response = await axios.put('http://localhost:4545/api/state/'+id+'?state=1')
        // 0 - por fazer // 1 - completa  // 2 - cancelada
-       response=true
+       response=true;
     }
     catch(err) {
       console.error("Erro",err)

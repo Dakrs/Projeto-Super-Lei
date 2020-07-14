@@ -8,8 +8,8 @@
     <div class="container" id="MAIN_COMP" style="min-height: 100vh; margin: 0; padding: 0">
       <div class="row" style="min-height: 100vh;">
         <div class="col azure left" align="center">
-          <span class="addButton" @click="toggleAddTodo()">
-            <i class="fa fa-plus-square-o fa-lg"></i>
+          <span class="addButton">
+            <i class="fa fa-plus-square-o fa-lg"  @click="toggleAddTodo()"></i>
           </span>
           <div class="sortBy">
             <span class="text-muted noselect" style="font-size: 0.9rem">
@@ -66,8 +66,9 @@
             </table>
           </div>
           <div class="history">
-            <span class="text-muted mouse noselect" @click="test()" style="font-size: 0.9rem">
-                History
+            <span class="mouse noselect" @click="handleLogInModal()" style="font-size: 1.1rem">
+              <i class="fa fa-cloud-upload" aria-hidden="true"></i>
+              Storage
             </span>
           </div>
           <div class="title bottomTittle">
@@ -151,6 +152,9 @@
           </div>
         </div>
       </div>
+      <login-modal
+        :submit_fun="test">
+      </login-modal>
       <google-key-modal
         :submit_fun="handleGoogleModal">
       </google-key-modal>

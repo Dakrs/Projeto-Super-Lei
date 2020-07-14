@@ -219,3 +219,31 @@ td.mouse {
   cursor: pointer;
   -webkit-user-select: none;
 }
+
+div.container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+div.container span:hover {
+  color: black;
+}
+
+div.item {
+  margin-right: 3%;
+  border-bottom: 2px solid #eeeeee;
+  color: #eeeeee;
+  padding: 3px;
+}
+
+div.active {
+  border-bottom: 2px solid #bdbdbd !important;
+  color: black;
+}
+
+div.containerHorizontal {
+  padding: 5%;
+}

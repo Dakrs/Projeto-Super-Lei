@@ -104,7 +104,7 @@ var alltodos = new Vue({
     toggled: null,
     sortedBy: 0,
     sortableJS: null,
-    sync_status: [API.getGITHUB_KEY_STATUS(),API.getGOOGLE_KEY_STATUS(),API.getOUTLOOK_KEY_STATUS()]
+    sync_status: [API.getGITHUB_KEY_STATUS(),API.getGOOGLE_KEY_STATUS(),API.getOUTLOOK_KEY_STATUS(),false]
   },
   async mounted(){
     var todos = await Ipc.get_all_todos();
@@ -329,6 +329,11 @@ var alltodos = new Vue({
       }
 
       $('#GITHUB-MODAL').modal('hide');
+    },
+    handleLogInModal: function (){
+      if (!this.sync_status[3]){
+        $('#LOGIN-MODAL').modal('show');
+      }
     },
     // função que mostra o modal
     toggleAddTodo: function(){

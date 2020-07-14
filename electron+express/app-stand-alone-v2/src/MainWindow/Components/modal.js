@@ -112,3 +112,62 @@ Vue.component('github-key-modal',{
   </div>
   `
 })
+
+Vue.component('login-modal',{
+  data: function(){
+    return {
+      status: true
+    };
+  },
+  props: {
+    submit_fun: Function,
+  },
+  methods: {
+    submit: function(){
+      this.submit_fun();
+    },
+  },
+  template:`
+  <div class="modal fade" id="LOGIN-MODAL" data-focus="true" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="-webkit-user-select: none;">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="container">
+            <div v-if="status" class="item active">
+              <span v-on:click="status = !status" style="font-size: 1.5em;">Log In</span>
+            </div>
+            <div v-else class="item">
+              <span v-on:click="status = !status" style="font-size: 1.5em;">Log In</span>
+            </div>
+            <div v-if="!status" class="item active">
+              <span v-on:click="status = !status" style="font-size: 1.5em;">Sign In</span>
+            </div>
+            <div v-else class="item">
+              <span v-on:click="status = !status" style="font-size: 1.5em;">Sign In</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="containerHorizontal">
+            <form id="LOGIN-FORM">
+              <input type="email" class="form-control" placeholder="Email" aria-label="Email" aria-describedby="basic-addon1" style="margin-bottom: 2%" required>
+              <input type="password" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="basic-addon1" minlength="8" required>
+              <input v-if="!status" type="password" class="form-control" placeholder="Confirm Password" aria-label="Confirm Password" aria-describedby="basic-addon1" style="margin-top: 2%" minlength="8" required>
+            </form>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button form="LOGIN-FORM" type="submit" style="width: 100%" class="btn btn-dark">Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  `,
+  mounted(){
+    var func = this.submit;
+    $('#LOGIN-FORM').on('submit', function(e){
+      e.preventDefault();
+      console.log("wat");
+    });
+  }
+})
