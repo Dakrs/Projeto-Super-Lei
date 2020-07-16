@@ -57,7 +57,7 @@ function startExpress() {
 	// Triggered when a child process uses process.send() to send messages.
 	webServer.on('message', function (message) {
 		log.info(message);
-		if (message === 'READY' && mainwin === null){
+		if (message === 'READY' && mainwin === null) {
 			mainwin = new MainWindow();
 			mainwin.window.once('ready-to-show',() => {
 				mainwin.window.show();
@@ -91,7 +91,6 @@ function startExpress() {
 	webServer.on('error', function (err) {
 		log.info('web server error: ' + err);
 	});
-
 }
 
 

@@ -371,6 +371,9 @@ var alltodos = new Vue({
             this.sync_status[3] = true;
             this.sync_status = [...this.sync_status];
             break;
+          case 409:
+            alert('Wrong credentials');
+            break;
           default:
             alert('An error was found');
             break;
@@ -382,6 +385,9 @@ var alltodos = new Vue({
           case 200:
             $('#LOGIN-MODAL').modal('hide');
             alert('Account created with success');
+            break;
+          case 409:
+            alert('Email is already in use');
             break;
           default:
             alert('An error was found');
