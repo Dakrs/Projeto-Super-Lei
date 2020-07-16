@@ -104,7 +104,7 @@ var alltodos = new Vue({
     toggled: null,
     sortedBy: 0,
     sortableJS: null,
-    sync_status: [API.getGITHUB_KEY_STATUS(),API.getGOOGLE_KEY_STATUS(),API.getOUTLOOK_KEY_STATUS(),false]
+    sync_status: [API.getGITHUB_KEY_STATUS(),API.getGOOGLE_KEY_STATUS(),API.getOUTLOOK_KEY_STATUS(),API.getJWT()]
   },
   async mounted(){
     var todos = await Ipc.get_all_todos();
@@ -360,6 +360,34 @@ var alltodos = new Vue({
         alert('Todo Added');
       }
       $('#ADD_TOO_COMP').modal('hide');
+    },
+    handleLogInSubmit: async function(type,email,pass){
+      if (type){
+        const resp = await Ipc.login(email,pass);
+        switch (resp) {
+          case 200:
+            $('#LOGIN-MODAL').modal('hide');
+            alert('Logged in');
+            this.sync_status[3] = true;
+            this.sync_status = [...this.sync_status];
+            break;
+          default:
+            alert('An error was found');
+            break;
+        }
+      }
+      else{
+        const resp = await Ipc.register(email,pass);
+        switch (resp) {
+          case 200:
+            $('#LOGIN-MODAL').modal('hide');
+            alert('Account created with success');
+            break;
+          default:
+            alert('An error was found');
+            break;
+        }
+      }
     },
     test: function(){
       alert('Wele');

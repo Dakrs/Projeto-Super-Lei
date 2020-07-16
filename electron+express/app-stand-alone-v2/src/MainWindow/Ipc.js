@@ -88,6 +88,16 @@ export async function verify_Outlook_Key(){
   return result;
 }
 
+export async function login(email,pass){
+  const result = await ipcRenderer.invoke('log-in',email,pass);
+  return result;
+}
+
+export async function register(email,pass){
+  const result = await ipcRenderer.invoke('register',email,pass);
+  return result;
+}
+
 export default {store_google_api_key,
                 cancel_todo_id,
                 complete_todo_id,
@@ -105,4 +115,7 @@ export default {store_google_api_key,
                 getOUTLOOKURL,
                 getGITHUBURL,
                 verify_Outlook_Key,
-                verify_Github_Key}
+                verify_Github_Key,
+                login,
+                register
+              }

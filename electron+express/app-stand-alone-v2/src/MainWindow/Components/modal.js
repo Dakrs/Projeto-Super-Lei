@@ -123,9 +123,12 @@ Vue.component('login-modal',{
     submit_fun: Function,
   },
   methods: {
-    submit: function(){
-      this.submit_fun();
+    submit: function(type,email,pass){
+      this.submit_fun(type,email,pass);
     },
+    getStatus: function (){
+      return this.$data.status;
+    }
   },
   template:`
   <div class="modal fade" id="LOGIN-MODAL" data-focus="true" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="-webkit-user-select: none;">
@@ -150,9 +153,9 @@ Vue.component('login-modal',{
         <div class="modal-body">
           <div class="containerHorizontal">
             <form id="LOGIN-FORM">
-              <input type="email" class="form-control" placeholder="Email" aria-label="Email" aria-describedby="basic-addon1" style="margin-bottom: 2%" required>
-              <input type="password" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="basic-addon1" minlength="8" required>
-              <input v-if="!status" type="password" class="form-control" placeholder="Confirm Password" aria-label="Confirm Password" aria-describedby="basic-addon1" style="margin-top: 2%" minlength="8" required>
+              <input type="email" id="EMAIL_LOGIN" class="form-control" placeholder="Email" aria-label="Email" aria-describedby="basic-addon1" style="margin-bottom: 2%" required>
+              <input type="password" id="PWD_LOGIN" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="basic-addon1" minlength="8" required>
+              <input v-if="!status" id="PWD_CONF_LOGIN" type="password" class="form-control" placeholder="Confirm Password" aria-label="Confirm Password" aria-describedby="basic-addon1" style="margin-top: 2%" minlength="8" required>
             </form>
           </div>
         </div>
@@ -165,9 +168,25 @@ Vue.component('login-modal',{
   `,
   mounted(){
     var func = this.submit;
+    var status = this.getStatus;
     $('#LOGIN-FORM').on('submit', function(e){
       e.preventDefault();
-      console.log("wat");
+
+      const email = $('#EMAIL_LOGIN').val();
+      const pwd = $('#PWD_LOGIN').val();
+
+      const sts = status();
+      if (!sts){
+        const pwd_conf = $('#PWD_CONF_LOGIN').val();
+        if (pwd_conf !== pwd)
+          alert('Passwords don\'t match');
+        else{
+          func(sts,email,pwd);
+        }
+      }
+      else{
+        func(sts,email,pwd);
+      }
     });
   }
 })

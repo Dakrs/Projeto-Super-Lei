@@ -88,15 +88,6 @@ var google1 = {
 }
 */
 
-var git = {
-  _id: 5,
-  date: new Date(2016,3,12),
-  name: 'Merge',
-  origin: 'Github',
-  description: 'Merge mal realizado',
-  priority: 3,
-}
-
 export default function setIpc(){
   ipcMain.handle('verify-outlook-key',async (event,arg) => {
     //perguntar à api se a key do outlook existe
@@ -277,6 +268,42 @@ export default function setIpc(){
        }
        return response.data;
 
+  });
+
+  ipcMain.handle('log-in', async (event, ...args) => {
+    var response;
+
+    try{
+      response = await axios.post('https://amcyni.herokuapp.com/login',{
+        email: args[0],
+        pwd: args[1]
+      })
+    }
+    catch(err){
+      console.log(err);
+      return null;
+    }
+
+    if (response.status === 200){
+      store.set('JWT_TOKEN',response.data.token);  
+    }
+
+    return response.status;
+  });
+  ipcMain.handle('register', async (event, ...args) => {
+    var response;
+
+    try{
+      response = await axios.post('https://amcyni.herokuapp.com/register',{
+        email: args[0],
+        pwd: args[1]
+      });
+    }
+    catch(err){
+      return null;
+    }
+
+    return response.status;
   });
 
   /*

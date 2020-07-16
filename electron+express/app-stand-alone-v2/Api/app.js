@@ -39,9 +39,9 @@ Register.exists()
 
 var indexRouter = require('./routes/google');
 var githubRouter = require('./routes/github');
-var outlookROuter = require('./routes/outlook')
-var authorizeRouter = require('./routes/authorize')
-var apiRouter = require('./routes/api')
+var outlookROuter = require('./routes/outlook');
+var authorizeRouter = require('./routes/authorize');
+var apiRouter = require('./routes/api');
 
 var app = express();
 

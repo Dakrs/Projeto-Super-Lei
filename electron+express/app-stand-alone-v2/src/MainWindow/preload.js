@@ -33,6 +33,10 @@ contextBridge.exposeInMainWorld(
       var key = store.get('GITHUB_API_KEY');
       return (typeof key !== 'undefined');
     },
+    getJWT: () => {
+      var key = store.get('JWT_TOKEN');
+      return (typeof key !== 'undefined');
+    },
     Ipc: API_MAIN,
   }
 )

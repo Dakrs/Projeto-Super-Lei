@@ -86,14 +86,6 @@
                   "preload": {
                     "js": "./src/ModalWindow/preload.js"
                   }
-                },
-                {
-                  "html": "./src/LogInWindow/login.html",
-                  "js": "./src/LogInWindow/login.js",
-                  "name": "login_window",
-                  "preload": {
-                    "js": "./src/ModalWindow/preload.js"
-                  }
                 }
               ]
             }
