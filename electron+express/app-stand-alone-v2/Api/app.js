@@ -8,6 +8,7 @@ const passport = require('passport');
 const keys = require('./config/keys');
 const cookieSession = require('cookie-session');
 
+var Register = require('./controllers/register')
 
 require('dotenv').config({path : __dirname+'/.env'});
 
@@ -17,11 +18,24 @@ require('dotenv').config({path : __dirname+'/.env'});
 const DATABASE_NAME = 'Access';
 
 mongoose.connect('mongodb://127.0.0.1:27017/' + DATABASE_NAME, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => {
-    console.log(`Connected to Mongo at [${DATABASE_NAME}] database...`);
+  .then(() =>{
+    console.log(`Connected to Mongo at [${DATABASE_NAME}] database...`)
     process.send('READY');
-  })
+  }) 
   .catch((erro) => console.log(`Mongo: Error connecting to [${DATABASE_NAME}]: ${erro}`))
+
+Register.exists()
+.then(resp => {
+  if (resp){
+    console.log("ja existe")
+  }
+  else {
+    Register.insert({local:0,global:0})
+    .then(resp => console.log("criou collection nova"))
+    .catch(err => console.log(err))
+  }
+})
+
 
 var indexRouter = require('./routes/google');
 var githubRouter = require('./routes/github');
