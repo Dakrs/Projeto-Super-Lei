@@ -15,6 +15,105 @@ function getTrue() {
 }
 
 export default function setIpc(){
+
+  async function sync(){
+    if(!store.has('JWT_TOKEN')) {
+      return null;
+    }
+
+    const token = store.get('JWT_TOKEN');
+
+    var response;
+    var register;
+
+    try{
+      response = await axios.get('http://localhost:4545/api/register');
+      register = response.data[0];
+    }
+    catch(err){
+      //libertar o lock
+      return null;
+    }
+    // buscar as transações remote
+    var transactions_from_global = [];
+    try{
+      response = await axios.get('https://amcyni.herokuapp.com/api/transaction/' + register.global,{headers: {'x-access-token': token}});
+      transactions_from_global = response.data;
+    }
+    catch(err){
+      return null;
+    }
+
+    var list_trans_uncommited = [];
+    try{
+      response = await axios.get('http://localhost:4545/api/transactions',register);
+      list_trans_uncommited = response.data;
+    }
+    catch(err){
+      return null;
+    }
+
+    console.log(transactions_from_global);
+    console.log(list_trans_uncommited);
+    console.log("PASSOU");
+
+
+    var transactions_to_update = [];
+    var transactions_to_perform = [];
+
+    for(var i = 0; i < transactions_from_global.length; i++){
+      var dependency = false;
+      for(var j = 0; j < list_trans_uncommited.length; j++){
+        if(transactions_from_global[i].idOrigin === list_trans_uncommited[j].idOrigin){
+          switch (transactions_from_global[i].type) {
+            case 'Post':
+              if (list_trans_uncommited[j].type === 'Post'){
+                dependency = true;
+                list_trans_uncommited.slice(j,1);
+              }
+              break;
+            case 'confirm':
+              if (list_trans_uncommited[j].type === 'confirm') {
+                dependency = true;
+                list_trans_uncommited.slice(j,1);
+              }
+              else if (list_trans_uncommited[j].type === 'cancel') {
+                dependency = true;
+                transactions_to_update.push(transactions_from_global[i]);
+                list_trans_uncommited.slice(j,1);
+              }
+              break;
+            case 'cancel':
+              if (list_trans_uncommited[j].type === 'cancel') {
+                dependency = true;
+                list_trans_uncommited.slice(j,1);
+              }
+              else if (list_trans_uncommited[j].type === 'confirm') {
+                dependency = true;
+                transactions_to_update.push(transactions_from_global[i]);
+                list_trans_uncommited.slice(j,1);
+              }
+              break;
+            default:
+          }
+        }
+        if (dependency){
+          break;
+        }
+      }
+
+      if(!dependency){
+        //executa transaction transactions_from_global[i]
+        transactions_to_perform.push(transactions_from_global[i]);
+      }
+    }
+
+    console.log(transactions_to_perform);
+    console.log(transactions_to_update);
+    console.log(list_trans_uncommited);
+  }
+
+
   ipcMain.handle('verify-outlook-key',async (event,arg) => {
     //perguntar à api se a key do outlook existe
     var response=false
@@ -198,6 +297,7 @@ export default function setIpc(){
 
   ipcMain.handle('log-in', async (event, ...args) => {
     var response;
+    var response2;
 
     try{
       response = await axios.post('https://amcyni.herokuapp.com/login',{
@@ -209,9 +309,31 @@ export default function setIpc(){
       return err.response.status;
     }
 
-    if (response.status === 200){
-      store.set('JWT_TOKEN',response.data.token);
+    /**
+    var register;
+
+    try{
+      response2 = await axios.get('http://localhost:4545/api/register');
+      register = response2.data;
     }
+    catch(err){
+      return null;
+    }
+
+    var list_trans_uncommited = [];
+    try{
+      response2 = await axios.get('http://localhost:4545/api/transactions',register);
+      list_trans_uncommited = response2.data;
+    }
+    catch(err){
+      //libertar o lock
+      return null;
+    }*/
+
+    //await axios.post('https://amcyni.herokuapp.com/api/transactions',{transactions: list_trans_uncommited},{headers: {'x-access-token': response.data.token}});
+    //console.log(list_trans_uncommited);
+    store.set('JWT_TOKEN',response.data.token);
+    await sync();
 
     return response.status;
   });
@@ -230,16 +352,4 @@ export default function setIpc(){
 
     return response.status;
   });
-
-  /*
-  ipcMain.handle('history', async (event) => {
-    const result = await somePromise()
-    return result
-  });*/
-}
-
-function sync(){
-  if(!store.has('JWT_TOKEN')) {
-    return null;
-  }
 }
