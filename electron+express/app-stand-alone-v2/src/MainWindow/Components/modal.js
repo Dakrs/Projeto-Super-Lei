@@ -154,7 +154,7 @@ Vue.component('login-modal',{
           <div class="containerHorizontal">
             <form id="LOGIN-FORM">
               <input type="email" id="EMAIL_LOGIN" class="form-control" placeholder="Email" aria-label="Email" aria-describedby="basic-addon1" style="margin-bottom: 2%" required>
-              <input type="password" id="PWD_LOGIN" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="basic-addon1" minlength="8" required>
+              <input type="password" id="PWD_LOGIN" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="basic-addon1" required>
               <input v-if="!status" id="PWD_CONF_LOGIN" type="password" class="form-control" placeholder="Confirm Password" aria-label="Confirm Password" aria-describedby="basic-addon1" style="margin-top: 2%" minlength="8" required>
             </form>
           </div>
