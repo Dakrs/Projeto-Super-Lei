@@ -35,6 +35,64 @@ export default function setIpc(){
       return null;
     }
     // buscar as transações remote
+    /**
+    var transactions_from_global = [
+      {
+        _id: 'qQ2kCkERZQrkzmkjhKYEO',
+        idOrigin: '5lev709aqkqnatbdjb41dh04l6',
+        name: '[TODO] Test Google Cal',
+        description: 'Este é um teste para o google calendar.',
+        origin: 'Google Calendar',
+        owner: 'ds@gmail.com',
+        state: 0,
+        priority: '3',
+        __v: 0,
+        idTask: 'vo_ZWlCIbujtRuEcSj8Ri',
+        type: 'Post',
+        timestamp: 0
+      },
+      {
+        _id: 'TBtbR92cNsGJU_irJJDTQ',
+        name: 'teste na app',
+        priority: '3',
+        description: '',
+        origin: 'Mobile App',
+        owner: 'ds@gmail.com',
+        state: 0,
+        __v: 0,
+        idTask: 'YuPHAuesNMVdDjSWpUzp_',
+        idOrigin: 'YuPHAuesNMVdDjSWpUzp_',
+        type: 'Post',
+        timestamp: 1,
+      },
+      {
+        _id: 'VAFDHbliYzttLcuPUaVLb',
+        idOrigin: '0vp9pa00ofjgqlieguvmutgnid',
+        name: '[TODO]Test Cal 2',
+        origin: 'Google Calendar',
+        owner: 'ds@gmail.com',
+        state: 0,
+        priority: '3',
+        __v: 0,
+        idTask: 'wDwHZ3_qXWbsKMsJ6B9EH',
+        type: 'Post',
+        timestamp: 2
+      },
+      {
+        _id: 'VAFDHbliYzttLcuPUaVLb',
+        idOrigin: '0vp9pa00ofjgqlieguvmutgnid',
+        name: '[TODO]Test Cal 2',
+        origin: 'Google Calendar',
+        owner: 'ds@gmail.com',
+        state: 0,
+        priority: '3',
+        __v: 0,
+        idTask: 'wDwHZ3_qXWbsKMsJ6B9EH',
+        type: 'cancel',
+        timestamp: 3
+      }
+    ];*/
+
     var transactions_from_global = [];
     try{
       response = await axios.get('https://amcyni.herokuapp.com/api/transaction/' + register.global,{headers: {'x-access-token': token}});
@@ -54,9 +112,7 @@ export default function setIpc(){
     }
 
     console.log(transactions_from_global);
-    console.log(list_trans_uncommited);
-    console.log("PASSOU");
-
+    console.log('Passou');
 
     var transactions_to_update = [];
     var transactions_to_perform = [];
@@ -69,29 +125,30 @@ export default function setIpc(){
             case 'Post':
               if (list_trans_uncommited[j].type === 'Post'){
                 dependency = true;
-                list_trans_uncommited.slice(j,1);
+                list_trans_uncommited.splice(j,1);
+                console.log('entrei');
               }
               break;
             case 'confirm':
               if (list_trans_uncommited[j].type === 'confirm') {
                 dependency = true;
-                list_trans_uncommited.slice(j,1);
+                list_trans_uncommited.splice(j,1);
               }
               else if (list_trans_uncommited[j].type === 'cancel') {
                 dependency = true;
                 transactions_to_update.push(transactions_from_global[i]);
-                list_trans_uncommited.slice(j,1);
+                list_trans_uncommited.splice(j,1);
               }
               break;
             case 'cancel':
               if (list_trans_uncommited[j].type === 'cancel') {
                 dependency = true;
-                list_trans_uncommited.slice(j,1);
+                list_trans_uncommited.splice(j,1);
               }
               else if (list_trans_uncommited[j].type === 'confirm') {
                 dependency = true;
                 transactions_to_update.push(transactions_from_global[i]);
-                list_trans_uncommited.slice(j,1);
+                list_trans_uncommited.splice(j,1);
               }
               break;
             default:
