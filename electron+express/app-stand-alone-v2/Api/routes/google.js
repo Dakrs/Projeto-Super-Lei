@@ -52,6 +52,7 @@ router.get('/tasks', async function(req, res) {
 
               var aux = await Task.insert(task)
               var register = await Register.get()
+              var registerINC = Register.incLocal(register[0]._id)
               var transactions = JSON.parse(JSON.stringify(aux)); //new json object here
                 transactions.idTask = aux._id
                 transactions._id = nanoid()
@@ -110,6 +111,16 @@ router.get('/calendar', async function(req, res) {
             task.priority=3
 
             var aux = await Task.insert(task)
+              var register = await Register.get()
+              var registerINC = Register.incLocal(register[0]._id)
+              var transactions = JSON.parse(JSON.stringify(aux)); //new json object here
+                transactions.idTask = aux._id
+                transactions._id = nanoid()
+                transactions.type = "Post";
+                transactions.timestamp = register[0].local
+                console.log(transactions)
+               await Transaction.insert(transactions)
+               
 
             return aux;
           }
@@ -156,7 +167,16 @@ router.get('/emails', async function(req, res) {
                   task.state = 0
                   task.priority=3
 
-                  var x = await Task.insert(task)
+                var x = await Task.insert(task)
+                var register = await Register.get()
+                var registerINC = Register.incLocal(register[0]._id)
+                var transactions = JSON.parse(JSON.stringify(x)); //new json object here
+                transactions.idTask = aux._id
+                transactions._id = nanoid()
+                transactions.type = "Post";
+                transactions.timestamp = register[0].local
+                console.log(transactions)
+               await Transaction.insert(transactions)
                   return x;
               }
               else
