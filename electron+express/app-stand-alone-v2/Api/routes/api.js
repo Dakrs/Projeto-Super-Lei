@@ -92,6 +92,7 @@ router.put('/state/:id',function(req, res, next) {
                 console.log(register)
                 var transactions = JSON.parse(JSON.stringify(dados2)); //new json object here
                 transactions.idTask = dados2._id
+                transactions.idOrigin = dados2._id
                 transactions._id = nanoid()
                 transactions.type = req.query.state==="1" ? "complete" : "false";
                 transactions.timestamp = register[0].local
@@ -144,6 +145,7 @@ router.post('/',function(req,res){
                 console.log(register)
                 var transactions = JSON.parse(JSON.stringify(dados)); //new json object here
                 transactions.idTask = dados._id
+                transactions.idOrigin = dados._id
                 transactions._id = nanoid()
                 transactions.type = "Post";
                 transactions.timestamp = register[0].local
