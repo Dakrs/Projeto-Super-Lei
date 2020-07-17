@@ -171,7 +171,7 @@ router.get('/emails', async function(req, res) {
                 var register = await Register.get()
                 var registerINC = Register.incLocal(register[0]._id)
                 var transactions = JSON.parse(JSON.stringify(x)); //new json object here
-                transactions.idTask = aux._id
+                transactions.idTask =x._id
                 transactions._id = nanoid()
                 transactions.type = "Post";
                 transactions.timestamp = register[0].local
