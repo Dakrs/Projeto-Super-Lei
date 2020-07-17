@@ -6,6 +6,7 @@ var auth2 = require('../authGoogle')
 var nanoid = require('nanoid');
 const {google} = require('googleapis');
 var Task = require('../controllers/tasks')
+var Register = require('../controllers/register')
 var Utility = require('../utility')
 
 
@@ -50,6 +51,16 @@ router.get('/tasks', async function(req, res) {
               task.priority=3
 
               var aux = await Task.insert(task)
+              var register = await Register.get()
+              var transactions = JSON.parse(JSON.stringify(aux)); //new json object here
+                transactions.idTask = aux._id
+                transactions._id = nanoid()
+                transactions.type = "Post";
+                transactions.timestamp = register[0].local
+                console.log(transactions)
+               await Transaction.insert(transactions)
+               
+        
               return aux
           }
           else
