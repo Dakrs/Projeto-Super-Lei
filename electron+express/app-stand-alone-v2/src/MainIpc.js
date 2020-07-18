@@ -35,6 +35,7 @@ export default function setIpc(){
       return null;
     }
     // buscar as transações remote
+
     /**
     var transactions_from_global = [
       {
@@ -67,8 +68,8 @@ export default function setIpc(){
       },
       {
         _id: 'VAFDHbliYzttLcuPUaVLb',
-        idOrigin: '0vp9pa00ofjgqlieguvmutgnid',
-        name: '[TODO]Test Cal 2',
+        idOrigin: '7mkngs1pptb5gbi25e1c8423cu',
+        name: '[TODO] Test Cal',
         origin: 'Google Calendar',
         owner: 'ds@gmail.com',
         state: 0,
@@ -79,9 +80,9 @@ export default function setIpc(){
         timestamp: 2
       },
       {
-        _id: 'VAFDHbliYzttLcuPUaVLb',
-        idOrigin: '0vp9pa00ofjgqlieguvmutgnid',
-        name: '[TODO]Test Cal 2',
+        _id: 'VAFDHbliYzttLcuPUdasdaVLb',
+        idOrigin: '7mkngs1pptb5gbi25e1c8423cu',
+        name: '[TODO] Test Cal',
         origin: 'Google Calendar',
         owner: 'ds@gmail.com',
         state: 0,
@@ -92,6 +93,7 @@ export default function setIpc(){
         timestamp: 3
       }
     ];*/
+
 
     var transactions_from_global = [];
     try{
@@ -136,7 +138,7 @@ export default function setIpc(){
               }
               else if (list_trans_uncommited[j].type === 'cancel') {
                 dependency = true;
-                transactions_to_update.push(transactions_from_global[i]);
+                transactions_to_update.push({dep: transactions_from_global[i], id: list_trans_uncommited[j]._id});
                 list_trans_uncommited.splice(j,1);
               }
               break;
@@ -147,7 +149,7 @@ export default function setIpc(){
               }
               else if (list_trans_uncommited[j].type === 'confirm') {
                 dependency = true;
-                transactions_to_update.push(transactions_from_global[i]);
+                transactions_to_update.push({dep: transactions_from_global[i], id: list_trans_uncommited[j]._id});
                 list_trans_uncommited.splice(j,1);
               }
               break;
@@ -162,6 +164,24 @@ export default function setIpc(){
       if(!dependency){
         //executa transaction transactions_from_global[i]
         transactions_to_perform.push(transactions_from_global[i]);
+      }
+    }
+
+    for(var i = 0; i < transactions_to_perform.length; i++){
+      try{
+        await axios.post('http://localhost:4545/api/transactionTotask',transactions_to_perform[i]);
+      }
+      catch(err){
+        console.log(err);
+      }
+    }
+
+    for(var i = 0; i < transactions_to_update.length; i++){
+      try{
+        await axios.put('http://localhost:4545/api/updatetransaction',transactions_to_update[i]);
+      }
+      catch(err){
+        console.log(err);
       }
     }
 

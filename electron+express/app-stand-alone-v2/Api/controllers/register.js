@@ -4,7 +4,7 @@ var Register = require('../models/register')
 module.exports.get = () =>{
     return Register
            .find()
-           .exec() 
+           .exec()
 }
 
 module.exports.updateById = (id,local,global) => {
@@ -30,6 +30,10 @@ module.exports.incLocal = (_id) => {
         {$inc : {local :1}})
 }
 
+module.exports.setLocal = (_id,val) => {
+  return Register.updateOne({_id : _id},{local: val});
+}
+
 
 
 module.exports.incGlobal = (_id) => {
@@ -37,4 +41,3 @@ module.exports.incGlobal = (_id) => {
         .updateOne({_id : _id},
         {$inc : {global :1}})
 }
-
