@@ -17,6 +17,7 @@ function getTrue() {
 export default function setIpc(){
 
   async function sync(){
+
     if(!store.has('JWT_TOKEN')) {
       return null;
     }
@@ -25,6 +26,13 @@ export default function setIpc(){
 
     var response;
     var register;
+
+    try {
+      response = await axios.get('https://amcyni.herokuapp.com/api/lock',{headers: {'x-access-token': token}});
+    } catch (err) {
+      console.log('lock error');
+      return null;
+    }
 
     try{
       response = await axios.get('http://localhost:4545/api/register');
@@ -35,65 +43,6 @@ export default function setIpc(){
       return null;
     }
     // buscar as transações remote
-
-    /**
-    var transactions_from_global = [
-      {
-        _id: 'qQ2kCkERZQrkzmkjhKYEO',
-        idOrigin: '5lev709aqkqnatbdjb41dh04l6',
-        name: '[TODO] Test Google Cal',
-        description: 'Este é um teste para o google calendar.',
-        origin: 'Google Calendar',
-        owner: 'ds@gmail.com',
-        state: 0,
-        priority: '3',
-        __v: 0,
-        idTask: 'vo_ZWlCIbujtRuEcSj8Ri',
-        type: 'Post',
-        timestamp: 0
-      },
-      {
-        _id: 'TBtbR92cNsGJU_irJJDTQ',
-        name: 'teste na app',
-        priority: '3',
-        description: '',
-        origin: 'Mobile App',
-        owner: 'ds@gmail.com',
-        state: 0,
-        __v: 0,
-        idTask: 'YuPHAuesNMVdDjSWpUzp_',
-        idOrigin: 'YuPHAuesNMVdDjSWpUzp_',
-        type: 'Post',
-        timestamp: 1,
-      },
-      {
-        _id: 'VAFDHbliYzttLcuPUaVLb',
-        idOrigin: '7mkngs1pptb5gbi25e1c8423cu',
-        name: '[TODO] Test Cal',
-        origin: 'Google Calendar',
-        owner: 'ds@gmail.com',
-        state: 0,
-        priority: '3',
-        __v: 0,
-        idTask: 'wDwHZ3_qXWbsKMsJ6B9EH',
-        type: 'Post',
-        timestamp: 2
-      },
-      {
-        _id: 'VAFDHbliYzttLcuPUdasdaVLb',
-        idOrigin: '7mkngs1pptb5gbi25e1c8423cu',
-        name: '[TODO] Test Cal',
-        origin: 'Google Calendar',
-        owner: 'ds@gmail.com',
-        state: 0,
-        priority: '3',
-        __v: 0,
-        idTask: 'wDwHZ3_qXWbsKMsJ6B9EH',
-        type: 'cancel',
-        timestamp: 3
-      }
-    ];*/
-
 
     var transactions_from_global = [];
     try{
@@ -113,8 +62,8 @@ export default function setIpc(){
       return null;
     }
 
-    console.log(transactions_from_global);
-    console.log('Passou');
+//    console.log(transactions_from_global);
+//    console.log('Passou');
 
     var transactions_to_update = [];
     var transactions_to_perform = [];
@@ -184,9 +133,30 @@ export default function setIpc(){
       }
     }
 
-    console.log(transactions_to_perform);
-    console.log(transactions_to_update);
-    console.log(list_trans_uncommited);
+    var gs;
+    try{
+      response = await axios.post('https://amcyni.herokuapp.com/api/transactions',{transactions: list_trans_uncommited},{headers: {'x-access-token': token}});
+      gs = response.data;
+    }
+    catch(err){
+      console.log(err);
+      return null;
+    }
+
+    //console.log(transactions_to_perform);
+    //console.log(transactions_to_update);
+    //console.log(list_trans_uncommited);
+
+    try{
+      response = await axios.put('http://localhost:4545/api/register/'+ register._id,{global: gs, local: gs});
+    }
+    catch(err){
+      console.log(err);
+      return null;
+    }
+
+    console.log('Sync Completed');
+    return true;
   }
 
 
@@ -262,6 +232,10 @@ export default function setIpc(){
        response = await axios.put('http://localhost:4545/api/state/'+id+'?state=1')
        // 0 - por fazer // 1 - completa  // 2 - cancelada
        response=true;
+
+       if(store.has('JWT_TOKEN')){
+         await sync();
+       }
     }
     catch(err) {
       console.error("Erro",err)
@@ -278,10 +252,14 @@ export default function setIpc(){
         await axios.put('http://localhost:4545/api/state/'+id+'?state=2')
        // 0 - por fazer // 1 - completa  // 2 - cancelada
        response =true
+
+       if(store.has('JWT_TOKEN')){
+         await sync();
+       }
     }
     catch(err) {
           console.error("Erro",err)
-      }
+    }
 
     return response;
 
@@ -316,6 +294,11 @@ export default function setIpc(){
 
   ipcMain.handle('get_git_todos', async (event, ...args) => {
     await axios.get('http://localhost:4545/github/issues')
+
+    if(store.has('JWT_TOKEN')){
+      await sync();
+    }
+
     let response = await axios.get('http://localhost:4545/api')
     response.data.forEach(element => {
          if(element.date)
@@ -328,6 +311,11 @@ export default function setIpc(){
 
     await axios.get('http://localhost:4545/outlook/calendar')
     await axios.get('http://localhost:4545/outlook/emails')
+
+    if(store.has('JWT_TOKEN')){
+      await sync();
+    }
+
    let response = await axios.get('http://localhost:4545/api')
    response.data.forEach(element => {
          if(element.date)
@@ -342,12 +330,16 @@ export default function setIpc(){
     await axios.get('http://localhost:4545/google/tasks')
     await axios.get('http://localhost:4545/google/calendar')
     await axios.get('http://localhost:4545/google/emails')
+
+    if(store.has('JWT_TOKEN')){
+      await sync();
+    }
    let response = await axios.get('http://localhost:4545/api')
    response.data.forEach(element => {
          if(element.date)
              element.date= new Date(element.date)
        });
-     return response.data
+   return response.data
   });
 
   ipcMain.handle('add_todo', async (event, ...args) => {
@@ -363,6 +355,9 @@ export default function setIpc(){
 
           })
 
+          if(store.has('JWT_TOKEN')){
+            await sync();
+          }
     }
     catch(err) {
            return null
@@ -386,7 +381,8 @@ export default function setIpc(){
     }
 
     store.set('JWT_TOKEN',response.data.token);
-    await sync();
+    var res = await sync();
+    console.log(res);
 
     return response.status;
   });

@@ -114,15 +114,14 @@ router.put('/state/:id',function(req, res, next) {
 
 
 router.put('/register/:id',function(req,res,nex){
-    var local = req.query.local
-    var global=req.query.global
+    var local = req.body.local
+    var global=req.body.global
     var id = req.params.id
     Register.updateById(id,local,global)
     .then(dados =>res.jsonp(dados))
     .catch(erro =>{
         console.log(erro)
         res.status(500).jsonp(erro)})
-
 })
 
 
