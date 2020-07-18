@@ -68,7 +68,7 @@ router.get('/calendar', async function(req, res) {
 
         var eventos = await listEvents(oAuth2Client,idCalendario)
 
-        eventos.map(async element =>{
+        eventos.forEach(async element =>{
 
             promise= promise.then(() =>{
                 return addTasksCalendar(element)
@@ -98,7 +98,7 @@ router.get('/emails', async function(req, res) {
         var headers = element.payload.headers
 
 
-        headers.map( async header => {
+        headers.forEach( async header => {
           promise = promise.then(() => {
               return addTasksEmail(header,element)
           })

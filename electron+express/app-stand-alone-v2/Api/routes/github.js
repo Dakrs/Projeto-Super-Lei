@@ -5,7 +5,11 @@ var nanoid = require('nanoid');
 const jwt = require('jsonwebtoken');
 const keys = require('../config/keys');
 var Task = require('../controllers/tasks');
+var Register = require('../controllers/register')
 const Credential = require('../controllers/credentials');
+var Transaction = require('../controllers/transactions')
+let promise = Promise.resolve(); 
+
 
 const oauth2 = require('simple-oauth2').create({
   client: {
@@ -98,45 +102,37 @@ router.get('/issues', async function(req, res, next) {
         const result =  await response.json();
         var issueRes = [];
                 
-        var promise1 = result.map( async function(repo) {
-              title = repo.name;
-
-              const headers = {
-                "Authorization" : "Token " + accessToken
-              }   
-              const url2 = "https://api.github.com/repos/" + username + "/" + title +  "/issues";/*?q=author:" + username + " type:issue";*/
+        result.map( async function(repo) {
+          title = repo.name;
+          const headers = {
+              "Authorization" : "Token " + accessToken
+          }   
+          const url2 = "https://api.github.com/repos/" + username + "/" + title +  "/issues";/*?q=author:" + username + " type:issue";*/
               
-              const issues = await fetch(url2, {
+          const issues = await fetch(url2, {
                 "method": "GET",
                 "headers": headers
+          })
+          issueRes = await issues.json();
+              
+          if(issueRes.length > 0){
+              
+              issueRes.forEach(element => {
+                promise= promise.then(() =>{
+                    return addTasks(element)
+                })
               })
 
-              issueRes = await issues.json();
-              
-              if(issueRes.length > 0){
-                var promise2 = issueRes.map(async r => {
-                  var response = await Task.findByIdOrigin(r.id,"GITHUB")
-                  if (response.length===0){
-                    var task = {}
-                        task._id = nanoid()
-                        task.idOrigin = r.id
-                        task.name = r.title
-                        task.description = r.body
-                        task.origin = "GITHUB"
-                        task.owner = r.user.id
-                        task.state = 0
+              promise.then(data => {
+                //All tasks completed
+                console.log(data); 
+              });
                         
-                        var aux = await Task.insert(task)
-                        console.log("INSERI");
-                        return aux
-                        
-                   }
-                })                  
-                await Promise.all(promise2);
-              }
-        })
-        await Promise.all(promise1);
-        res.jsonp(issueRes);
+          }
+        
+        })                  
+        res.jsonp(issueRes);   
+       
         
       } catch (error) {
         console.log(error);
@@ -183,6 +179,46 @@ async function getAccessToken() {
   var token = await Credential.get("GITHUB");
 
   return token[0].token.access_token;
+
+}
+
+
+function addTasks(r){
+  return new Promise (async (resolve,reject) => {
+    var response = await Task.findByIdOrigin(r.id,"GITHUB")
+    if (response.length===0){
+      var task = {}
+          task._id = nanoid()
+          task.idOrigin = r.id
+          task.name = r.title
+          task.description = r.body
+          task.origin = "GITHUB"
+          task.owner = "me"
+          task.state = 0
+          
+          var aux = await Task.insert(task)
+          var register = await Register.get()
+          await createTransaction(aux,"Post",register[0].local)
+          await Register.incLocal(register[0]._id)
+
+          return resolve(aux)
+    }
+    else
+        resolve(false)
+  })
+  
+}
+
+async function createTransaction(task, type,local){
+
+  var transactions = JSON.parse(JSON.stringify(task)); //new json object here
+
+  transactions.idTask = task._id
+  transactions._id = nanoid()
+  transactions.type = type;
+  transactions.idOrigin = task.origin === 'metodo' ? task._id : task.idOrigin;
+  transactions.timestamp = local
+ await Transaction.insert(transactions)
 
 }
 
