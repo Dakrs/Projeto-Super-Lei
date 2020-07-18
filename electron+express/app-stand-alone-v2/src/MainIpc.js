@@ -162,7 +162,6 @@ export default function setIpc(){
       }
 
       if(!dependency){
-        //executa transaction transactions_from_global[i]
         transactions_to_perform.push(transactions_from_global[i]);
       }
     }
@@ -386,29 +385,6 @@ export default function setIpc(){
       return err.response.status;
     }
 
-    /**
-    var register;
-
-    try{
-      response2 = await axios.get('http://localhost:4545/api/register');
-      register = response2.data;
-    }
-    catch(err){
-      return null;
-    }
-
-    var list_trans_uncommited = [];
-    try{
-      response2 = await axios.get('http://localhost:4545/api/transactions',register);
-      list_trans_uncommited = response2.data;
-    }
-    catch(err){
-      //libertar o lock
-      return null;
-    }*/
-
-    //await axios.post('https://amcyni.herokuapp.com/api/transactions',{transactions: list_trans_uncommited},{headers: {'x-access-token': response.data.token}});
-    //console.log(list_trans_uncommited);
     store.set('JWT_TOKEN',response.data.token);
     await sync();
 
