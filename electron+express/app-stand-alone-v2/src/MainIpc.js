@@ -28,9 +28,10 @@ export default function setIpc(){
     var register;
 
     try {
-      response = await axios.get('https://amcyni.herokuapp.com/api/lock',{headers: {'x-access-token': token}});
+      response = await axios.put('https://amcyni.herokuapp.com/api/lock',null,{headers: {'x-access-token': token}});
     } catch (err) {
-      console.log('lock error');
+
+      console.log('lock error: ' + err.response.status);
       return null;
     }
 
