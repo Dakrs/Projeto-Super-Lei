@@ -9,6 +9,8 @@ var Task = require('../controllers/tasks')
 var Register = require('../controllers/register')
 var Utility = require('../utility')
 var Transaction = require('../controllers/transactions')
+let promise = Promise.resolve(); 
+
 
 
 
@@ -28,60 +30,32 @@ router.get('/tasks', async function(req, res) {
   var file = await readFile();
   if(file){
     auth2.authorize(JSON.parse(file), async function(oAuth2Client){
-  var l_tasks = await list_tasks(oAuth2Client)
+      var l_tasks = await list_tasks(oAuth2Client)
+      l_tasks.forEach( async element => {
+          var items = element.data.items
 
-  var promises1= l_tasks.map( async element => {
+          if(items){
+              items.forEach(element => {
 
-    var items = element.data.items
-
-    if(items){
-        var promises2 = items.map(async t =>{
-
-          var response = await Task.findByIdOrigin(t.id,"Google Tasks")
-          if (response.length===0){
-            var task = {}
-              task._id=nanoid()
-              task.idOrigin = t.id
-              task.date= t.due
-              task.name = t.title
-              if(t.notes)
-              task.description = t.notes
-              task.origin = "Google Tasks"
-              task.owner = "me"
-              task.state = 0
-              task.priority=3
-
-              var aux = await Task.insert(task)
-              var register = await Register.get()
-              var registerINC = Register.incLocal(register[0]._id)
-              var transactions = JSON.parse(JSON.stringify(aux)); //new json object here
-                transactions.idTask = aux._id
-                transactions._id = nanoid()
-                transactions.type = "Post";
-                transactions.timestamp = register[0].local
-                console.log(transactions)
-               await Transaction.insert(transactions)
-
-
-              return aux
+                promise= promise.then(() =>{
+                  return addTasksTasks(element)
+                })
+              })
+          
+              promise.then(data => {
+            //All tasks completed
+                console.log(data); 
+              });
           }
-          else
-              return false;
-        })
-
-      await Promise.all(promises2)
-
-    }
-
-  return  true;
-  })
-  await Promise.all(promises1)
-  res.jsonp(l_tasks)
+      })
+      res.jsonp(l_tasks)
     })
-
   }
-
+  else {
+    res.jsonp(false)
+  }
 })
+
 
 /* GET home page. */
 router.get('/calendar', async function(req, res) {
@@ -94,52 +68,24 @@ router.get('/calendar', async function(req, res) {
 
         var eventos = await listEvents(oAuth2Client,idCalendario)
 
-    const promises = eventos.map(async element =>{
-      var bool = await Utility.todoRegex(element.summary)
-      if (bool){
-          var response = await Task.findByIdOrigin(element.id,"Google Calendar")
-          if (response.length===0){
-              var task ={}
-            task._id=nanoid()
-            task.idOrigin = element.id
-            task.date= element.start.date
-            task.name = element.summary
-            if(element.description)
-            task.description=element.description
-            task.origin = "Google Calendar"
-            task.owner = "me"
-            task.state = 0
-            task.priority=3
+        eventos.map(async element =>{
 
-            var aux = await Task.insert(task)
-            console.log(aux);
-              var register = await Register.get()
-              console.log(register);
-              var registerINC = await Register.incLocal(register[0]._id)
-              var transactions = JSON.parse(JSON.stringify(aux)); //new json object here
-                transactions.idTask = aux._id
-                transactions._id = nanoid()
-                transactions.type = "Post";
-                transactions.timestamp = register[0].local
-                console.log(transactions)
-               await Transaction.insert(transactions)
+            promise= promise.then(() =>{
+                return addTasksCalendar(element)
+            })
+        })
 
-
-            return aux;
-          }
-
-      }
-      else
-          return bool;
-
-    });
-
-    var tasks = await Promise.all(promises)
-  })
-    res.jsonp(ids_Calendars)
+        promise.then(data => {
+          //All tasks completed
+        console.log(data); 
+        });
       })
-    }
-  })
+     
+          
+      res.jsonp(ids_Calendars)
+    })
+  }
+})
 
 router.get('/emails', async function(req, res) {
   task = {}
@@ -148,57 +94,24 @@ router.get('/emails', async function(req, res) {
     auth2.authorize(JSON.parse(file),async function(oAuth2Client){
       var emails = await list_emails(oAuth2Client)
 
-      var promises1 = emails.map(async element =>{
+        emails.forEach(async element =>{
         var headers = element.payload.headers
 
 
-        var promises2= headers.map( async header => {
-
-          if(header.name ==="Subject" && element.labelIds[element.labelIds.length-1] ==="INBOX"){
-
-            var bool = await Utility.todoRegex(header.value)
-            if(bool){
-
-              var response = await Task.findByIdOrigin(element.id,"Google Gmail")
-              if(response.length===0){
-
-                  task._id = nanoid()
-                  task.idOrigin = element.id
-                  task.name = header.value
-                  task.origin = "Google Gmail"
-                  task.owner = "me"
-                  task.state = 0
-                  task.priority=3
-
-                var x = await Task.insert(task)
-                var register = await Register.get()
-                var registerINC = Register.incLocal(register[0]._id)
-                var transactions = JSON.parse(JSON.stringify(x)); //new json object here
-                transactions.idTask =x._id
-                transactions._id = nanoid()
-                transactions.type = "Post";
-                transactions.timestamp = register[0].local
-                console.log(transactions)
-               await Transaction.insert(transactions)
-                  return x;
-              }
-              else
-                  return false
-            }
-             else false
-          }
+        headers.map( async header => {
+          promise = promise.then(() => {
+              return addTasksEmail(header,element)
+          })
 
         })
-        await Promise.all(promises2)
-
+        promise.then(data => {
+          //All tasks completed
+          console.log(data); 
+        });
       })
-      var aux =await Promise.all(promises1)
-
       return res.jsonp(emails)
     })
-
-      }
-
+  }
   })
 
 router.post('/code',async (req,res) => {
@@ -308,6 +221,121 @@ async function listCalendars(auth){
 }
 
 
+function addTasksTasks(t){
+  return new Promise (async (resolve,reject) => {
+    var response = await Task.findByIdOrigin(t.id,"Google Tasks")
+    if (response.length===0){
+      var task = {}
+        task._id=nanoid()
+        task.idOrigin = t.id
+        task.date= t.due
+        task.name = t.title
+        if(t.notes)
+        task.description = t.notes
+        task.origin = "Google Tasks"
+        task.owner = "me"
+        task.state = 0
+        task.priority=3
+
+        var aux = await Task.insert(task)
+        var register = await Register.get()
+
+        await createTransaction(aux,"Post",register[0].local)
+        await Register.incLocal(register[0]._id)
+
+        resolve(aux)
+    }
+    else
+        resolve(false)
+  })
+}
+
+function addTasksCalendar(element){
+  return new Promise (async (resolve,reject) => {
+    var bool = await Utility.todoRegex(element.summary)
+    if (bool){
+        var response = await Task.findByIdOrigin(element.id,"Google Calendar")
+        if (response.length===0){
+          var task ={}
+          task._id=nanoid()
+          task.idOrigin = element.id
+          task.date= element.start.date
+          task.name = element.summary
+          if(element.description)
+          task.description=element.description
+          task.origin = "Google Calendar"
+          task.owner = "me"
+          task.state = 0
+          task.priority=3
+          var aux = await Task.insert(task)
+          var register = await Register.get()
+
+          await createTransaction(aux,"Post",register[0].local)
+          await Register.incLocal(register[0]._id)
+
+          resolve(aux)
+        }
+        else
+          resolve(false)
+    }
+    else
+        resolve(false)
+})
+}
+
+function addTasksEmail(header,element){
+  return new Promise (async (resolve,reject) => {
+
+    if(header.name ==="Subject" && element.labelIds[element.labelIds.length-1] ==="INBOX"){
+
+      var bool = await Utility.todoRegex(header.value)
+      if(bool){
+  
+        var response = await Task.findByIdOrigin(element.id,"Google Gmail")
+        if(response.length===0){
+  
+            task._id = nanoid()
+            task.idOrigin = element.id
+            task.name = header.value
+            task.origin = "Google Gmail"
+            task.owner = "me"
+            task.state = 0
+            task.priority=3
+  
+            var x = await Task.insert(task)
+            var register = await Register.get()
+           
+            
+            await createTransaction(x,"Post",register[0].local)
+            await Register.incLocal(register[0]._id)
+            resolve(x);
+        }
+
+        else
+          resolve(false)
+      }
+       else 
+         resolve(false)
+    }
+    else resolve(false)
+  })
+}
+
+
+
+
+async function createTransaction(task, type,local){
+
+  var transactions = JSON.parse(JSON.stringify(task)); //new json object here
+
+  transactions.idTask = task._id
+  transactions._id = nanoid()
+  transactions.type = type;
+  transactions.idOrigin = task.origin === 'metodo' ? task._id : task.idOrigin;
+  transactions.timestamp = local
+ await Transaction.insert(transactions)
+
+}
 
 
 
