@@ -7,10 +7,11 @@ module.exports.insert = t => {
 }
 
 
+module.exports.updateType = (id, type) => {
+  return Transaction.updateOne({_id : id},{type: type});
+}
 
 module.exports.getTransactionsWithInterval = (local, global) => {
     return Transaction.find({ timestamp: { $gte: global, $lt: local } });
-    
+
 }
-
-

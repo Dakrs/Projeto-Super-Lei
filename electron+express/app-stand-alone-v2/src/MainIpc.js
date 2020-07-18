@@ -35,6 +35,66 @@ export default function setIpc(){
       return null;
     }
     // buscar as transações remote
+
+    /**
+    var transactions_from_global = [
+      {
+        _id: 'qQ2kCkERZQrkzmkjhKYEO',
+        idOrigin: '5lev709aqkqnatbdjb41dh04l6',
+        name: '[TODO] Test Google Cal',
+        description: 'Este é um teste para o google calendar.',
+        origin: 'Google Calendar',
+        owner: 'ds@gmail.com',
+        state: 0,
+        priority: '3',
+        __v: 0,
+        idTask: 'vo_ZWlCIbujtRuEcSj8Ri',
+        type: 'Post',
+        timestamp: 0
+      },
+      {
+        _id: 'TBtbR92cNsGJU_irJJDTQ',
+        name: 'teste na app',
+        priority: '3',
+        description: '',
+        origin: 'Mobile App',
+        owner: 'ds@gmail.com',
+        state: 0,
+        __v: 0,
+        idTask: 'YuPHAuesNMVdDjSWpUzp_',
+        idOrigin: 'YuPHAuesNMVdDjSWpUzp_',
+        type: 'Post',
+        timestamp: 1,
+      },
+      {
+        _id: 'VAFDHbliYzttLcuPUaVLb',
+        idOrigin: '7mkngs1pptb5gbi25e1c8423cu',
+        name: '[TODO] Test Cal',
+        origin: 'Google Calendar',
+        owner: 'ds@gmail.com',
+        state: 0,
+        priority: '3',
+        __v: 0,
+        idTask: 'wDwHZ3_qXWbsKMsJ6B9EH',
+        type: 'Post',
+        timestamp: 2
+      },
+      {
+        _id: 'VAFDHbliYzttLcuPUdasdaVLb',
+        idOrigin: '7mkngs1pptb5gbi25e1c8423cu',
+        name: '[TODO] Test Cal',
+        origin: 'Google Calendar',
+        owner: 'ds@gmail.com',
+        state: 0,
+        priority: '3',
+        __v: 0,
+        idTask: 'wDwHZ3_qXWbsKMsJ6B9EH',
+        type: 'cancel',
+        timestamp: 3
+      }
+    ];*/
+
+
     var transactions_from_global = [];
     try{
       response = await axios.get('https://amcyni.herokuapp.com/api/transaction/' + register.global,{headers: {'x-access-token': token}});
@@ -54,9 +114,7 @@ export default function setIpc(){
     }
 
     console.log(transactions_from_global);
-    console.log(list_trans_uncommited);
-    console.log("PASSOU");
-
+    console.log('Passou');
 
     var transactions_to_update = [];
     var transactions_to_perform = [];
@@ -69,29 +127,30 @@ export default function setIpc(){
             case 'Post':
               if (list_trans_uncommited[j].type === 'Post'){
                 dependency = true;
-                list_trans_uncommited.slice(j,1);
+                list_trans_uncommited.splice(j,1);
+                console.log('entrei');
               }
               break;
             case 'confirm':
               if (list_trans_uncommited[j].type === 'confirm') {
                 dependency = true;
-                list_trans_uncommited.slice(j,1);
+                list_trans_uncommited.splice(j,1);
               }
               else if (list_trans_uncommited[j].type === 'cancel') {
                 dependency = true;
-                transactions_to_update.push(transactions_from_global[i]);
-                list_trans_uncommited.slice(j,1);
+                transactions_to_update.push({dep: transactions_from_global[i], id: list_trans_uncommited[j]._id});
+                list_trans_uncommited.splice(j,1);
               }
               break;
             case 'cancel':
               if (list_trans_uncommited[j].type === 'cancel') {
                 dependency = true;
-                list_trans_uncommited.slice(j,1);
+                list_trans_uncommited.splice(j,1);
               }
               else if (list_trans_uncommited[j].type === 'confirm') {
                 dependency = true;
-                transactions_to_update.push(transactions_from_global[i]);
-                list_trans_uncommited.slice(j,1);
+                transactions_to_update.push({dep: transactions_from_global[i], id: list_trans_uncommited[j]._id});
+                list_trans_uncommited.splice(j,1);
               }
               break;
             default:
@@ -103,8 +162,25 @@ export default function setIpc(){
       }
 
       if(!dependency){
-        //executa transaction transactions_from_global[i]
         transactions_to_perform.push(transactions_from_global[i]);
+      }
+    }
+
+    for(var i = 0; i < transactions_to_perform.length; i++){
+      try{
+        await axios.post('http://localhost:4545/api/transactionTotask',transactions_to_perform[i]);
+      }
+      catch(err){
+        console.log(err);
+      }
+    }
+
+    for(var i = 0; i < transactions_to_update.length; i++){
+      try{
+        await axios.put('http://localhost:4545/api/updatetransaction',transactions_to_update[i]);
+      }
+      catch(err){
+        console.log(err);
       }
     }
 
@@ -309,29 +385,6 @@ export default function setIpc(){
       return err.response.status;
     }
 
-    /**
-    var register;
-
-    try{
-      response2 = await axios.get('http://localhost:4545/api/register');
-      register = response2.data;
-    }
-    catch(err){
-      return null;
-    }
-
-    var list_trans_uncommited = [];
-    try{
-      response2 = await axios.get('http://localhost:4545/api/transactions',register);
-      list_trans_uncommited = response2.data;
-    }
-    catch(err){
-      //libertar o lock
-      return null;
-    }*/
-
-    //await axios.post('https://amcyni.herokuapp.com/api/transactions',{transactions: list_trans_uncommited},{headers: {'x-access-token': response.data.token}});
-    //console.log(list_trans_uncommited);
     store.set('JWT_TOKEN',response.data.token);
     await sync();
 

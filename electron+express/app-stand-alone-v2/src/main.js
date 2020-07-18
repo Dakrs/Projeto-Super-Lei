@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, shell} = require('electron');
 const path = require('path');
 const axios = require('axios');
 const LoadingWindow = require('./Electron/LoadingWindow');
@@ -162,6 +162,7 @@ app.on('activate', () => {
 setIpc();
 
 ipcMain.on('trigger-google-url', async (event,arg) => {
+	/**
 	modalwindow = new ApiURLWindow(1,mainwin.window);
 
 
@@ -173,7 +174,10 @@ ipcMain.on('trigger-google-url', async (event,arg) => {
 		modalwindow = null;
 		console.log('del');
 		//mainwin.window.show();
-	})
+	})*/
+	let response = await axios.get('http://localhost:4545/google/url');
+	var url = response.data;
+	shell.openExternal(url);
 });
 
 ipcMain.on('trigger-outlook-url', async (event,arg) => {

@@ -415,6 +415,15 @@ alltodos.sortableJS = Sortable.create(el,{
   },
 });
 
+setInterval( async () => {
+  var size = alltodos.todos.length;
+  alltodos.todos = await Ipc.get_all_todos();
+  alltodos.sortBy(alltodos.sortedBy);
+  if (alltodos.todos.length > size){
+    alert((alltodos.todos.length - size)  + ' new ToDos!');
+  }
+},10000);
+
 
 /**
 window.ipcRenderer.on('testing',(event,arg) => {

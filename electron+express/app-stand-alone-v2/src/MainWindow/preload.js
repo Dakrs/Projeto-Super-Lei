@@ -16,8 +16,7 @@ ipcRenderer.on('testing',(event,arg) => {
 
 ipcRenderer.send('test','ests');*/
 
-store.delete('JWT_TOKEN');  
-store.delete('OUTLOOK_API_KEY');
+store.delete('JWT_TOKEN');
 
 
 contextBridge.exposeInMainWorld(

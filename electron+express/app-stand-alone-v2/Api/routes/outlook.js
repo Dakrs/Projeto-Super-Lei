@@ -24,14 +24,14 @@ router.get('/verify', function(req,res){
       else
       res.jsonp(false)
   })
-  .catch(erro => res.jsonp(false))
+  .catch(erro => res.jsonp(erro))
 
 })
 
 
 
 router.get('/emails', async function(req, res, next) {
-  
+
   task = {}
   const accessToken = await authHelper.getAccessToken();
   console.log(accessToken)
@@ -42,7 +42,7 @@ router.get('/emails', async function(req, res, next) {
           done(null, accessToken);
         }
     });
-  
+
     try {
       // Get the 10 newest messages from inbox
       const result = await client
@@ -50,13 +50,13 @@ router.get('/emails', async function(req, res, next) {
         .top(1000000000)
         .orderby('receivedDateTime DESC')
         .get();
-    
+
       var emails =  result.value;
       emails.forEach(element => {
         var bool = Utility.todoRegex(element.subject)
         if(bool){
           Task.findByIdOrigin(element.id,"Outlook emails")
-          .then(response =>{  
+          .then(response =>{
             if(response.length===0){
               task._id = nanoid()
               task.idOrigin = element.id
@@ -65,19 +65,19 @@ router.get('/emails', async function(req, res, next) {
               task.origin = "Outlook emails"
               task.owner = "me"
               task.state = 0
-              
+
               Task.insert(task)
               .then(dados => console.log("inseri task proveniente do email outlook"))
             }
           })
-        } 
+        }
       });
       res.jsonp(result)
     } catch (err) {
       res.status(500).jsonp(erro)
       }
-    
-  } 
+
+  }
   else {
     // Redirect to home
     var x = authHelper.getAuthUrl()
@@ -102,7 +102,7 @@ router.get('/calendar',async function(req, res, next){
     const start = new Date(new Date().setHours(0,0,0));
     // Set end of the calendar view to 365 days from start
     const end = new Date(new Date(start).setDate(start.getDate() + 365));
-      
+
     try {
       // Get the first 10 events for the coming week
       const result = await client
@@ -115,7 +115,7 @@ router.get('/calendar',async function(req, res, next){
         var bool = Utility.todoRegex(element.subject)
         if (bool){
           Task.findByIdOrigin(element.id,"Outlook Calendar")
-          .then(response =>{  
+          .then(response =>{
             if(response.length===0){
               task._id = nanoid()
               task.idOrigin = element.id
@@ -126,23 +126,23 @@ router.get('/calendar',async function(req, res, next){
               task.origin = "Outlook Calendar"
               task.owner = "me"
               task.state = 0
-              
+
               Task.insert(task)
               .then(dados => console.log("inseri task proveniente do CALENDARIO outlook"))
             }
           })
-        }   
+        }
       });
     } catch (err) {
       res.status(500).jsonp(err)
     }
-      
+
   } else {
     // Redirect to home
   var x = authHelper.getAuthUrl()
   res.redirect(authHelper.getAuthUrl())
   }
-  
+
 })
 
 module.exports = router;

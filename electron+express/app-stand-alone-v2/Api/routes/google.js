@@ -8,6 +8,7 @@ const {google} = require('googleapis');
 var Task = require('../controllers/tasks')
 var Register = require('../controllers/register')
 var Utility = require('../utility')
+var Transaction = require('../controllers/transactions')
 
 
 
@@ -60,8 +61,8 @@ router.get('/tasks', async function(req, res) {
                 transactions.timestamp = register[0].local
                 console.log(transactions)
                await Transaction.insert(transactions)
-               
-        
+
+
               return aux
           }
           else
@@ -111,8 +112,10 @@ router.get('/calendar', async function(req, res) {
             task.priority=3
 
             var aux = await Task.insert(task)
+            console.log(aux);
               var register = await Register.get()
-              var registerINC = Register.incLocal(register[0]._id)
+              console.log(register);
+              var registerINC = await Register.incLocal(register[0]._id)
               var transactions = JSON.parse(JSON.stringify(aux)); //new json object here
                 transactions.idTask = aux._id
                 transactions._id = nanoid()
@@ -120,7 +123,7 @@ router.get('/calendar', async function(req, res) {
                 transactions.timestamp = register[0].local
                 console.log(transactions)
                await Transaction.insert(transactions)
-               
+
 
             return aux;
           }
@@ -290,11 +293,11 @@ async function listCalendars(auth){
   const service = google.calendar({version : 'v3',auth})
    var calendars = await service.calendarList.list({
   })
-    
+
     var promises1 = calendars.data.items.map(async calendar =>{
       if (calendar.accessRole === "owner"){
           calendars_ids.push(calendar.id)
-      }        
+      }
     return;
     })
 
