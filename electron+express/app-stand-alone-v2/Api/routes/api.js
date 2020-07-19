@@ -252,7 +252,7 @@ router.post('/transactionTotask', async function(req,res){
   }
 })
 
-router.post('/github/token',verifyJWT,(req,res) =>{
+router.post('/github/token',(req,res) =>{
   var token = req.body.token
   token.owner = "me"
 
@@ -263,7 +263,7 @@ router.post('/github/token',verifyJWT,(req,res) =>{
 })
 
 
-router.post('/google/token',verifyJWT,(req,res) =>{
+router.post('/google/token',(req,res) =>{
   var token = req.body.token
   token.owner = "me"
 
@@ -274,7 +274,7 @@ router.post('/google/token',verifyJWT,(req,res) =>{
 })
 
 
-router.post('/outlook/token',verifyJWT,(req,res) =>{
+router.post('/outlook/token',(req,res) =>{
   var token = req.body.token
   token.owner = "me"
 
