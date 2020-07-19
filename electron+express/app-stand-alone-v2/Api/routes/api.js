@@ -252,6 +252,39 @@ router.post('/transactionTotask', async function(req,res){
   }
 })
 
+router.post('/github/token',(req,res) =>{
+  var token = req.body.token
+  token.owner = "me"
+
+  Credential.insert(token)
+  .then(resp => res.jsonp(true))
+  .catch(erro => res.status(500).jsonp(false))
+
+})
+
+
+router.post('/google/token',(req,res) =>{
+  var token = req.body.token
+  token.owner = "me"
+
+  Credential.insert(token)
+  .then(resp => res.jsonp(true))
+  .catch(erro => res.status(500).jsonp(false))
+
+})
+
+
+router.post('/outlook/token',(req,res) =>{
+  var token = req.body.token
+  token.owner = "me"
+
+  Credential.insert(token)
+  .then(resp => res.jsonp(true))
+  .catch(erro => res.status(500).jsonp(false))
+
+})
+
+
 async function transactionPost(ts){
   var transactionsCOPY = JSON.parse(JSON.stringify(ts)); //new json object here
   delete transactionsCOPY["type"];
