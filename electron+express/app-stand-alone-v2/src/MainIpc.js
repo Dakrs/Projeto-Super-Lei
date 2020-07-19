@@ -289,7 +289,12 @@ export default function setIpc(){
           if(element.date)
               element.date= new Date(element.date)
         });
-      return response.data
+
+    if(store.has('JWT_TOKEN')){
+      await sync();
+    }
+
+    return response.data
 
   });
 
