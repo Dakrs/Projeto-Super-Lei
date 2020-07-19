@@ -167,9 +167,17 @@ router.put('/updatetransaction',async function(req,res){
   var id = req.body.id;
   var type = req.body.dep.type;
 
-  var result = await Transaction.updateType(id,type);
-
   try{
+    var result = await Transaction.updateType(id,type);
+    switch (type) {
+      case 'confirm':
+        await Task.updateState(eq.body.dep.idTask,1);
+        break;
+      case 'cancel':
+        await Task.updateState(eq.body.dep.idTask,2);
+        break;
+      default:
+    }
     res.jsonp(type);
   }
   catch(err){

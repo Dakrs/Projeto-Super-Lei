@@ -396,7 +396,13 @@ var alltodos = new Vue({
       }
     },
     toggleSync: async function (){
-      await Ipc.sync();
+      var res = await Ipc.sync();
+      if (res !== null){
+        alert('Sync Completed');
+      }
+      else{
+        alert('Error on sync');
+      }
     },
     test: function(){
       alert('Wele');
