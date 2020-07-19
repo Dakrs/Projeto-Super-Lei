@@ -377,9 +377,20 @@ export default function setIpc(){
 
     store.set('JWT_TOKEN',response.data.token);
 
+    console.log(response.data);
+
+    if (store.has('GOOGLE_API_KEY') && response.data.google.length === 0){
+      try{
+        response2 = await axios.get('http://localhost:4545/api/googleToken');
+        console.log(response2.data.token);
+        await axios.post('https://amcyni.herokuapp.com/api/google/token',response2.data.token,{headers: {'x-access-token': response.data.token}});
+      }
+      catch(err){
+        console.log(err);
+      }
+    }
 
     var res = await sync();
-    console.log(res);
 
     return response.status;
   });
