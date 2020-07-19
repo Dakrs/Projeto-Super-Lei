@@ -395,6 +395,9 @@ var alltodos = new Vue({
         }
       }
     },
+    toggleSync: async function (){
+      await Ipc.sync();
+    },
     test: function(){
       alert('Wele');
     },

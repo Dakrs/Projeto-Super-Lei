@@ -74,6 +74,10 @@
               <i class="fa fa-download" aria-hidden="true"></i>
               Connected
             </span>
+            <span v-if="sync_status[3]" class="mouse noselect" @click="toggleSync()" style="font-size: 1.1rem">
+              <i class="fa fa-superpowers" aria-hidden="true"></i>
+              Refresh
+            </span>
           </div>
           <div class="title bottomTittle">
             <p class="title">me<strong>todo</strong></p>

@@ -63,8 +63,9 @@ export default function setIpc(){
       return null;
     }
 
-//    console.log(transactions_from_global);
-//    console.log('Passou');
+
+    console.log(transactions_from_global);
+    console.log('Passou');
 
     var transactions_to_update = [];
     var transactions_to_perform = [];
@@ -144,9 +145,12 @@ export default function setIpc(){
       return null;
     }
 
-    //console.log(transactions_to_perform);
-    //console.log(transactions_to_update);
-    //console.log(list_trans_uncommited);
+
+    console.log("Fiz");
+    console.log(transactions_to_perform);
+    console.log(transactions_to_update);
+    console.log("Enviei");
+    console.log(list_trans_uncommited);
 
     try{
       response = await axios.put('http://localhost:4545/api/register/'+ register._id,{global: gs, local: gs});
@@ -290,10 +294,6 @@ export default function setIpc(){
               element.date= new Date(element.date)
         });
 
-    if(store.has('JWT_TOKEN')){
-      await sync();
-    }
-
     return response.data
 
   });
@@ -407,4 +407,13 @@ export default function setIpc(){
 
     return response.status;
   });
+
+  ipcMain.handle('sync', async (event,...args)=>{
+
+    if(!store.has('JWT_TOKEN')) {
+      return null;
+    }
+
+    return await sync();
+  })
 }

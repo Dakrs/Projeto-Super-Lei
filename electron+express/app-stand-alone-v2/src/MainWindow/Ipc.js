@@ -98,6 +98,11 @@ export async function register(email,pass){
   return result;
 }
 
+export async function sync(){
+  const result = await ipcRenderer.invoke('sync');
+  return result;
+}
+
 export default {store_google_api_key,
                 cancel_todo_id,
                 complete_todo_id,
@@ -117,5 +122,6 @@ export default {store_google_api_key,
                 verify_Outlook_Key,
                 verify_Github_Key,
                 login,
-                register
+                register,
+                sync
               }
