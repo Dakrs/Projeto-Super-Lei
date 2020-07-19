@@ -171,10 +171,10 @@ router.put('/updatetransaction',async function(req,res){
     var result = await Transaction.updateType(id,type);
     switch (type) {
       case 'confirm':
-        await Task.updateState(eq.body.dep.idTask,1);
+        await Task.updateState(req.body.dep.idTask,1);
         break;
       case 'cancel':
-        await Task.updateState(eq.body.dep.idTask,2);
+        await Task.updateState(req.body.dep.idTask,2);
         break;
       default:
     }
