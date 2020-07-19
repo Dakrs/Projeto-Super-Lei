@@ -60,6 +60,49 @@ router.get('/transactions',function(req,res){
 })
 
 
+router.get('/googleToken',(req,res) =>{
+  Credential.get("GOOGLE")
+  .then(token => {
+    if(token.length> 0){
+      res.jsonp(token[0])
+    }
+    else{
+    res.status(500).jsonp(false)
+    }
+  })
+  .catch(erro => res.status(500).jsonp(erro))
+})
+
+
+
+router.get('/outlookToken',(req,res) =>{
+  Credential.get("OUTLOOK")
+  .then(token => {
+    if(token.length> 0){
+      res.jsonp(token[0])
+    }
+    else{
+    res.status(500).jsonp(false)
+    }
+  })
+  .catch(erro => res.status(500).jsonp(erro))
+})
+
+
+router.get('/githubToken',(req,res) =>{
+  Credential.get("GITHUB")
+  .then(token => {
+    if(token.length> 0){
+      res.jsonp(token[0])
+    }
+    else{
+    res.status(500).jsonp(false)
+    }
+  })
+  .catch(erro => res.status(500).jsonp(erro))
+})
+
+
 
 
 router.get('/:id',function(req, res, next) {
