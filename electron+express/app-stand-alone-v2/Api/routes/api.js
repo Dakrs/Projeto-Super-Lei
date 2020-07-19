@@ -3,6 +3,7 @@ var router = express.Router();
 var Task = require('../controllers/tasks')
 var Transaction = require('../controllers/transactions')
 var Register = require('../controllers/register')
+var Credential = require('../controllers/credentials')
 var nanoid = require('nanoid')
 
 router.get('/',function(req, res, next) {

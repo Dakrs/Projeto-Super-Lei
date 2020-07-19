@@ -63,10 +63,6 @@ export default function setIpc(){
       return null;
     }
 
-
-    console.log(transactions_from_global);
-    console.log('Passou');
-
     var transactions_to_update = [];
     var transactions_to_perform = [];
 
@@ -144,13 +140,6 @@ export default function setIpc(){
       console.log(err);
       return null;
     }
-
-
-    console.log("Fiz");
-    console.log(transactions_to_perform);
-    console.log(transactions_to_update);
-    console.log("Enviei");
-    console.log(list_trans_uncommited);
 
     try{
       response = await axios.put('http://localhost:4545/api/register/'+ register._id,{global: gs, local: gs});
@@ -387,6 +376,8 @@ export default function setIpc(){
     }
 
     store.set('JWT_TOKEN',response.data.token);
+
+
     var res = await sync();
     console.log(res);
 
