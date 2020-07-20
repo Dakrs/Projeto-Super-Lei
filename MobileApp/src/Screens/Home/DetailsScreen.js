@@ -22,8 +22,9 @@ import {Card,
  
 const DetailsScreen = ({navigation ,route})=> {
 
-  const {todoInfo,completeTodo,cancelTodo}= route.params
-  
+  const {todoInfo}= route.params
+  //const {todoInfo,completeTodo,cancelTodo}= route.params
+  /*
   _complete = () => {
     completeTodo(todoInfo._id)
   }
@@ -31,7 +32,7 @@ const DetailsScreen = ({navigation ,route})=> {
     cancelTodo(todoInfo._id)
   }
   
- 
+ */
   function timeConversor(time){
     const ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(time);
     const mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(time);
@@ -79,22 +80,7 @@ const DetailsScreen = ({navigation ,route})=> {
           </View>
         </Card.Content>
         <Divider></Divider>
-        <Card.Content style={styles.row}>
-          <Button 
-          labelStyle={{fontSize:10,color:'green',}} 
-          style={styles.button} 
-          mode="Text" 
-          onPress={() => {_complete(); navigation.push('TodosScreen')} }>
-        Complete
-          </Button> 
-          <Button 
-          labelStyle={{fontSize:10,color:'red',}} 
-          style={styles.button} 
-          mode="Text" 
-          onPress={() => {_cancel(); navigation.push('TodosScreen') }}>
-        Cancel
-          </Button>   
-        </Card.Content>
+        
       </Card>
     )}
  
@@ -135,5 +121,23 @@ const DetailsScreen = ({navigation ,route})=> {
       
       }); 
       
+/*
+      <Card.Content style={styles.row}>
+      <Button 
+      labelStyle={{fontSize:10,color:'green',}} 
+      style={styles.button} 
+      mode="Text" 
+      onPress={() => {_complete(); navigation.push('TodosScreen')} }>
+    Complete
+      </Button> 
+      <Button 
+      labelStyle={{fontSize:10,color:'red',}} 
+      style={styles.button} 
+      mode="Text" 
+      onPress={() => {_cancel(); navigation.push('TodosScreen') }}>
+    Cancel
+      </Button>   
+    </Card.Content> 
       
-      export default DetailsScreen;
+  */
+     export default DetailsScreen;

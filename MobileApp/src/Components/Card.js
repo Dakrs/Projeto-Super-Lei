@@ -22,11 +22,19 @@ import 'intl/locale-data/jsonp/en';
     return da + ' ' + mo + ' ' + ye;
   }  
 
+var todo = {}
 
   const myCard = ({navigation , todoInfo,completeTodo,cancelTodo}) => {
-
+todo = todoInfo
+console.log(todo)
     return (
-<Card style={styles.card}>
+<Card style={[styles.card, {borderColor: 
+          todo.origin==="Google Tasks" || 
+          todo.origin==="Google Calendar" || 
+          todo.origin==="Google Gmail" ? "red" 
+          : todo.origin ==="Outlook Calendar" || 
+          todo.origin ==="Outlook emails" ? "blue"
+          : "black"   }]}>
           <Card.Content style={styles.cardContent}>
             <Title>{todoInfo.name}</Title>
               <Button 
@@ -74,14 +82,17 @@ import 'intl/locale-data/jsonp/en';
           marginRight:25,
           marginBottom:10,
           marginTop:10,
+          borderWidth:2,
+          borderColor: todo.origin==="Google Tasks" ? "red" : "blue"       
           
-
         },
         cardContent: {
           flex :1,
           backgroundColor: "#eaeaea",
           flexDirection:'row',  
           justifyContent:'space-between',
+          
+          
         },
         date:{
           flexDirection: "row",

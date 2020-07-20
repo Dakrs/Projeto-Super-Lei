@@ -15,7 +15,7 @@ import api from '../../Services/api'
 
 import { getUser } from '../../utils'
 
-export default function Sync({syncGoogle,syncOutlook}){
+export default function Sync({syncGoogle,syncOutlook,syncGithub}){
 
   const [modalVisible1, setModalVisible1] = React.useState(false);
   const [modalVisible2, setModalVisible2] = React.useState(false);
@@ -30,7 +30,7 @@ async function checkCredentials(type){
   setType(type)
   var user= await getUser()
   user=JSON.parse(user)
-  var resp= await api.get('/'+type+'/credentials/'+user.user)
+  var resp= await api.get('/'+type+'/credentials')
   console.log(resp.data)
     if (resp.data.length > 0) {
        if( type === "google"){
@@ -41,12 +41,13 @@ async function checkCredentials(type){
        }
 
        else if (type==="github"){
+         await syncGithub()
 
        }
         Alert.alert("You are sync :)")
     }
     else {
-      var url = await api.get('/'+type+'/url/')
+      var url = await api.get('/'+type+'/url')
         setUrl(url.data)
         
         if(type==="google")

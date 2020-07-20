@@ -22,38 +22,6 @@ import HomeScreen from './HomeScreen'
 import ExitScreen from './ExitScreen'
 
 
-var myDate1 = new Date();
-var myDate2 = new Date("2016-05-15");
-
-var todosArray = [
-{_id : "223332",
-  name: "Teste1",
-  origin: "Github",
-  priority: 3,
-  description: "eu sozinho no mundo á esprra delas ssdsadsa sasaddsa asfsad a",
-  date: myDate1,
-},
-{
-  _id : "223323",
-  name: "Teste2",
-  origin: "Outlook",
-  date: myDate2,
-  priority: 3,
-},
-{
-  _id : "22332",
-  name: "Teste3",
-  origin: "Github",
- 
-  priority: 3,
-},{
-  _id : "22322",
-  name: "TESTE4",
-  origin: "Github",
- 
-  priority: 3,
-}
-]
 
 export default function Home({navigation}) {
 
@@ -61,8 +29,8 @@ export default function Home({navigation}) {
   const [routes] = React.useState([
     {key:'home',title:'Home',icon:'home',color:"#FFFFFF"},
     { key: 'sync', title: 'Sync', icon: 'sync',color:"#FFFFFF" },
-    { key: 'add', title: 'Add', icon: 'plus',color:"#FFFFFF" },
-    { key: 'history', title: 'History', icon: 'history',color:"#FFFFFF" },
+   // { key: 'add', title: 'Add', icon: 'plus',color:"#FFFFFF" },
+   //{ key: 'history', title: 'History', icon: 'history',color:"#FFFFFF" },
     { key:  'exit', title:'Exit', icon: 'exit-to-app',color:"#FFFFFF"}
   ]);
   const [todos, setTodos]= useState([])
@@ -71,7 +39,7 @@ export default function Home({navigation}) {
     async function loadTodos(){
       var user= await getUser()
       user=JSON.parse(user)
-      var response = await api.get('/api/tasks/'+user.user)
+      var response = await api.get('/api/tasks')
       response.data.forEach(element => {
         if(element.date)
             element.date= new Date(element.date)
@@ -90,7 +58,7 @@ export default function Home({navigation}) {
   async function  submitNewTodo(name,priority,description){
     var user= await getUser()
     user=JSON.parse(user)
-      var response= await api.post('/api/tasks/'+user.user, {
+      var response= await api.post('/api/tasks', {
         name : name,
         priority : priority,
         description : description,
@@ -122,10 +90,10 @@ async function  syncGoogle (){
 
       var user= await getUser()
       user=JSON.parse(user)
-      await api('/google/tasks/'+ user.user)
-      await api('/google/calendar/' + user.user)
-      await api('/google/emails/' + user.user)
-      var response = await api.get('/api/tasks/'+user.user)
+      await api('/google/tasks')
+      await api('/google/calendar')
+      await api('/google/emails')
+      var response = await api.get('/api/tasks')
       response.data.forEach(element => {
         if(element.date)
             element.date= new Date(element.date)
@@ -138,9 +106,22 @@ async function  syncGoogle (){
 async function syncOutlook () {
   var user= await getUser()
   user=JSON.parse(user)
-  await api('/outlook/calendar/' + user.user)
-  await api('/outlook/emails/' + user.user)
-  var response = await api.get('/api/tasks/'+user.user)
+  await api('/outlook/calendar')
+  await api('/outlook/emails')
+  var response = await api.get('/api/tasks')
+  response.data.forEach(element => {
+    if(element.date)
+        element.date= new Date(element.date)
+      });
+      setTodos(response.data)
+}
+
+
+async function syncGithub () {
+  var user= await getUser()
+  user=JSON.parse(user)
+  await api('/github/issues')
+  var response = await api.get('/api/tasks')
   response.data.forEach(element => {
     if(element.date)
         element.date= new Date(element.date)
@@ -152,18 +133,21 @@ async function syncOutlook () {
 
 
 
+
+
+
   const HomeScreenRoute = () => <HomeScreen  Todos={todos} completeTodo={completeTodo} cancelTodo={cancelTodo} />;
-  const SyncRoute = () => <Sync syncGoogle={syncGoogle}syncOutlook={syncOutlook} ></Sync>;
-  const HistoryRoute = () => <Text>History</Text>;
-  const  AddScreenRoute = () => <AddTodoScreen submitNewTodo={submitNewTodo}></AddTodoScreen>
+  const SyncRoute = () => <Sync syncGoogle={syncGoogle}syncOutlook={syncOutlook} syncGithub={syncGithub} ></Sync>;
+ // const HistoryRoute = () => <Text>History</Text>;
+  //const  AddScreenRoute = () => <AddTodoScreen submitNewTodo={submitNewTodo}></AddTodoScreen>
   const ExitScreenRoute = ()  =><ExitScreen navigation={navigation}></ExitScreen>
 
  
   const renderScene = BottomNavigation.SceneMap({
     home: HomeScreenRoute ,
     sync: SyncRoute,
-    add: AddScreenRoute,
-    history: HistoryRoute,
+    //add: AddScreenRoute,
+    //history: HistoryRoute,
     exit : ExitScreenRoute
     
   });
@@ -173,10 +157,12 @@ async function syncOutlook () {
       <NavigationContainer>
       <BottomNavigation
       style={{flex:1}}
+      barStyle={{backgroundColor:"white"}}
       navigationState={{index,routes}}
       onIndexChange={setIndex}
       renderScene={renderScene}
-      inactiveColor={"#000000"}
+      style={{backgroundColor:"white"}}
+      inactiveColor={"grey"}
       activeColor={"#000000"}
     />
     </NavigationContainer>
