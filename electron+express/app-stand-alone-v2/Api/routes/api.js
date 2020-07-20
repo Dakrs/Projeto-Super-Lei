@@ -286,6 +286,7 @@ router.post('/outlook/token',(req,res) =>{
   token.token = req.body.token
   token.owner = "me"
   token.type = "OUTLOOK"
+  console.log(req.body);
 
   Credential.insert(token)
   .then(resp => res.jsonp(true))

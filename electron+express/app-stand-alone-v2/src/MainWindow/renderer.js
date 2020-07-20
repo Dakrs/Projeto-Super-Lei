@@ -368,8 +368,9 @@ var alltodos = new Vue({
           case 200:
             $('#LOGIN-MODAL').modal('hide');
             alert('Logged in');
-            this.sync_status[3] = true;
-            this.sync_status = [...this.sync_status];
+            //this.sync_status[3] = true;
+            //this.sync_status = [...this.sync_status];
+            this.sync_status = [API.getGITHUB_KEY_STATUS(),API.getGOOGLE_KEY_STATUS(),API.getOUTLOOK_KEY_STATUS(),true];
             break;
           case 409:
             alert('Wrong credentials');

@@ -66,18 +66,31 @@
             </table>
           </div>
           <div class="history">
-            <span v-if="!sync_status[3]" class="mouse noselect" @click="handleLogInModal()" style="font-size: 1.1rem">
-              <i class="fa fa-cloud-upload" aria-hidden="true"></i>
-              Storage
+            <span class="text-muted noselect" style="font-size: 0.9rem">
+                Cloud
             </span>
-            <span v-else class="noselect" style="font-size: 1.1rem">
-              <i class="fa fa-download" aria-hidden="true"></i>
-              Connected
-            </span>
-            <span v-if="sync_status[3]" class="mouse noselect" @click="toggleSync()" style="font-size: 1.1rem">
-              <i class="fa fa-superpowers" aria-hidden="true"></i>
-              Refresh
-            </span>
+            <table class="table table-borderless" style="margin-bottom:0">
+              <tbody>
+                <tr v-if="!sync_status[3]">
+                  <td @click="handleLogInModal()" class="fontSize text-left mouse">
+                    <i class="fa fa-cloud-upload" aria-hidden="true"></i>
+                    Storage
+                  </td>
+                </tr>
+                <tr v-else>
+                  <td class="fontSize text-left">
+                    <i class="fa fa-download" aria-hidden="true"></i>
+                    Connected
+                  </td>
+                </tr>
+                <tr v-if="sync_status[3]">
+                  <td @click="sync(2)" class="fontSize text-left mouse" @click="toggleSync()">
+                    <i class="fa fa-superpowers" aria-hidden="true"></i>
+                    Refresh
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
           <div class="title bottomTittle">
             <p class="title">me<strong>todo</strong></p>

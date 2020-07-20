@@ -164,9 +164,26 @@ export default function setIpc(){
     catch(err){
       console.error("Erro",err)
     }
-    if (response === true)
+    if (response === true){
       store.set('OUTLOOK_API_KEY',true);
-    //store.set('OUTLOOK_API_KEY',true);
+
+      if(store.has('JWT_TOKEN')){
+          var token = store.get('JWT_TOKEN');
+          console.log(token);
+          var resp2;
+          try{
+            resp2 = await axios.get('https://amcyni.herokuapp.com/outlook/credentials',{headers: {'x-access-token': token}});
+            if (resp2.data.length === 0){
+              resp2 = await axios.get('http://localhost:4545/api/outlookToken');
+              await axios.post('https://amcyni.herokuapp.com/api/outlook/token',{token: resp2.data.token},{headers: {'x-access-token': token}});
+            }
+          }
+          catch(err){
+            console.log(err);
+          }
+      }
+    }
+
     return response;
    })
 
@@ -179,8 +196,26 @@ export default function setIpc(){
     catch(err){
       console.error("Erro",err)
     }
-    if (response === true)
-      store.set('GITHUB_API_KEY',true);
+
+    if (response === true){
+        store.set('GITHUB_API_KEY',true);
+
+        if(store.has('JWT_TOKEN')){
+          var token = store.get('JWT_TOKEN');
+          var resp2;
+          try{
+            resp2 = await axios.get('https://amcyni.herokuapp.com/github/credentials',{headers: {'x-access-token': token}});
+            if (resp2.data.length === 0){
+              resp2 = await axios.get('http://localhost:4545/api/githubToken');
+              await axios.post('https://amcyni.herokuapp.com/api/github/token',{token: resp2.data.token},{headers: {'x-access-token': token}});
+            }
+          }
+          catch(err){
+            console.log(err);
+          }
+      }
+    }
+
     return response;
    });
 
@@ -212,6 +247,21 @@ export default function setIpc(){
        response = aux.data
        // 0 - por fazer // 1 - completa  // 2 - cancelada
        store.set('GOOGLE_API_KEY',true);
+
+       if(store.has('JWT_TOKEN')){
+         var token = store.get('JWT_TOKEN');
+         var resp2;
+         try{
+           resp2 = await axios.get('https://amcyni.herokuapp.com/google/credentials',{headers: {'x-access-token': token}});
+           if (resp2.data.length === 0){
+             resp2 = await axios.get('http://localhost:4545/api/googleToken');
+             await axios.post('https://amcyni.herokuapp.com/api/google/token',{token: resp2.data.token},{headers: {'x-access-token': token}});
+           }
+         }
+         catch(err){
+           console.log(err);
+         }
+     }
     }
     catch(err) {
           console.error("Erro",err)
@@ -382,7 +432,6 @@ export default function setIpc(){
     if (store.has('GOOGLE_API_KEY') && response.data.google.length === 0){
       try{
         response2 = await axios.get('http://localhost:4545/api/googleToken');
-        console.log(response2.data.token);
         await axios.post('https://amcyni.herokuapp.com/api/google/token',{token: response2.data.token},{headers: {'x-access-token': response.data.token}});
       }
       catch(err){
@@ -390,27 +439,55 @@ export default function setIpc(){
       }
     }
 
-    /**
-    if (store.has('GOOGLE_API_KEY') && response.data.google.length === 0){
+    if (store.has('OUTLOOK_API_KEY') && response.data.outlook.length === 0){
       try{
-        response2 = await axios.get('http://localhost:4545/api/googleToken');
-        console.log(response2.data.token);
-        await axios.post('https://amcyni.herokuapp.com/api/google/token',{token: response2.data.token},{headers: {'x-access-token': response.data.token}});
+        response2 = await axios.get('http://localhost:4545/api/outlookToken');
+        await axios.post('https://amcyni.herokuapp.com/api/outlook/token',{token: response2.data.token},{headers: {'x-access-token': response.data.token}});
       }
       catch(err){
         console.log(err);
       }
     }
-    if (!store.has('GOOGLE_API_KEY') && response.data.google.length !== 0){
+
+    if (store.has('GITHUB_API_KEY') && response.data.github.length === 0){
       try{
-        response2 = await axios.get('http://localhost:4545/api/googleToken');
-        console.log(response2.data.token);
-        await axios.post('https://amcyni.herokuapp.com/api/google/token',{token: response2.data.token},{headers: {'x-access-token': response.data.token}});
+        response2 = await axios.get('http://localhost:4545/api/githubToken');
+        await axios.post('https://amcyni.herokuapp.com/api/github/token',{token: response2.data.token},{headers: {'x-access-token': response.data.token}});
       }
       catch(err){
         console.log(err);
       }
-    }*/
+    }
+
+    if (!store.has('GOOGLE_API_KEY') && response.data.google.length !== 0){
+      try{
+        response2 = await axios.post('http://localhost:4545/api/google/token',response.data.google[0]);
+        store.set('GOOGLE_API_KEY',true);
+      }
+      catch(err){
+        console.log(err);
+      }
+    }
+
+    if (!store.has('OUTLOOK_API_KEY') && response.data.outlook.length !== 0){
+      try{
+        response2 = await axios.post('http://localhost:4545/api/outlook/token',response.data.outlook[0]);
+        store.set('OUTLOOK_API_KEY',true);
+      }
+      catch(err){
+        console.log(err);
+      }
+    }
+
+    if (!store.has('GITHUB_API_KEY') && response.data.github.length !== 0){
+      try{
+        response2 = await axios.post('http://localhost:4545/api/github/token',response.data.github[0]);
+        store.set('GITHUB_API_KEY',true);
+      }
+      catch(err){
+        console.log(err);
+      }
+    }
 
     var res = await sync();
 
