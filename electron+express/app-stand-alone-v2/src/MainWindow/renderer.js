@@ -104,7 +104,8 @@ var alltodos = new Vue({
     toggled: null,
     sortedBy: 0,
     sortableJS: null,
-    sync_status: [API.getGITHUB_KEY_STATUS(),API.getGOOGLE_KEY_STATUS(),API.getOUTLOOK_KEY_STATUS(),API.getJWT()]
+    sync_status: [API.getGITHUB_KEY_STATUS(),API.getGOOGLE_KEY_STATUS(),API.getOUTLOOK_KEY_STATUS(),API.getJWT()],
+    interval: null
   },
   async mounted(){
     var todos = await Ipc.get_all_todos();
@@ -123,6 +124,9 @@ var alltodos = new Vue({
     },
     // botão complete todo main comp
     complete: async function (id){
+      if (this.interval !== null)
+        clearInterval(this.interval);
+
       const result = await Ipc.complete_todo_id(id);
       if (result){
         if (this.toggled !== null && this.toggled._id === id){
@@ -133,9 +137,15 @@ var alltodos = new Vue({
       else{
         alert('ERROR!');
       }
+
+      if(this.interval !== null)
+        this.interval = setInterval(this.refresh,10000);
     },
     // botão cancel todo main comp
     cancel: async function (id){
+      if (this.interval !== null)
+        clearInterval(this.interval);
+
       const result = await Ipc.cancel_todo_id(id);
       if (result){
         if (this.toggled !== null && this.toggled._id === id){
@@ -146,9 +156,15 @@ var alltodos = new Vue({
       else{
         alert('ERROR!');
       }
+
+      if(this.interval !== null)
+        this.interval = setInterval(this.refresh,10000);
     },
     // para lidar com os botões do todo que está a ser mostrado nos details
     complete_toggle: async function(id){
+      if (this.interval !== null)
+        clearInterval(this.interval);
+
       const result = await Ipc.complete_todo_id(id);
       if (result){
         this.toggled = null;
@@ -157,9 +173,15 @@ var alltodos = new Vue({
       else{
         alert('ERROR!');
       }
+
+      if(this.interval !== null)
+        this.interval = setInterval(this.refresh,10000);
     },
     // para lidar com os botões do todo que está a ser mostrado nos details
     cancel_toggle: async function(id){
+      if (this.interval !== null)
+        clearInterval(this.interval);
+
       const result = await Ipc.cancel_todo_id(id);
       if (result){
         this.toggled = null;
@@ -168,9 +190,15 @@ var alltodos = new Vue({
       else{
         alert('ERROR!');
       }
+
+      if(this.interval !== null)
+        this.interval = setInterval(this.refresh,10000);
     },
     //metodo para atualizar a ordem da lista quando old_index é menor que new_index
     rev_DaD_update: async function(old_index,new_index){
+      if (this.interval !== null)
+        clearInterval(this.interval);
+
       var new_Array = [];
 
       this.todos.forEach((item, i) => {
@@ -190,9 +218,15 @@ var alltodos = new Vue({
         this.todos = new_Array;
       else
         console.log('ERROR');
+
+      if(this.interval !== null)
+        this.interval = setInterval(this.refresh,10000);
     },
     //metodo para atualizar a ordem da lista quando old_index é maior que new_index
     nor_DaD_update: async function(old_index,new_index){
+      if (this.interval !== null)
+        clearInterval(this.interval);
+
       var new_Array = [];
       this.todos.forEach((item, i) => {
         new_Array.push(item);
@@ -211,28 +245,34 @@ var alltodos = new Vue({
         this.todos = new_Array;
       else
         console.log('ERROR');
+
+      if(this.interval !== null)
+        this.interval = setInterval(this.refresh,10000);
     },
     verifyProperty: function(data){
       return (typeof data !== 'undefined');
     },
     sortBy: function(type){
-      if (type !== this.sortedBy)
-      {
-        this.sortedBy = type;
-        var new_Array = [];
-        if (type === 0){
-          this.todos = sortByNormal(this.todos);
-          this.sortableJS.option("disabled", false);
-        }
-        else if (type === 1) {
-          this.todos = sortByDate(this.todos);
-          this.sortableJS.option("disabled", true);
-        }
-        else {
-          this.todos = sortByOrigin(this.todos);
-          this.sortableJS.option("disabled", true);
-        }
+      if (this.interval !== null)
+        clearInterval(this.interval);
+
+      this.sortedBy = type;
+      var new_Array = [];
+      if (type === 0){
+        this.todos = sortByNormal(this.todos);
+        this.sortableJS.option("disabled", false);
       }
+      else if (type === 1) {
+        this.todos = sortByDate(this.todos);
+        this.sortableJS.option("disabled", true);
+      }
+      else {
+        this.todos = sortByOrigin(this.todos);
+        this.sortableJS.option("disabled", true);
+      }
+
+      if(this.interval !== null)
+        this.interval = setInterval(this.refresh,10000);
     },
     timeConversor: function (time){
       const ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(time);
@@ -243,6 +283,9 @@ var alltodos = new Vue({
     },
     // função para atualizar os items de um dado tipo: //0 - Github 1 - Google 2 - Outlook
     sync: async function(type){
+      if (this.interval !== null)
+        clearInterval(this.interval);
+
       var length = this.todos.length;
       var new_todos = [];
 
@@ -288,9 +331,15 @@ var alltodos = new Vue({
           default:
         }
         alert((new_todos.length - length)  + ' new ToDos!');
+
+        if(this.interval !== null)
+          this.interval = setInterval(this.refresh,10000);
       }
     },
     handleGoogleModal: async function(key,type){
+      if (this.interval !== null)
+        clearInterval(this.interval);
+
       const res = await Ipc.store_google_api_key(key);
 
       if (res !== true){
@@ -301,8 +350,14 @@ var alltodos = new Vue({
         alert('Google API key validated');
       }
       $('#GOOGLE-MODAL').modal('hide');
+
+      if(this.interval !== null)
+        this.interval = setInterval(this.refresh,10000);
     },
     handleOutlookModal: async function(){
+      if (this.interval !== null)
+        clearInterval(this.interval);
+
       const res = await Ipc.verify_Outlook_Key();
       console.log(res);
 
@@ -315,8 +370,14 @@ var alltodos = new Vue({
       }
 
       $('#OUTLOOK-MODAL').modal('hide');
+
+      if(this.interval !== null)
+        this.interval = setInterval(this.refresh,10000);
     },
     handleGitHubModal: async function (){
+      if (this.interval !== null)
+        clearInterval(this.interval);
+
       const res = await Ipc.verify_Github_Key();
       console.log(res);
 
@@ -329,6 +390,9 @@ var alltodos = new Vue({
       }
 
       $('#GITHUB-MODAL').modal('hide');
+
+      if(this.interval !== null)
+        this.interval = setInterval(this.refresh,10000);
     },
     handleLogInModal: function (){
       if (!this.sync_status[3]){
@@ -341,6 +405,9 @@ var alltodos = new Vue({
     },
     // função para adicionar um todo.
     addTodo: async function (obj){
+      if (this.interval !== null)
+        clearInterval(this.interval);
+
       const res = await Ipc.add_todo(obj);
 
       if (typeof res !== 'undefined'){
@@ -360,6 +427,9 @@ var alltodos = new Vue({
         alert('Todo Added');
       }
       $('#ADD_TOO_COMP').modal('hide');
+
+      if (this.interval !== null)
+        this.interval = setInterval(this.refresh,10000);
     },
     handleLogInSubmit: async function(type,email,pass){
       if (type){
@@ -371,6 +441,7 @@ var alltodos = new Vue({
             //this.sync_status[3] = true;
             //this.sync_status = [...this.sync_status];
             this.sync_status = [API.getGITHUB_KEY_STATUS(),API.getGOOGLE_KEY_STATUS(),API.getOUTLOOK_KEY_STATUS(),true];
+            this.interval = setInterval(this.refresh,10000);
             break;
           case 409:
             alert('Wrong credentials');
@@ -397,12 +468,26 @@ var alltodos = new Vue({
       }
     },
     toggleSync: async function (){
+      if (this.interval !== null)
+        clearInterval(this.interval);
+
       var res = await Ipc.sync();
       if (res !== null){
         alert('Sync Completed');
       }
       else{
         alert('Error on sync');
+      }
+
+      if (this.interval !== null)
+        this.interval = setInterval(this.refresh,10000);
+    },
+    refresh: async function (){
+      var size = this.todos.length;
+      this.todos = await Ipc.get_all_todos();
+      this.sortBy(this.sortedBy);
+      if (this.todos.length > size){
+        alert((this.todos.length - size)  + ' new ToDos!');
       }
     },
     test: function(){
@@ -424,15 +509,6 @@ alltodos.sortableJS = Sortable.create(el,{
     }
   },
 });
-
-setInterval( async () => {
-  var size = alltodos.todos.length;
-  alltodos.todos = await Ipc.get_all_todos();
-  alltodos.sortBy(alltodos.sortedBy);
-  if (alltodos.todos.length > size){
-    alert((alltodos.todos.length - size)  + ' new ToDos!');
-  }
-},10000);
 
 
 /**
