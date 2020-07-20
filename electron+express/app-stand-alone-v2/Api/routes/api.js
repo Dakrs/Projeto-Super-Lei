@@ -253,35 +253,45 @@ router.post('/transactionTotask', async function(req,res){
 })
 
 router.post('/github/token',(req,res) =>{
-  var token = req.body.token
+  var token = {}
+  token.token = req.body.token
   token.owner = "me"
+  token.type = "GITHUB"
 
   Credential.insert(token)
   .then(resp => res.jsonp(true))
-  .catch(erro => res.status(500).jsonp(false))
+  .catch(erro => {
+    console.log(erro)
+    res.status(500).jsonp(false)})
 
 })
 
 
 router.post('/google/token',(req,res) =>{
-  var token = req.body.token
+  var token = {}
+  token.token = req.body.token
   token.owner = "me"
+  token.type = "GOOGLE"
 
   Credential.insert(token)
   .then(resp => res.jsonp(true))
-  .catch(erro => res.status(500).jsonp(false))
-
+  .catch(erro => {
+    console.log(erro)
+    res.status(500).jsonp(false)})
 })
 
 
 router.post('/outlook/token',(req,res) =>{
-  var token = req.body.token
+  var token = {}
+  token.token = req.body.token
   token.owner = "me"
+  token.type = "OUTLOOK"
 
   Credential.insert(token)
   .then(resp => res.jsonp(true))
-  .catch(erro => res.status(500).jsonp(false))
-
+  .catch(erro => {
+    console.log(erro)
+    res.status(500).jsonp(false)})
 })
 
 
