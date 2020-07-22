@@ -70,7 +70,7 @@ export default function Login(props) {
     <View style={styles.Container}>
       <StatusBar barStyle="light-content" />
 
-      <Text style={styles.Title}>Amcyni</Text>
+      <Text style={styles.Title}>meTodo</Text>
       <Text style={styles.TextInformation}>
         Your To-do List
       </Text>

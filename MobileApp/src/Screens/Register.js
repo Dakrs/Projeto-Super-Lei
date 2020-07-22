@@ -21,8 +21,14 @@ export default function Register(props) {
 
  
   async function signIn() {
-    if (username.length === 0) return
-    if(password!==repeatPassword){
+    if (password.length < 8) {
+      setErrorMessage("Error! Password to small")
+      return}
+    if(!validateIsEmail(username)){
+      setErrorMessage("Error! email is Invalid")
+      return;
+    } 
+    if(password!==repeatPassword ){
         setErrorMessage("Error! Put the same password")
         return
     }
@@ -60,12 +66,16 @@ const Back = () => {
       props.navigation.dispatch(resetAction)
 
 }
+function validateIsEmail(email) {
+  return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
+}
+
 
   return (
     <View style={styles.Container}>
       <StatusBar barStyle="light-content" />
 
-      <Text style={styles.Title}>Amcyni</Text>
+      <Text style={styles.Title}>meTodo</Text>
       <Text style={styles.TextInformation}>
         Your To-do List
       </Text>
