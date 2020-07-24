@@ -8,7 +8,7 @@ var Task = require('../controllers/tasks');
 var Register = require('../controllers/register')
 const Credential = require('../controllers/credentials');
 var Transaction = require('../controllers/transactions')
-let promise = Promise.resolve(); 
+let promise = Promise.resolve();
 
 
 const oauth2 = require('simple-oauth2').create({
@@ -70,7 +70,6 @@ router.get('/login/return', async function(req, res, next) {
   }
 });
 
-
 router.get('/issues', async function(req, res, next) {
     task = {}
 
@@ -92,48 +91,53 @@ router.get('/issues', async function(req, res, next) {
       try {
         const headers = {
           "Authorization" : "Token " + accessToken
-        }   
+        }
         const url = "https://api.github.com/user/repos";/*?q=author:" + username + " type:issue";*/
         const response = await fetch(url, {
           "method": "GET",
           "headers": headers
         });
-        
+
         const result =  await response.json();
         var issueRes = [];
-                
-        result.map( async function(repo) {
+        var issuesTotal = new Array(result.length);
+
+        Promise.all(result.map(async (repo,index) => {
           title = repo.name;
           const headers = {
               "Authorization" : "Token " + accessToken
-          }   
+          }
           const url2 = "https://api.github.com/repos/" + username + "/" + title +  "/issues";/*?q=author:" + username + " type:issue";*/
-              
+
           const issues = await fetch(url2, {
                 "method": "GET",
                 "headers": headers
           })
           issueRes = await issues.json();
-              
-          if(issueRes.length > 0){
-              
-              issueRes.forEach(element => {
-                promise= promise.then(() =>{
-                    return addTasks(element)
-                })
-              })
 
-              promise.then(data => {
-                //All tasks completed
-                console.log(data); 
-              });
-                        
+          if(issueRes.length > 0){
+            issuesTotal[index] = issueRes;
           }
-        
-        })                  
-        res.jsonp(issueRes);   
-       
-        
+          else{
+            issuesTotal[index] = null;
+          }
+        })).then(async () => {
+
+                  for(var i = 0; i < issuesTotal.length; i++){
+                    var middle = issuesTotal[i];
+                    if (middle === null)
+                      continue;
+                    console.log('Entrei');
+
+                    for(var k = 0; k < middle.length; k++){
+                      var resTask = await addTasksV2(middle[k]);
+                      console.log(resTask);
+                    }
+                  }
+
+                  res.jsonp(true);
+        })
+
       } catch (error) {
         console.log(error);
         githubData = { error: error }
@@ -141,8 +145,72 @@ router.get('/issues', async function(req, res, next) {
     } else {
       res.redirect(getAuthUrl());
     }
-    
+
 });
+
+/*
+router.get('/issues', async function(req, res, next) {
+    task = {}
+
+    const accessToken = await getAccessToken();
+
+    if(accessToken){
+      let gh = new GitHub({
+        token: accessToken
+      });
+
+      let me = await gh.getUser();
+      const requestProfile = me.getProfile();
+      requestProfile.then(function(val){
+        return val.data.login;
+      });
+      let user = await requestProfile;
+      const username = user.data.login;
+
+      try {
+        const headers = {
+          "Authorization" : "Token " + accessToken
+        }
+        const url = "https://api.github.com/user/repos";
+        const response = await fetch(url, {
+          "method": "GET",
+          "headers": headers
+        });
+
+        const result =  await response.json();
+        var issueRes = [];
+
+        for(var k = 0; k < result.length; k++){
+          title = result[k].name;
+          const headers = {
+              "Authorization" : "Token " + accessToken
+          }
+          const url2 = "https://api.github.com/repos/" + username + "/" + title +  "/issues";
+
+          const issues = await fetch(url2, {
+                "method": "GET",
+                "headers": headers
+          })
+          issueRes = await issues.json();
+          if(issueRes.length > 0){
+            for(var i = 0; i < issueRes.length; i++){
+              var data = await addTasksV2(issueRes[i]);
+              console.log(data);
+            }
+          }
+        }
+        res.jsonp(false);
+      }
+      catch (error) {
+          console.log(error);
+          githubData = { error: error }
+        }
+      }
+      else {
+        res.redirect(getAuthUrl());
+      }
+
+});*/
 
 // auth logout
 router.get('/logoff', function(req, res, next) {
@@ -152,7 +220,7 @@ router.get('/logoff', function(req, res, next) {
 });
 
 async function getTokenFromCode(auth_code) {
-  var creden = {} 
+  var creden = {}
   var tokenAux = {}
   let result = await oauth2.authorizationCode.getToken({
     code: auth_code,
@@ -161,7 +229,7 @@ async function getTokenFromCode(auth_code) {
   });
 
   const token = oauth2.accessToken.create(result);
-  
+
   creden.type = "GITHUB"
   creden.owner ="me"
   tokenAux.access_token = token.token.access_token
@@ -183,6 +251,28 @@ async function getAccessToken() {
 }
 
 
+async function addTasksV2(r){
+  var response = await Task.findByIdOrigin(r.id,"GITHUB");
+  if (response.length===0){
+    var task = {}
+    task._id = nanoid()
+    task.idOrigin = r.id
+    task.name = r.title
+    task.description = r.body
+    task.origin = "GITHUB"
+    task.owner = "me"
+    task.state = 0
+
+    var aux = await Task.insert(task)
+    var register = await Register.get()
+    await createTransaction(aux,"Post",register[0].local)
+    await Register.incLocal(register[0]._id)
+
+    return aux;
+  }
+  return null;
+}
+
 function addTasks(r){
   return new Promise (async (resolve,reject) => {
     var response = await Task.findByIdOrigin(r.id,"GITHUB")
@@ -195,7 +285,7 @@ function addTasks(r){
           task.origin = "GITHUB"
           task.owner = "me"
           task.state = 0
-          
+
           var aux = await Task.insert(task)
           var register = await Register.get()
           await createTransaction(aux,"Post",register[0].local)
@@ -206,7 +296,7 @@ function addTasks(r){
     else
         resolve(false)
   })
-  
+
 }
 
 async function createTransaction(task, type,local){
