@@ -139,7 +139,7 @@
     "popper.js": "^1.16.1",
     "simple-oauth2": "^3.4.0",
     "sortablejs": "^1.10.2",
-    "underscore": "^1.10.2",
+    "underscore": "^1.12.1",
     "vue": "^2.6.11"
   }
 }
